@@ -27,12 +27,12 @@ arengine/Assets/Editor/Vuforia/ImageTargetTextures/VuforiaMars_*
 arengine/Assets/Editor/Vuforia/TargetsetData*
 arengine/Assets/Editor/Vuforia/VuforiaMars_*
 arengine/Assets/Models*
-arengine/Assets/Plugins*
 arengine/Assets/StreamingAssets/Vuforia/VuforiaMars_*
 arengine/Assets/Vuforia*
 arengine/Assets/DownloadObbExample.cs*
 arengine/Assets/README.txt*
 arengine/QCAR
-arengine/magis.keystore
 arengine/Assets/ARGames/ARGameList.txt*
+arengine/Assets/Plugins*
+arengine/magis.keystore
 Igpaw*
