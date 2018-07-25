@@ -192,7 +192,13 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                 numWaypoints = int.Parse(name) + 1;   // track highest index so far...
         }
 
-        if (! editMode && activeWaypoints.Count == 0)
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        if (editMode)
+        {
+        }
+        else
+#endif
+        if (activeWaypoints.Count == 0)
         {
             // if not in edit mode and there are no active waypoints, we have reached the end of a module
             // and should increment the module number and reread the waypoints
