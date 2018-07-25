@@ -1,0 +1,24 @@
+{
+    "files.exclude":
+    {
+        "**/.DS_Store":true,
+        "**/.git":true,
+        "**/*.booproj":true,
+        "**/*.csproj":true,
+        "**/*.meta":true,
+        "**/*.pidb":true,
+        "**/*.sln":true,
+        "**/*.suo":true,
+        "**/*.unityproj":true,
+        "**/*.user":true,
+        "**/*.userprefs":true,
+        "build/":true,
+        "Build/":true,
+        "library/":true,
+        "Library/":true,
+        "obj/":true,
+        "Obj/":true,
+        "temp/":true,
+        "Temp/":true
+    }
+}

@@ -1,0 +1,222 @@
+SceneName	Object	Interaction	Flags	Dialogue
+Ateneo Seal	-	Autorun	-	@playsound SystemStart
+				@fade 1 1 1 1 0
+				@fade 0 0 0 0 0.5
+			!AutoAria	@status Look for Agent Aria.
+				@playmusic BGM1
+			AutoAria Progress==0	@status Look for the energy orb and Pick it Up.
+				@playmusic BGM1
+			Progress==1	@status Select either the Anomaly Gun or the Immortal Key, then Show it to Agent Aria.
+				@playmusic BGM1
+			Progress==2	@status Select the Immortal Key, then Use it on the barrier stone.
+				@playmusic BGM4
+			Progress>=3	@status Select the Anomaly Gun, then Fire it at the danag.
+				@playmusic BGM4
+			!Start	*** Connection established. Interference: 0.03%. Latency: 15ms. ***
+				*** Orders received. {Make contact with Agent Aria.} ***
+				@settrue Start
+				@setfalse M1%Inventory%Anomaly_Gun
+				@setfalse M1%Inventory%Immortal_Key
+				@select
+	Agent_Aria	Auto	!AutoAria	@animate Agent_Aria Yes
+				Aria#Well done. I hope your trip here was not too difficult?
+				@animate Agent_Aria Talk
+				Aria#As you can see, visiting another location will require you to physically travel there and focus on a specific marker with your Spirit Gear.
+				@animate Agent_Aria Talk
+				Aria#However, you can only travel to these locations if your duties require that you be present there.
+				@animate Agent_Aria Talk
+				Aria#Thankfully, your Spirit Gear's map screen will only display these relevant locations and will filter out everything else.
+				@animate Agent_Aria Yes
+				Aria#Assuming no spiritual interference, that is.
+				@animate Agent_Aria Talk
+				Aria#Now, our primary duty as members of M.A.G.I.S. is to ensure that none of the paranormal entities here make their way to your world.
+				@animate Agent_Aria Talk
+				Aria#This is the reason we investigate events that seem out of place.
+				@animate Agent_Aria Talk
+				Aria#If anything or anyone here starts acting up, it could be because of energy spilling into this world from yours.
+				@animate Agent_Aria Talk
+				Aria#It's a dangerous job, which is why you need to be prepared. We need to recharge your Spirit Gear so you can use its additional functions.
+				@show Energy_Orb
+				@animate Agent_Aria Talk
+				Aria#Think fast, recruit. I've asked one of our alchemists to deploy an energy orb near you.
+				@animate Agent_Aria Talk
+				Aria#You remember how to {Pick Up} objects with your Spirit Gear, right? Get to it.
+				@settrue AutoAria
+		Examine	-	M.A.G.I.S. Agent, codename: Aria.
+				Professor in the Department of M.A.G.I.S. and head of the Arcane Laboratory of Lost Secrets.
+		Talk_to	Progress==0	@animate Agent_Aria Talk
+				Aria#Did you {Pick Up} the energy orb yet?
+			Progress==1	@animate Agent_Aria Talk
+				Aria#Open your {Inventory}, then {Select} either the Anomaly Gun or the Immortal Key, then {Show} it to me.
+			Progress==2	@animate Agent_Aria Talk
+				Aria#To banish the danag, first {Use} your {Immortal Key} on the barrier stone. This will disable the barrier that is restraining the creature.
+				@animate Agent_Aria Talk
+				Aria#Once the barrier is down, you can {Fire} your {Anomaly Gun} at the danag. You might have to do this more than once.
+			Progress==3	@animate Agent_Aria Talk
+				Aria#The barrier is down! Quickly, {Fire} your {Anomaly Gun} at the danag!
+				@animate Agent_Aria Talk
+				Aria#I must warn you that it might take more than one shot to banish the creature.
+				@animate Agent_Aria Talk
+				Aria#But don't worry. Even if the danag attacks you, only your projected presence in this world will take damage.
+			Progress==4	@animate Agent_Aria No
+				Aria#Why do monsters always have to be this stubborn?
+				@animate Agent_Aria Talk
+				Aria#{Fire} your {Anomaly Gun} at the danag again! One more shot should do it.
+		Show_[Anomaly_Gun]_	Progress==1	@stopmusic
+				@animate Agent_Aria Talk
+				Aria#Good, you're now ready for your first mi---
+				@show Danag
+				Agent Aria is interrupted by a strange, high-pitched sound, followed by an ominous wail.
+				@playmusic BGM4
+				@fade 1 0 0 1 1
+				@fade 0 0 0 0 1
+				*** WARNING: HOSTILE DETECTED. ***
+				@animate Agent_Aria Talk
+				Aria#Hm, the barrier stone trapped something just now. How convenient.
+				@animate Agent_Aria Talk
+				Aria#Listen up! Your first task as an exchange student in the M.A.G.I.S. department is to banish the creature trapped by the barrier stone.
+				@animate Agent_Aria Yes
+				Aria#Let's see... Looks like a danag.
+				@animate Agent_Aria Talk
+				Aria#To banish the danag, first {Select} your {Immortal Key} then {Use} it on the barrier stone. This will dispel the barrier.
+				@animate Agent_Aria Talk
+				Aria#Once the barrier is down, you can {Fire} your {Anomaly Gun} at the danag. You might have to do this more than once.
+				@select
+				@set Progress 2
+			Progress>1	@animate Agent_Aria Talk
+				Aria#What is it? Is there something wrong with your Anomaly Gun?
+		Show_[Immortal_Key]_	Progress==1	@stopmusic
+				@animate Agent_Aria Talk
+				Aria#Good, you're now ready for your first mi---
+				@show Danag
+				Agent Aria is interrupted by a strange, high-pitched sound, followed by an ominous wail.
+				@playmusic BGM4
+				@fade 1 0 0 1 1
+				@fade 0 0 0 0 1
+				*** WARNING: HOSTILE DETECTED. ***
+				@animate Agent_Aria Talk
+				Aria#Hm, the barrier stone trapped something just now. How convenient.
+				@animate Agent_Aria Talk
+				Aria#Listen up! Your first task as an exchange student in the M.A.G.I.S. department is to banish the creature trapped by the barrier stone.
+				@animate Agent_Aria Yes
+				Aria#Let's see... Looks like a danag.
+				@animate Agent_Aria Talk
+				Aria#To banish the danag, first {Use} your {Immortal Key} on the barrier stone. This will dispel the barrier.
+				@animate Agent_Aria Talk
+				Aria#Once the barrier is down, you can {Fire} your {Anomaly Gun} at the danag. You might have to do this more than once.
+				@set Progress 2
+			Progress>1	@animate Agent_Aria Talk
+				Aria#What is it? Is there something wrong with your Immortal Key?
+	Barrier_Stone	Auto	!AutoStone	You see a relatively large piece of rock with a device attached to it.
+				@settrue AutoStone
+		Examine	-	Barrier stones such as this one are employed by the Department of M.A.G.I.S. as proximity-triggered traps.
+				Unwitting paranormal entities that wander too close will find themselves imprisoned inside a mystical force field.
+				Be advised that the force field's area of effect cannot cover the barrier stone itself.
+				WARNING: Some creatures are powerful enough to break through the force field on their own. Exercise caution when approaching a trapped target.
+		Touch	Progress<2	*** Barrier stone status: ARMED ***
+			Progress==2	*** Barrier stone status: ACTIVE ***
+			Progress>2	*** Barrier stone status: DEPLETED ***
+		Aim_[Anomaly_Gun]_	-	Destroying M.A.G.I.S. property isn't going to help you pass this test.
+		Use_[Immortal_Key]_	Progress<2	It looks like the Immortal Key can be used to issue commands to the barrier stone. However, you don't know what the commands are.
+			Progress==2	@playsound Unlock
+				@fade 0 1 1 0.5 0.5
+				@fade 0 0 0 0 0.5
+				*** Barrier stone status: DISABLED ***
+				@animate Agent_Aria Yes
+				Aria#Now, {Fire} your {Anomaly Gun} at the danag!
+				@animate Agent_Aria Talk
+				Aria#If your first shot doesn't take it out, the danag will retaliate.
+				@animate Agent_Aria Talk
+				Aria#You, as in you in your world, won't feel a thing. However, your projected presence here in this other world...
+				@animate Agent_Aria Talk
+				Aria#Well, I'll tell you more once you take down the danag.
+				@select
+				@set Progress 3
+			Progress>2	You try to reactivate the barrier stone, but nothing happens.
+	Energy_Orb	Auto	!AutoOrb	*** Energy orb detected. {Pick up} the orb to restore all Spirit Gear functions. ***
+				@settrue AutoOrb
+		Examine	-	These man-made balls of lightning contain both the magic power and the source code to enable various functions of a Spirit Gear.
+				For authorized users, these functions include the Anomaly Gun and the Immortal Key.
+				You do not have a high enough clearance level to view an energy orb's creation process.
+		Pick_up	-	*** Charging... 0%... 10%... 23%... 39%... 65%... 99%... ***
+				@hide Energy_Orb
+				@fade 0 1 0 1 0.5
+				@fade 0 0 0 0 0.5
+				*** Spirit Gear functions restored. Please verify that the Anomaly Gun and the Immortal Key has been added to your inventory. ***
+				@animate Agent_Aria Talk
+				Aria#Looks like it worked. Just to be sure, open your {Inventory}. You should see both an Anomaly Gun and an Immortal Key.
+				@animate Agent_Aria Talk
+				Aria#{Select} one of them, then {Show} it to me.
+				@animate Agent_Aria Talk
+				Aria#The {Show} command will appear where {Talk} and {Give} were before. Your Spirit Gear will always display the most relevant action.
+				@animate Agent_Aria Talk
+				Aria#Honestly, I'm glad it does that. The last thing I want happening is you accidentally shooting me with your Anomaly Gun.
+				@settrue M1%Inventory%Anomaly_Gun
+				@settrue M1%Inventory%Immortal_Key
+				@set Progress 1
+	Danag	Auto	!AutoDanag	@settrue AutoDanag
+		Examine	-	Paranormal entity, aswang type.
+				This creature is an aswang with a sharp, piercing tongue, which it uses to drain its victim's blood.
+				Danags used to be benevolent beings that helped with planting crops, but stopped doing so once they acquired a taste for human blood.
+		Talk_to	-	It answers with an eerie wail.
+				@animate Agent_Aria No
+				Aria#Most hostile creatures would take that opportunity to land a free hit on you, you know.
+		Fire_[Anomaly_Gun]_	Progress==2	@animate Agent_Aria No
+				Aria#Your Anomaly Gun isn't strong enough to penetrate the barrier. {Use} your {Immortal Key} on the barrier stone to disable the shield first.
+			Progress==3	@playsound ShootWeapon
+				@fade 1 1 1 1 0
+				@fade 0 0 0 0 0.5
+				@playsound Impact
+				You fire your weapon and hit the danag!
+				@animate Danag Attack1
+				The danag wails in agony, but then it quickly reaches out and strikes you!
+				@playsound SystemDamage
+				@fade 1 0 0 1 0
+				@fade 0 0 0 0 0.5
+				*** Connection stability: 97%. ***
+				@animate Agent_Aria Yes
+				Aria#Ha, that hardly scratched your projection! {Fire} your Anomaly Gun at the danag again. One more shot should do it.
+				@set Progress 4
+			Progress==4	@playsound ShootWeapon
+				@fade 1 1 1 1 0
+				@fade 0 0 0 0 0.5
+				@playsound Impact
+				You fire your weapon and hit the danag!
+				@playsound VoidReturn
+				@fade 1 1 0 1 1
+				@hide Danag
+				@fade 0 0 0 0 0.5
+				@stopmusic
+				You have successfully banished the danag!
+				@animate Agent_Aria Yes
+				Aria#Excellent work! You have good aim.
+				@animate Agent_Aria Talk
+				Aria#However, I must warn you - not all hostile creatures go down that easily. And most of them hit much harder than that danag.
+				@animate Agent_Aria Talk
+				Aria#If your projected presence takes too much damage, your connection here will become unstable and your Spirit Gear may initiate emergency repairs.
+				@animate Agent_Aria Talk
+				Aria#Worst thing that could happen is that you'll never be able to visit this world ever again, so be careful.
+				@playmusic BGM1
+				@animate Agent_Aria Talk
+				Aria#Anyway, congratulations on completing your first mission. Why don't you go take a break?
+				@animate Agent_Aria Talk
+				Aria#You might need to charge your mobile device. Or maybe you have things to do in your world.
+				@animate Agent_Aria Talk
+				Aria#When you feel like helping us out, just check your Spirit Gear to see where your skills are needed.
+				@animate Agent_Aria Talk
+				Aria#Ah, I almost forgot. Take this badge. It's proof that you're a member of the Department of M.A.G.I.S.
+				@animate Agent_Aria Yes
+				Aria#Take care of yourself. See you again soon!
+				@set Progress 5
+				@settrue End
+				Congratulations! You've completed Module 1!
+				It is highly recommended that you take a break after each module and resume play on the following day.
+				@exit
+		Use_[Immortal_Key]_	Progress==2	@animate Agent_Aria No
+				Aria#Use it on the barrier stone, not on the danag.
+			Progress>2	@animate Agent_Aria No
+				Aria#The Immortal Key wasn't designed to be used as a weapon.
+	-	Put_away_[Anomaly_Gun]	-	@select
+	-	Put_away_[Immortal_Key]	-	@select
+	-	Inventory	M1%Inventory%Anomaly_Gun | M1%Inventory%Immortal_Key	@subscene M1%Inventory
+	-	Depart	End	@exit

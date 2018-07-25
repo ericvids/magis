@@ -1,0 +1,13 @@
+SceneName	Object	Interaction	Flags	Dialogue
+-	-	Autorun	-	@settrue PitchOnly
+			!Anomaly_Gun	@hide Anomaly_Gun
+			Anomaly_Gun	@show Anomaly_Gun
+			!Immortal_Key	@hide Immortal_Key
+			Immortal_Key	@show Immortal_Key
+	Anomaly_Gun	Examine	-	Standard-issue weapon utilized by most M.A.G.I.S. agents. Safety lock is released only when targeting a hostile entity.
+		Select		@select Anomaly_Gun
+				@exit
+	Immortal_Key	Examine	-	Spell synthesizer utilized by most M.A.G.I.S. agents. Downloads required runes and incantations from the M.A.G.I.S. network.
+		Select		@select Immortal_Key
+				@exit
+	-	Cancel	-	@exit

@@ -1,0 +1,167 @@
+﻿SceneName	Object	Interaction	Flags	Dialogue
+M0%Scene1	-	Autorun	-	@playsound SystemStart
+				@fade 1 1 1 1 0
+				@fade 0 0 0 0 0.5
+				@playmusic BGM1
+			!AutoAria	@status Look for Agent Aria.
+			AutoAria Progress==0	@status Look around, then Examine Agent Aria.
+			Progress==1	@status Look for Little Pepe and Talk to him.
+			Progress==2 !M0%Inventory%Flower	@status Look for the flower and Pick it Up.
+			Progress==2 M0%Inventory%Flower	@status Open Inventory, Select the flower, and Give it to Agent Aria.
+			Progress==3	@status Depart and proceed to the next location.
+			!Start	Welcome to the MAGIS sample game. (Tap the screen to continue.)
+				This game is intended to demonstrate the basic features of MAGIS. This game itself is a subset of Igpaw: Loyola (Available on the App Store and Play Store!)
+				Please be informed that the default places in the map are located in the Loyola Schools of the Ateneo de Manila University. You may change this map by customizing the MapSystem object inside MapScene.unity.
+				*** System ready. Tap the screen to continue. ***
+				@hide BigBadge
+				@show Agent_Aria
+				@show Flower
+				@show Brochure
+				@fade 1 1 1 1 0
+				@fade 0 0 0 0 0.5
+				*** Connection established. Interference: 0.02%. Latency: 15ms. ***
+				*** Orders received. {Make contact with Agent Aria.} ***
+				@settrue Start
+	Agent_Aria	Auto	!AutoAria	@animate Agent_Aria Talk
+				M.A.G.I.S. Agent#Good, you got the connection working. You're the new recruit, yes?
+				@animate Agent_Aria Talk
+				Aria#I'm Agent Aria, and I'll be instructing you in the use of your Spirit Gear.
+				@animate Agent_Aria Talk
+				Aria#Oh? No one told you? It's that rectangular device you're using. What was it called in your world again? Smartphone? Tablet?
+				@animate Agent_Aria Talk
+				Aria#Spirit Gear technology turns your device into a special tool that allows you to see otherworlders like me. All you need to do is look through it.
+				@animate Agent_Aria Talk
+				Aria#Try it out! Look at your surroundings through your Spirit Gear.
+				@animate Agent_Aria Talk
+				Aria#When you're done, use your Spirit Gear to {Examine} me so we can continue your lesson.
+				@settrue AutoAria
+		Examine	Progress==0	M.A.G.I.S. Agent, codename: Aria.
+				Professor in the Department of M.A.G.I.S. and head of the Arcane Laboratory of Lost Secrets.
+				@animate Agent_Aria Yes
+				Aria#Excellent.
+				@animate Agent_Aria Talk
+				Aria#Whenever you {Examine} someone or something, your Spirit Gear will access our department's database and provide more information.
+				@animate Agent_Aria Talk
+				Aria#This is particularly useful when you want to learn more about whoever or whatever is in front of you.
+				@animate Agent_Aria Talk
+				Aria#By the way, have you noticed that no matter what you do, your position here in the other world seems to remain the same?
+				@animate Agent_Aria Talk
+				Aria#It's a limitation of the Spirit Gear. But it's useful if, for example, you need to move out of someone's way in your world.
+				@animate Agent_Aria Talk
+				Aria#Now, I will call a friend over, and I would like you to {Talk} to him.
+				@animate Agent_Aria Talk
+				Aria#Your Spirit Gear also acts as a translator of sorts. Use it to {Talk} to my little friend in the same way you used it to examine me.
+				@show Little_Pepe
+				@set Progress 1
+			Progress>0	M.A.G.I.S. Agent, codename: Aria.
+				Professor in the Department of M.A.G.I.S. and head of the Arcane Laboratory of Lost Secrets.
+		Talk_to	Progress==0	@animate Agent_Aria No
+				Aria#I understand you wish to speak with me about many other things, but I want you to {Examine} me first.
+			Progress==1	@animate Agent_Aria Talk
+				Aria#Go on, don't be shy. Use your Spirit Gear to locate my little friend and {Talk} to him.
+			Progress==2	@animate Agent_Aria Talk
+				Aria#Yes? Is something the matter?
+			Progress==3	@animate Agent_Aria Talk
+				Aria#If you want to know more about the Department of M.A.G.I.S., you should {Examine} that brochure to my left.
+				@animate Agent_Aria Talk
+				Aria#I will see you again soon. Have a safe journey.
+		Give_[Flower]_	-	@animate Agent_Aria Talk
+				Aria#Is this for me? Thank you very much.
+				@setfalse M0%Inventory%Flower
+				@select
+				@animate Agent_Aria Yes
+				Aria#With that, you've passed the first part of your training under me.
+				@animate Agent_Aria Talk
+				Aria#For your next lesson, I want you to learn how to traverse the "other world".
+				@animate Agent_Aria Talk
+				Aria#When you need to change locations, a {Depart} command should appear in your Spirit Gear's interface. Selecting it has two functions.
+				@animate Agent_Aria Talk
+				Aria#First, it will sever your connection with this world. After all, isn't it difficult to walk around while having to look at your device all the time?
+				@animate Agent_Aria Talk
+				Aria#Your own well-being in your world should be your utmost priority. {Always watch out for moving vehicles and other potential dangers.}
+				@animate Agent_Aria Talk
+				Aria#I cannot assist you in your world should you get hurt or should anything happen to your device. Do remain vigilant at all times.
+				@animate Agent_Aria Talk
+				Aria#Where was I? Ah, the {Depart} command. Tapping it will bring up a map screen that will also display your next destination.
+				@animate Agent_Aria Talk
+				Aria#Now, I want you to {Depart} and go to the location indicated by the red icon.
+				@animate Agent_Aria Talk
+				Aria#Once you arrive, the map screen will display an image of the "marker" that will act as a connection point.
+				@animate Agent_Aria Talk
+				Aria#Your Spirit Gear will tell you what to do once you've gotten that far. If all goes well, it will reconnect you to the other world. Good luck!
+				@set Progress 3
+				@settrue End
+	Flower	Auto	!AutoFlower	There is a rather normal-looking flower here.
+				@settrue AutoFlower
+		Examine	Progress<2	A sunflower. It has been enchanted with minor preservation magic.
+			Progress==2	A sunflower. It has been enchanted with minor preservation magic.
+				To add it to your inventory, focus on it and tap the {Pick Up} button.
+		Pick_up	Progress==0 FlowerImpatient<2	Agent Aria is still waiting for you to use your Spirit Gear to {Examine} her. You can pick up the flower later.
+				@incr FlowerImpatient 1
+			Progress==0 FlowerImpatient>1	While it is highly likely that you will need the flower later, please follow Agent Aria's instructions and use your Spirit Gear to {Examine} her.
+				@incr FlowerImpatient 1
+			Progress==1 FlowerImpatient<2	Aren't you supposed to {Talk} to Little Pepe? You can pick up the flower later.
+				@incr FlowerImpatient 1
+			Progress==1 FlowerImpatient>1	The flower may be begging you to pick it up, but please {Talk} to Little Pepe first.
+				@incr FlowerImpatient 1
+			Progress==2 FlowerImpatient<2	You pick up {a flower}.
+				@hide Flower
+				@animate Little_Pepe Talk
+				Pepe#Now that the flower is in your inventory, you can {Select} it so you can {Give} it to Aria.
+				@animate Little_Pepe Talk
+				Pepe#First, open your {Inventory}. Then, locate the flower and {Select} it. Finally, use your Spirit Gear to look at Aria and {Give} the flower to her.
+				@settrue M0%Inventory%Flower
+			Progress==2 FlowerImpatient>1	You pick up {a flower}. Finally. You already knew you needed the flower for later, but your Spirit Gear wouldn't let you take it. Must be a logical defect.
+				@hide Flower
+				@animate Little_Pepe Talk
+				Pepe#Now that the flower is in your inventory, you can {Select} it so you can {Give} it to Aria.
+				@animate Little_Pepe Talk
+				Pepe#First, open your {Inventory}. Then, locate the flower and {Select} it. Finally, use your Spirit Gear to look at Aria and {Give} the flower to her.
+				@settrue M0%Inventory%Flower
+	Brochure	Auto	!AutoBrochure	An Ateneo de Manila University brochure? Why is it in the other world?
+				@settrue AutoBrochure
+		Examine	-	@hide Brochure
+				@showstill Picture_Brochure
+				You find a section about the Department of M.A.G.I.S., but some of it is unreadable.
+				"Department of Magic, Anomalies, Ghosts, Immortals, and Spirits: A Center of ---
+				"--- Graduates of the Department of M.A.G.I.S. are trained to harness their ---
+				"--- and combat paranormal threats."
+				@hidestill
+				@showstill Picture_Diwata
+				There is a picture of a M.A.G.I.S. student accepting a flower from what appears to be a diwata. Below it is the tagline:
+				\n[TWO WORLDS, ONE SPIRIT]
+				@hidestill
+				@show Brochure
+				Strangely enough, the entry for the Department of M.A.G.I.S. does not contain any contact information.
+		Pick_up	-	Maybe you should look for a brochure like this in your world instead. You doubt it will have any information about the Department of M.A.G.I.S., though.
+		Use_[Flower]_	-	You imitate the pose of the M.A.G.I.S. student in the picture. Nothing happens.
+	Little_Pepe	Auto	!AutoPepe	A young boy. He looks familiar. Maybe you've seen an older version of him somewhere?
+				@settrue AutoPepe
+		Examine	-	Historical Figure, Philippine National Hero. Currently appears as he did when he was a young student in the Ateneo Municipal de Manila.
+				Author of several works, including Noli Me Tángere and El Filibusterismo.
+		Talk_to	Progress==1	@animate Little_Pepe Talk
+				Aria's Friend#Hello there. As you may already know, my name is Pepe.
+				@animate Little_Pepe Talk
+				Pepe#I hope you pay attention to Agent Aria's lessons. Your line of work can sometimes be dangerous.
+				@animate Little_Pepe Talk
+				Pepe#As part of your training, I would like you to give something to Agent Aria for me.
+				@animate Little_Pepe Talk
+				Pepe#There is a flower on the ground to my right. You can't actually touch it, but your Spirit Gear can interact with it and add it your inventory.
+				@animate Little_Pepe Talk
+				Pepe#Just use your Spirit Gear to locate and {Pick Up} the flower. Simple, right?
+				@set Progress 2
+			Progress==2 !M0%Inventory%Flower	@animate Little_Pepe Talk
+				Pepe#The flower should be somewhere to my right. Use your Spirit Gear to locate the flower, then tap the {Pick Up} button to add it to your inventory.
+			Progress==2 M0%Inventory%Flower	@animate Little_Pepe Talk
+				Pepe#To hand over the flower to Aria, first open your {Inventory}.
+				@animate Little_Pepe Yes
+				Pepe#Then, locate the flower and {Select} it.
+				@animate Little_Pepe Talk
+				Pepe#Finally, use your Spirit Gear to look at Aria and {Give} the flower to her.
+			Progress==3	@animate Little_Pepe Talk
+				Pepe#It was very nice to meet you, friend. Take care.
+		Show_[Flower]_	-	@animate Little_Pepe No
+				Pepe#Please give that flower to Agent Aria.
+	-	Put_away_[Flower]	-	@select
+	-	Inventory	M0%Inventory%Flower	@subscene M0%Inventory
+	-	Depart	End	@exit

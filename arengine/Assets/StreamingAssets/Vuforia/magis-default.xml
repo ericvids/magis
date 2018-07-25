@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget name="alls_id" size="10.000000 13.333333" />
+    <ImageTarget name="ateneo_seal" size="10.000000 10.000000" />
+  </Tracking>
+</QCARConfig>

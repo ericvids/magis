@@ -1,0 +1,1730 @@
+fileFormatVersion: 2
+guid: 7a3c64e2c791b264b9b68542b10f5068
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: BlendTargets
+    100002: Geo_Grp
+    100004: group23
+    100006: group28
+    100008: group28 1
+    100010: group28 2
+    100012: group28 3
+    100014: group28 4
+    100016: group34
+    100018: group36
+    100020: group38
+    100022: group50
+    100024: group51
+    100026: Head_yr_jnt
+    100028: ikHandle3
+    100030: ikHandle4
+    100032: ikHandle5
+    100034: ikHandle6
+    100036: ikHandle7
+    100038: ikHandle8
+    100040: jaw
+    100042: joint11
+    100044: joint11 1
+    100046: joint19
+    100048: joint19 1
+    100050: joint19 2
+    100052: joint19 3
+    100054: joint19 4
+    100056: joint19 5
+    100058: joint19 6
+    100060: joint19 7
+    100062: joint19 8
+    100064: joint19 9
+    100066: joint23
+    100068: joint23 1
+    100070: joint26
+    100072: joint26 1
+    100074: joint28
+    100076: joint6
+    100078: Joint_Grp
+    100080: L_ankle_yr_jnt
+    100082: L_ball_yr_jnt
+    100084: L_ball_yr_jnt 1
+    100086: L_clavicle_yr_jnt
+    100088: L_eye_yr
+    100090: L_Forearm_yr
+    100092: L_heel_yr_jnt
+    100094: L_index01_yr_jnt
+    100096: L_index02_yr_jnt
+    100098: L_index03_yr_jnt
+    100100: L_lowerleg_yr_jnt
+    100102: L_middle01_yr_jnt
+    100104: L_middle02_yr_jnt
+    100106: L_middle03_yr_jnt
+    100108: L_pinky01_yr_jnt
+    100110: L_pinky02_yr_jnt
+    100112: L_pinky03_yr_jnt
+    100114: L_ring01_yr_jnt
+    100116: L_ring02_yr_jnt
+    100118: L_ring03_yr_jnt
+    100120: L_thumb01_yr_jnt
+    100122: L_thumb02_yr_jnt
+    100124: L_thumb03_yr_jnt
+    100126: L_toe_yr_jnt
+    100128: L_upper_yr
+    100130: L_upperleg_yr_jnt
+    100132: L_Wrist
+    100134: Neck_yr_jnt
+    100136: polySurface1
+    100138: polySurface10
+    100140: polySurface3
+    100142: polySurface35
+    100144: polySurface44
+    100146: polySurface45
+    100148: polySurface46
+    100150: polySurface47
+    100152: polySurface54
+    100154: polySurface55
+    100156: polySurface56
+    100158: polySurface57
+    100160: polySurface58
+    100162: polySurface59
+    100164: R_ankle_yr_jnt
+    100166: R_ball_yr_jnt
+    100168: R_ball_yr_jnt 1
+    100170: R_clavicle_yr_jnt
+    100172: R_eye_yr
+    100174: R_Forearm_yr
+    100176: R_heel_yr_jnt
+    100178: R_index01_yr_jnt
+    100180: R_index02_yr_jnt
+    100182: R_index03_yr_jnt
+    100184: R_lowerleg_yr_jnt
+    100186: R_middle01_yr_jnt
+    100188: R_middle02_yr_jnt
+    100190: R_middle03_yr_jnt
+    100192: R_pinky01_yr_jnt
+    100194: R_pinky02_yr_jnt
+    100196: R_pinky03_yr_jnt
+    100198: R_ring01_yr_jnt
+    100200: R_ring02_yr_jnt
+    100202: R_ring03_yr_jnt
+    100204: R_thumb01_yr_jnt
+    100206: R_thumb02_yr_jnt
+    100208: R_thumb03_yr_jnt
+    100210: R_toe_yr_jnt
+    100212: R_upper_yr
+    100214: R_upperleg_yr_jnt
+    100216: R_Wrist
+    100218: Root_yr_jnt
+    100220: Spine01_yr_jnt
+    100222: Spine02_yr_jnt
+    100224: Spine03_yr_jnt
+    100226: transform1
+    100228: //RootNode
+    400000: BlendTargets
+    400002: Geo_Grp
+    400004: group23
+    400006: group28
+    400008: group28 1
+    400010: group28 2
+    400012: group28 3
+    400014: group28 4
+    400016: group34
+    400018: group36
+    400020: group38
+    400022: group50
+    400024: group51
+    400026: Head_yr_jnt
+    400028: ikHandle3
+    400030: ikHandle4
+    400032: ikHandle5
+    400034: ikHandle6
+    400036: ikHandle7
+    400038: ikHandle8
+    400040: jaw
+    400042: joint11
+    400044: joint11 1
+    400046: joint19
+    400048: joint19 1
+    400050: joint19 2
+    400052: joint19 3
+    400054: joint19 4
+    400056: joint19 5
+    400058: joint19 6
+    400060: joint19 7
+    400062: joint19 8
+    400064: joint19 9
+    400066: joint23
+    400068: joint23 1
+    400070: joint26
+    400072: joint26 1
+    400074: joint28
+    400076: joint6
+    400078: Joint_Grp
+    400080: L_ankle_yr_jnt
+    400082: L_ball_yr_jnt
+    400084: L_ball_yr_jnt 1
+    400086: L_clavicle_yr_jnt
+    400088: L_eye_yr
+    400090: L_Forearm_yr
+    400092: L_heel_yr_jnt
+    400094: L_index01_yr_jnt
+    400096: L_index02_yr_jnt
+    400098: L_index03_yr_jnt
+    400100: L_lowerleg_yr_jnt
+    400102: L_middle01_yr_jnt
+    400104: L_middle02_yr_jnt
+    400106: L_middle03_yr_jnt
+    400108: L_pinky01_yr_jnt
+    400110: L_pinky02_yr_jnt
+    400112: L_pinky03_yr_jnt
+    400114: L_ring01_yr_jnt
+    400116: L_ring02_yr_jnt
+    400118: L_ring03_yr_jnt
+    400120: L_thumb01_yr_jnt
+    400122: L_thumb02_yr_jnt
+    400124: L_thumb03_yr_jnt
+    400126: L_toe_yr_jnt
+    400128: L_upper_yr
+    400130: L_upperleg_yr_jnt
+    400132: L_Wrist
+    400134: Neck_yr_jnt
+    400136: polySurface1
+    400138: polySurface10
+    400140: polySurface3
+    400142: polySurface35
+    400144: polySurface44
+    400146: polySurface45
+    400148: polySurface46
+    400150: polySurface47
+    400152: polySurface54
+    400154: polySurface55
+    400156: polySurface56
+    400158: polySurface57
+    400160: polySurface58
+    400162: polySurface59
+    400164: R_ankle_yr_jnt
+    400166: R_ball_yr_jnt
+    400168: R_ball_yr_jnt 1
+    400170: R_clavicle_yr_jnt
+    400172: R_eye_yr
+    400174: R_Forearm_yr
+    400176: R_heel_yr_jnt
+    400178: R_index01_yr_jnt
+    400180: R_index02_yr_jnt
+    400182: R_index03_yr_jnt
+    400184: R_lowerleg_yr_jnt
+    400186: R_middle01_yr_jnt
+    400188: R_middle02_yr_jnt
+    400190: R_middle03_yr_jnt
+    400192: R_pinky01_yr_jnt
+    400194: R_pinky02_yr_jnt
+    400196: R_pinky03_yr_jnt
+    400198: R_ring01_yr_jnt
+    400200: R_ring02_yr_jnt
+    400202: R_ring03_yr_jnt
+    400204: R_thumb01_yr_jnt
+    400206: R_thumb02_yr_jnt
+    400208: R_thumb03_yr_jnt
+    400210: R_toe_yr_jnt
+    400212: R_upper_yr
+    400214: R_upperleg_yr_jnt
+    400216: R_Wrist
+    400218: Root_yr_jnt
+    400220: Spine01_yr_jnt
+    400222: Spine02_yr_jnt
+    400224: Spine03_yr_jnt
+    400226: transform1
+    400228: //RootNode
+    4300000: polySurface3
+    4300002: polySurface10
+    4300004: polySurface35
+    4300006: polySurface45
+    4300008: polySurface46
+    4300010: polySurface47
+    4300012: polySurface54
+    4300014: polySurface55
+    4300016: polySurface57
+    4300018: polySurface58
+    4300020: polySurface59
+    7400000: Take 001
+    7400002: Idle
+    7400004: Talk
+    7400006: Yes
+    7400008: No
+    7400010: Maybe
+    9500000: //RootNode
+    13700000: polySurface10
+    13700002: polySurface3
+    13700004: polySurface35
+    13700006: polySurface45
+    13700008: polySurface46
+    13700010: polySurface47
+    13700012: polySurface54
+    13700014: polySurface55
+    13700016: polySurface57
+    13700018: polySurface58
+    13700020: polySurface59
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: blinn1
+    second: {fileID: 2100000, guid: bd32fdb9ca997fb4cab38104707f361f, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 1
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Idle
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 48
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Geo_Grp
+        weight: 1
+      - path: Geo_Grp/BlendTargets
+        weight: 1
+      - path: Geo_Grp/BlendTargets/polySurface35
+        weight: 1
+      - path: Geo_Grp/polySurface1
+        weight: 1
+      - path: Geo_Grp/polySurface1/polySurface3
+        weight: 1
+      - path: Geo_Grp/polySurface1/polySurface10
+        weight: 1
+      - path: Joint_Grp
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/ikHandle4
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/ikHandle3
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/joint23
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/joint23/ikHandle7
+        weight: 1
+      - path: Joint_Grp/L_Wrist
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt/L_index03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt/L_index03_yr_jnt/joint19
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group34
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group34/group28
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group36
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group36/group28 1
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group38
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group38/group28 2
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt/L_middle03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt/L_middle03_yr_jnt/joint19
+          1
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt/L_pinky03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt/L_pinky03_yr_jnt/joint19
+          2
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt/L_ring03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt/L_ring03_yr_jnt/joint19
+          3
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/group23
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt/L_thumb03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt/L_thumb03_yr_jnt/joint19
+          4
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/ikHandle6
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/ikHandle5
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/joint23 1
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/joint23 1/ikHandle8
+        weight: 1
+      - path: Joint_Grp/R_Wrist
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt/R_index03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt/R_index03_yr_jnt/joint19
+          5
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt/R_middle03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt/R_middle03_yr_jnt/joint19
+          6
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt/R_pinky03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt/R_pinky03_yr_jnt/joint19
+          7
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt/R_ring03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt/R_ring03_yr_jnt/joint19
+          8
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt/R_thumb03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt/R_thumb03_yr_jnt/joint19
+          9
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group50
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group50/group28 3
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group51
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group51/group28 4
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/joint11
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt/R_ball_yr_jnt
+          1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt/R_ball_yr_jnt
+          1/joint11 1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr/L_Forearm_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr/L_Forearm_yr/joint26
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/jaw
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/jaw/joint28
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/joint6
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/L_eye_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/R_eye_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr/R_Forearm_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr/R_Forearm_yr/joint26
+          1
+        weight: 1
+      - path: polySurface44
+        weight: 1
+      - path: polySurface44/polySurface45
+        weight: 1
+      - path: polySurface44/polySurface46
+        weight: 1
+      - path: polySurface44/polySurface47
+        weight: 1
+      - path: polySurface54
+        weight: 1
+      - path: polySurface55
+        weight: 1
+      - path: polySurface56
+        weight: 1
+      - path: polySurface56/polySurface57
+        weight: 1
+      - path: polySurface56/polySurface58
+        weight: 1
+      - path: polySurface56/polySurface59
+        weight: 1
+      - path: polySurface56/transform1
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Talk
+      takeName: Take 001
+      firstFrame: 49
+      lastFrame: 108
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Geo_Grp
+        weight: 1
+      - path: Geo_Grp/BlendTargets
+        weight: 1
+      - path: Geo_Grp/BlendTargets/polySurface35
+        weight: 1
+      - path: Geo_Grp/polySurface1
+        weight: 1
+      - path: Geo_Grp/polySurface1/polySurface3
+        weight: 1
+      - path: Geo_Grp/polySurface1/polySurface10
+        weight: 1
+      - path: Joint_Grp
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/ikHandle4
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/ikHandle3
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/joint23
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/joint23/ikHandle7
+        weight: 1
+      - path: Joint_Grp/L_Wrist
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt/L_index03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt/L_index03_yr_jnt/joint19
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group34
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group34/group28
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group36
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group36/group28 1
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group38
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group38/group28 2
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt/L_middle03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt/L_middle03_yr_jnt/joint19
+          1
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt/L_pinky03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt/L_pinky03_yr_jnt/joint19
+          2
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt/L_ring03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt/L_ring03_yr_jnt/joint19
+          3
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/group23
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt/L_thumb03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt/L_thumb03_yr_jnt/joint19
+          4
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/ikHandle6
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/ikHandle5
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/joint23 1
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/joint23 1/ikHandle8
+        weight: 1
+      - path: Joint_Grp/R_Wrist
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt/R_index03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt/R_index03_yr_jnt/joint19
+          5
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt/R_middle03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt/R_middle03_yr_jnt/joint19
+          6
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt/R_pinky03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt/R_pinky03_yr_jnt/joint19
+          7
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt/R_ring03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt/R_ring03_yr_jnt/joint19
+          8
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt/R_thumb03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt/R_thumb03_yr_jnt/joint19
+          9
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group50
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group50/group28 3
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group51
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group51/group28 4
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/joint11
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt/R_ball_yr_jnt
+          1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt/R_ball_yr_jnt
+          1/joint11 1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr/L_Forearm_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr/L_Forearm_yr/joint26
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/jaw
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/jaw/joint28
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/joint6
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/L_eye_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/R_eye_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr/R_Forearm_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr/R_Forearm_yr/joint26
+          1
+        weight: 1
+      - path: polySurface44
+        weight: 1
+      - path: polySurface44/polySurface45
+        weight: 1
+      - path: polySurface44/polySurface46
+        weight: 1
+      - path: polySurface44/polySurface47
+        weight: 1
+      - path: polySurface54
+        weight: 1
+      - path: polySurface55
+        weight: 1
+      - path: polySurface56
+        weight: 1
+      - path: polySurface56/polySurface57
+        weight: 1
+      - path: polySurface56/polySurface58
+        weight: 1
+      - path: polySurface56/polySurface59
+        weight: 1
+      - path: polySurface56/transform1
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Yes
+      takeName: Take 001
+      firstFrame: 109
+      lastFrame: 156
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Geo_Grp
+        weight: 1
+      - path: Geo_Grp/BlendTargets
+        weight: 1
+      - path: Geo_Grp/BlendTargets/polySurface35
+        weight: 1
+      - path: Geo_Grp/polySurface1
+        weight: 1
+      - path: Geo_Grp/polySurface1/polySurface3
+        weight: 1
+      - path: Geo_Grp/polySurface1/polySurface10
+        weight: 1
+      - path: Joint_Grp
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/ikHandle4
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/ikHandle3
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/joint23
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/joint23/ikHandle7
+        weight: 1
+      - path: Joint_Grp/L_Wrist
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt/L_index03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt/L_index03_yr_jnt/joint19
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group34
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group34/group28
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group36
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group36/group28 1
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group38
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group38/group28 2
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt/L_middle03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt/L_middle03_yr_jnt/joint19
+          1
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt/L_pinky03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt/L_pinky03_yr_jnt/joint19
+          2
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt/L_ring03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt/L_ring03_yr_jnt/joint19
+          3
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/group23
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt/L_thumb03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt/L_thumb03_yr_jnt/joint19
+          4
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/ikHandle6
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/ikHandle5
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/joint23 1
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/joint23 1/ikHandle8
+        weight: 1
+      - path: Joint_Grp/R_Wrist
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt/R_index03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt/R_index03_yr_jnt/joint19
+          5
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt/R_middle03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt/R_middle03_yr_jnt/joint19
+          6
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt/R_pinky03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt/R_pinky03_yr_jnt/joint19
+          7
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt/R_ring03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt/R_ring03_yr_jnt/joint19
+          8
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt/R_thumb03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt/R_thumb03_yr_jnt/joint19
+          9
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group50
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group50/group28 3
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group51
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group51/group28 4
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/joint11
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt/R_ball_yr_jnt
+          1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt/R_ball_yr_jnt
+          1/joint11 1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr/L_Forearm_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr/L_Forearm_yr/joint26
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/jaw
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/jaw/joint28
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/joint6
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/L_eye_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/R_eye_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr/R_Forearm_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr/R_Forearm_yr/joint26
+          1
+        weight: 1
+      - path: polySurface44
+        weight: 1
+      - path: polySurface44/polySurface45
+        weight: 1
+      - path: polySurface44/polySurface46
+        weight: 1
+      - path: polySurface44/polySurface47
+        weight: 1
+      - path: polySurface54
+        weight: 1
+      - path: polySurface55
+        weight: 1
+      - path: polySurface56
+        weight: 1
+      - path: polySurface56/polySurface57
+        weight: 1
+      - path: polySurface56/polySurface58
+        weight: 1
+      - path: polySurface56/polySurface59
+        weight: 1
+      - path: polySurface56/transform1
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: No
+      takeName: Take 001
+      firstFrame: 157
+      lastFrame: 204
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Geo_Grp
+        weight: 1
+      - path: Geo_Grp/BlendTargets
+        weight: 1
+      - path: Geo_Grp/BlendTargets/polySurface35
+        weight: 1
+      - path: Geo_Grp/polySurface1
+        weight: 1
+      - path: Geo_Grp/polySurface1/polySurface3
+        weight: 1
+      - path: Geo_Grp/polySurface1/polySurface10
+        weight: 1
+      - path: Joint_Grp
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/ikHandle4
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/ikHandle3
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/joint23
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/joint23/ikHandle7
+        weight: 1
+      - path: Joint_Grp/L_Wrist
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt/L_index03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt/L_index03_yr_jnt/joint19
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group34
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group34/group28
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group36
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group36/group28 1
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group38
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group38/group28 2
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt/L_middle03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt/L_middle03_yr_jnt/joint19
+          1
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt/L_pinky03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt/L_pinky03_yr_jnt/joint19
+          2
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt/L_ring03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt/L_ring03_yr_jnt/joint19
+          3
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/group23
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt/L_thumb03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt/L_thumb03_yr_jnt/joint19
+          4
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/ikHandle6
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/ikHandle5
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/joint23 1
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/joint23 1/ikHandle8
+        weight: 1
+      - path: Joint_Grp/R_Wrist
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt/R_index03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt/R_index03_yr_jnt/joint19
+          5
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt/R_middle03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt/R_middle03_yr_jnt/joint19
+          6
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt/R_pinky03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt/R_pinky03_yr_jnt/joint19
+          7
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt/R_ring03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt/R_ring03_yr_jnt/joint19
+          8
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt/R_thumb03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt/R_thumb03_yr_jnt/joint19
+          9
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group50
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group50/group28 3
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group51
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group51/group28 4
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/joint11
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt/R_ball_yr_jnt
+          1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt/R_ball_yr_jnt
+          1/joint11 1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr/L_Forearm_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr/L_Forearm_yr/joint26
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/jaw
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/jaw/joint28
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/joint6
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/L_eye_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/R_eye_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr/R_Forearm_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr/R_Forearm_yr/joint26
+          1
+        weight: 1
+      - path: polySurface44
+        weight: 1
+      - path: polySurface44/polySurface45
+        weight: 1
+      - path: polySurface44/polySurface46
+        weight: 1
+      - path: polySurface44/polySurface47
+        weight: 1
+      - path: polySurface54
+        weight: 1
+      - path: polySurface55
+        weight: 1
+      - path: polySurface56
+        weight: 1
+      - path: polySurface56/polySurface57
+        weight: 1
+      - path: polySurface56/polySurface58
+        weight: 1
+      - path: polySurface56/polySurface59
+        weight: 1
+      - path: polySurface56/transform1
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Maybe
+      takeName: Take 001
+      firstFrame: 205
+      lastFrame: 252
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Geo_Grp
+        weight: 1
+      - path: Geo_Grp/BlendTargets
+        weight: 1
+      - path: Geo_Grp/BlendTargets/polySurface35
+        weight: 1
+      - path: Geo_Grp/polySurface1
+        weight: 1
+      - path: Geo_Grp/polySurface1/polySurface3
+        weight: 1
+      - path: Geo_Grp/polySurface1/polySurface10
+        weight: 1
+      - path: Joint_Grp
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/ikHandle4
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/ikHandle3
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/joint23
+        weight: 1
+      - path: Joint_Grp/L_heel_yr_jnt/L_toe_yr_jnt/L_ball_yr_jnt/joint23/ikHandle7
+        weight: 1
+      - path: Joint_Grp/L_Wrist
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt/L_index03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_index01_yr_jnt/L_index02_yr_jnt/L_index03_yr_jnt/joint19
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group34
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group34/group28
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group36
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group36/group28 1
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group38
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/group38/group28 2
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt/L_middle03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_middle01_yr_jnt/L_middle02_yr_jnt/L_middle03_yr_jnt/joint19
+          1
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt/L_pinky03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_pinky01_yr_jnt/L_pinky02_yr_jnt/L_pinky03_yr_jnt/joint19
+          2
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt/L_ring03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_ring01_yr_jnt/L_ring02_yr_jnt/L_ring03_yr_jnt/joint19
+          3
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/group23
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt/L_thumb03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/L_Wrist/L_thumb01_yr_jnt/L_thumb02_yr_jnt/L_thumb03_yr_jnt/joint19
+          4
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/ikHandle6
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/ikHandle5
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/joint23 1
+        weight: 1
+      - path: Joint_Grp/R_heel_yr_jnt/R_toe_yr_jnt/R_ball_yr_jnt/joint23 1/ikHandle8
+        weight: 1
+      - path: Joint_Grp/R_Wrist
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt/R_index03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_index01_yr_jnt/R_index02_yr_jnt/R_index03_yr_jnt/joint19
+          5
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt/R_middle03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_middle01_yr_jnt/R_middle02_yr_jnt/R_middle03_yr_jnt/joint19
+          6
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt/R_pinky03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_pinky01_yr_jnt/R_pinky02_yr_jnt/R_pinky03_yr_jnt/joint19
+          7
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt/R_ring03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_ring01_yr_jnt/R_ring02_yr_jnt/R_ring03_yr_jnt/joint19
+          8
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt/R_thumb03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/R_Wrist/R_thumb01_yr_jnt/R_thumb02_yr_jnt/R_thumb03_yr_jnt/joint19
+          9
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group50
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group50/group28 3
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group51
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/group51/group28 4
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/L_upperleg_yr_jnt/L_lowerleg_yr_jnt/L_ankle_yr_jnt/L_ball_yr_jnt
+          1/joint11
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt/R_ball_yr_jnt
+          1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/R_upperleg_yr_jnt/R_lowerleg_yr_jnt/R_ankle_yr_jnt/R_ball_yr_jnt
+          1/joint11 1
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr/L_Forearm_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/L_clavicle_yr_jnt/L_upper_yr/L_Forearm_yr/joint26
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/jaw
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/jaw/joint28
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/joint6
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/L_eye_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/Neck_yr_jnt/Head_yr_jnt/R_eye_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr/R_Forearm_yr
+        weight: 1
+      - path: Joint_Grp/Root_yr_jnt/Spine01_yr_jnt/Spine02_yr_jnt/Spine03_yr_jnt/R_clavicle_yr_jnt/R_upper_yr/R_Forearm_yr/joint26
+          1
+        weight: 1
+      - path: polySurface44
+        weight: 1
+      - path: polySurface44/polySurface45
+        weight: 1
+      - path: polySurface44/polySurface46
+        weight: 1
+      - path: polySurface44/polySurface47
+        weight: 1
+      - path: polySurface54
+        weight: 1
+      - path: polySurface55
+        weight: 1
+      - path: polySurface56
+        weight: 1
+      - path: polySurface56/polySurface57
+        weight: 1
+      - path: polySurface56/polySurface58
+        weight: 1
+      - path: polySurface56/polySurface59
+        weight: 1
+      - path: polySurface56/transform1
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 11
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+    normalCalculationMode: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: processed assets
+  assetBundleVariant: 

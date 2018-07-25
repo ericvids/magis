@@ -1,0 +1,119 @@
+﻿<color=lightblue>MAGIS Credits</color>
+
+Please add license attributions (e.g., Creative Commons) for any additional assets that you use here.
+
+Also, you are highly encouraged to customize this credits file to your own liking, but we request that you keep the MAGIS credits following this message intact.
+
+==============================
+
+<color=lightblue>Mobile Augmented-Reality Game Engine for Instructional Support</color>
+
+<color=lightblue>Principal Investigator</color>
+Ma. Mercedes T. Rodrigo
+
+<color=lightblue>MAGIS Engine Programmers</color>
+Eric Cesar Vidal
+Nicko Caluya
+Jayzon Ty
+Melvin Luis Mendoza
+
+<color=lightblue>MAGIS Asset Creators</color>
+Walfrido David Diy
+Japheth Duane Samaco
+John Michael Santos
+Jose Isidro Beraquit
+John Gabriel Agcaoili
+Jaclyn Ting Lim-Vidal
+Nicole Bugayong
+Jan Santos
+Noelle Velasquez
+Gretchen Alarkon
+Luigi Raphael Lim
+Noelle Velasquez
+Habble (https://soundcloud.com/habster)
+
+<color=lightblue>Other Staff</color>
+Ma. Rosario Madjos
+Jonathan Casano
+Jenilyn Agapito
+Richard Pagador
+Yya Antiporda
+Jessica Sugay
+Kristine Saturninas
+Joanna Feliz Cortez
+Angeli Magdaraog
+Kyle Nathan Fazonela
+Daniel Francisco Del Rosario
+Angelu Bianca Abrigo
+John Vincent Pancho
+John Carlo Ariola
+Jon Ray Favorito
+Joaquin Jacinto
+Sean Policarpio
+Joal Rose Lim
+
+<color=lightblue>Special Thanks to</color>
+Martin Villanueva
+Ace Vitangcol
+Molly Velasco-Wansom
+Tracy Monsod
+Angelo Soliongco
+Filomeno V. Aguilar, Jr.
+Eduardo Jose E. Calasanz
+Ma. Assunta C. Cuyegkeng
+Fabian M. Dayrit
+Manuel B. Dy, Jr.
+Carina C. Samaniego
+Maria Luz Vilches
+Emilyn Espiritu
+Yael Buencamino
+Arielle Acosta
+Rina Marie Isip
+Our many testers
+Faculty, Technical and Secretarial Staff of DISCS
+Administrative, Technical and Secretarial Staff of the Ateneo de Manila
+The Bookmark, Inc.
+
+The following free model is used in MAGIS:
+bit-gun-22922 (https://assetstore.unity.com)
+
+The following free icons are used in MAGIS:
+bag-game-icon-leather-inventory-367588448 by Alfmaler (https://www.shutterstock.com)
+Running Icon by Deluge (https://openclipart.org)
+Grab by Iris Sun (https://thenounproject.com, CC BY)
+
+The following free sound effects are used in MAGIS (https://freesound.org):
+beep2.wav by thisusernameis (CC0)
+Computer Shutdown.wav by lipsumdolor (CC0)
+Charge Up Shot.wav by spoonsandlessspoons
+Damage by qubodup
+Laser Gun by Dpoggioli
+1BramCamera.flac by kwahmah_02
+
+MAGIS was developed using the Unity game engine.
+© 2018 Unity Technologies ApS.
+
+The augmented reality portions of MAGIS were developed using Vuforia™.
+© 2018 PTC, Inc.
+
+MAGIS uses map data by OpenStreetMap (openstreetmap.org) under CC BY SA.
+
+This work was made possible through the generosity of:
+
+The Ateneo de Manila University and the Faura Research Foundation for the grant entitled Mobile Augmented Reality Game Engine for Instructional Support for Agenda for Hope @ 160
+
+and
+
+The Commission on Higher Education’s grant entitled Mobile Augmented Reality Game Engine for Instructional Support awarded through the Grant-in-Aid for HEI Faculty and Staff Affected by the K to 12 Transition Discovery-Applied Research and Extension for Trans/Interdisciplinary Opportunities (DARE TO) Program.
+
+This sample game is a work of fiction. All likenesses of historical figures explicitly referenced in this work are not intended to be accurately depicted and are strictly for educational purposes only. All other similarities to real persons, living or dead, are purely coincidental.
+
+==============================
+
+MAGIS copyright © 2018, Ateneo de Manila University.
+
+This program (excluding certain assets as indicated above) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License v2 along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.

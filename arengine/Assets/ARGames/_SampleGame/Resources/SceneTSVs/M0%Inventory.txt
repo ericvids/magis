@@ -1,0 +1,8 @@
+SceneName	Object	Interaction	Flags	Dialogue
+-	-	Autorun	-	@settrue PitchOnly
+			!Flower	@hide Flower
+			Flower	@show Flower
+	Flower	Examine	-	A sunflower. It has been enchanted with minor preservation magic.
+		Select		@select Flower
+				@exit
+	-	Cancel	-	@exit

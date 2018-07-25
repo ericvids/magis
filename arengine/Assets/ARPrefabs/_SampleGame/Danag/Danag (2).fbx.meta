@@ -1,0 +1,330 @@
+fileFormatVersion: 2
+guid: 096aadd955ce5434f9d9fd2ec6a40c3b
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: Abdomen Lower
+    100002: Abdomen Middle
+    100004: Abdomen Upper
+    100006: Armature
+    100008: ArmLower.L
+    100010: ArmLower.R
+    100012: ArmUpper.L
+    100014: ArmUpper.R
+    100016: Camera
+    100018: //RootNode
+    100020: Danag_EyesL
+    100022: Danag_EyesR
+    100024: DanagBody:Group2
+    100026: DanagHat
+    100028: DanagLowerTeeth1
+    100030: DanagPants1
+    100032: DanagShirt1
+    100034: DanagTongue1
+    100036: DanagUpperTeeth1
+    100038: Foot.L
+    100040: Foot.L_end
+    100042: Foot.R
+    100044: Foot.R_end
+    100046: Head
+    100048: IndexBase.L
+    100050: IndexBase.R
+    100052: IndexMid.L
+    100054: IndexMid.R
+    100056: IndexTip.L
+    100058: IndexTip.L_end
+    100060: IndexTip.R
+    100062: IndexTip.R_end
+    100064: LowerTeeth
+    100066: LowerTeeth_end
+    100068: LowerThigh.L
+    100070: LowerThigh.R
+    100072: MiddleBase.L
+    100074: MiddleBase.R
+    100076: MiddleMiddle.L
+    100078: MiddleMiddle.R
+    100080: MiddleTip.L
+    100082: MiddleTip.L_end
+    100084: MiddleTip.R
+    100086: MiddleTip.R_end
+    100088: Neck Lower
+    100090: Neck Upper
+    100092: PalmIMP.L
+    100094: PalmIMP.R
+    100096: PalmPinky.L
+    100098: PalmPinky.R
+    100100: PalmThumb.L
+    100102: PalmThumb.R
+    100104: PinkyBase.L
+    100106: PinkyBase.R.
+    100108: PinkyMid.L
+    100110: PinkyMid.R
+    100112: PinkyTip.L
+    100114: PinkyTip.L_end
+    100116: PinkyTip.R
+    100118: PinkyTip.R_end
+    100120: PointerBase.L
+    100122: PointerBase.R
+    100124: PointerMiddle.L
+    100126: PointerMiddle.R
+    100128: PointerTip.L
+    100130: PointerTip.L_end
+    100132: PointerTip.R
+    100134: PointerTip.R_end
+    100136: Sun
+    100138: Sun.001
+    100140: ThumbBase.L
+    100142: ThumbBase.R
+    100144: ThumbTip.L
+    100146: ThumbTip.L_end
+    100148: ThumbTip.R
+    100150: ThumbTip.R_end
+    100152: Tongue
+    100154: Tongue.001
+    100156: Tongue.002
+    100158: Tongue.003
+    100160: Tongue.004
+    100162: Tongue.005
+    100164: Tongue.006
+    100166: Tongue.007
+    100168: Tongue.008
+    100170: Tongue.009
+    100172: Tongue.010
+    100174: Tongue.010_end
+    100176: UpperTeeth
+    100178: UpperTeeth_end
+    100180: UpperThigh.L
+    100182: UpperThigh.R
+    400000: Abdomen Lower
+    400002: Abdomen Middle
+    400004: Abdomen Upper
+    400006: Armature
+    400008: ArmLower.L
+    400010: ArmLower.R
+    400012: ArmUpper.L
+    400014: ArmUpper.R
+    400016: Camera
+    400018: //RootNode
+    400020: Danag_EyesL
+    400022: Danag_EyesR
+    400024: DanagBody:Group2
+    400026: DanagHat
+    400028: DanagLowerTeeth1
+    400030: DanagPants1
+    400032: DanagShirt1
+    400034: DanagTongue1
+    400036: DanagUpperTeeth1
+    400038: Foot.L
+    400040: Foot.L_end
+    400042: Foot.R
+    400044: Foot.R_end
+    400046: Head
+    400048: IndexBase.L
+    400050: IndexBase.R
+    400052: IndexMid.L
+    400054: IndexMid.R
+    400056: IndexTip.L
+    400058: IndexTip.L_end
+    400060: IndexTip.R
+    400062: IndexTip.R_end
+    400064: LowerTeeth
+    400066: LowerTeeth_end
+    400068: LowerThigh.L
+    400070: LowerThigh.R
+    400072: MiddleBase.L
+    400074: MiddleBase.R
+    400076: MiddleMiddle.L
+    400078: MiddleMiddle.R
+    400080: MiddleTip.L
+    400082: MiddleTip.L_end
+    400084: MiddleTip.R
+    400086: MiddleTip.R_end
+    400088: Neck Lower
+    400090: Neck Upper
+    400092: PalmIMP.L
+    400094: PalmIMP.R
+    400096: PalmPinky.L
+    400098: PalmPinky.R
+    400100: PalmThumb.L
+    400102: PalmThumb.R
+    400104: PinkyBase.L
+    400106: PinkyBase.R.
+    400108: PinkyMid.L
+    400110: PinkyMid.R
+    400112: PinkyTip.L
+    400114: PinkyTip.L_end
+    400116: PinkyTip.R
+    400118: PinkyTip.R_end
+    400120: PointerBase.L
+    400122: PointerBase.R
+    400124: PointerMiddle.L
+    400126: PointerMiddle.R
+    400128: PointerTip.L
+    400130: PointerTip.L_end
+    400132: PointerTip.R
+    400134: PointerTip.R_end
+    400136: Sun
+    400138: Sun.001
+    400140: ThumbBase.L
+    400142: ThumbBase.R
+    400144: ThumbTip.L
+    400146: ThumbTip.L_end
+    400148: ThumbTip.R
+    400150: ThumbTip.R_end
+    400152: Tongue
+    400154: Tongue.001
+    400156: Tongue.002
+    400158: Tongue.003
+    400160: Tongue.004
+    400162: Tongue.005
+    400164: Tongue.006
+    400166: Tongue.007
+    400168: Tongue.008
+    400170: Tongue.009
+    400172: Tongue.010
+    400174: Tongue.010_end
+    400176: UpperTeeth
+    400178: UpperTeeth_end
+    400180: UpperThigh.L
+    400182: UpperThigh.R
+    2000000: Camera
+    2100000: DanagHat
+    2100002: DanagFeathers
+    2100004: DanagEyes
+    2100006: DanagBody
+    2100008: DanagUpperTeeth
+    2100010: DanagTongue
+    4300000: DanagPants1
+    4300002: DanagHat
+    4300004: Danag_EyesL
+    4300006: DanagBody:Group2
+    4300008: DanagLowerTeeth1
+    4300010: Danag_EyesR
+    4300012: DanagUpperTeeth1
+    4300014: DanagTongue1
+    4300016: DanagShirt1
+    7400000: Armature|Attack
+    7400002: Armature|Idle
+    9500000: //RootNode
+    10800000: Sun
+    10800002: Sun.001
+    13700000: Danag_EyesL
+    13700002: Danag_EyesR
+    13700004: DanagBody:Group2
+    13700006: DanagHat
+    13700008: DanagLowerTeeth1
+    13700010: DanagPants1
+    13700012: DanagShirt1
+    13700014: DanagTongue1
+    13700016: DanagUpperTeeth1
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DanagBody
+    second: {fileID: 2100000, guid: 50e841b691176834397bdb0f3f43a015, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DanagEyes
+    second: {fileID: 2100000, guid: b259c80150678f0439e48a8fd6220c6c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DanagFeathers
+    second: {fileID: 2100000, guid: 8dfaae270bd231649ace6d9d9c1de5f2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DanagHat
+    second: {fileID: 2100000, guid: fbeeef63414499845a6c6393c36e4f5e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DanagTongue
+    second: {fileID: 2100000, guid: 16c8dbd19fe6f414e803bf6e386833ec, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DanagUpperTeeth
+    second: {fileID: 2100000, guid: a3bee2dfb685505408c43208ff5dbfa8, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 1
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: processed assets
+  assetBundleVariant: 

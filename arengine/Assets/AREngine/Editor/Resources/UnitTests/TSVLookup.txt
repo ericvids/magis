@@ -1,0 +1,16 @@
+SceneName	Interaction	Object	Flags	Dialogue
+VictoriaStreet	Examine	Baton	-	Hmm… definitely not something someone would use in an ordinary parade.
+				@toggle B
+		Scissors	A	
+		Pistol	A	
+	Pick Up	Baton	B	@pickup Baton
+	Baton	Daligmata	A	
+			AB	
+	Scissors	Daligmata	A	
+			AB	
+	Talk	Daligmata	!A	Welcome to the Intramuros of multiple periods and junctures. 
+				Now it is no longer merely 2015. Here walks a recent memory, while it speaks with the more distant past.
+				You are now standing here at No. 1 Victoria Street, named after one of the five ships in the voyage of Magellan in 1521. 
+				It marks your first step towards the discovery of a quarter of the map that will lead you to the the key that allows you to go beyond the walls.
+				@toggle A
+			A	[what is the Daligmata going to say the second time around?]
