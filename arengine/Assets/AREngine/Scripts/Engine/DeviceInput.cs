@@ -63,7 +63,11 @@ public class DeviceInput
         StartBattery();
 #endif
 
-#if ! UNITY_EDITOR
+#if UNITY_EDITOR
+        // in editor, gyro functionality can be provided by Unity remote but cannot be toggled
+        _gyroPresent = false;
+        Input.gyro.enabled = true;
+#else
         Input.gyro.updateInterval = Time.fixedDeltaTime;
         bool oldGyro = Input.gyro.enabled;
         Input.gyro.enabled = true;
@@ -205,6 +209,10 @@ public class DeviceInput
                 deviceRotation = average.GetAverage();
             }
 
+#if UNITY_EDITOR
+            if (! UnityEditor.EditorApplication.isRemoteConnected)
+                deviceRotation = Quaternion.identity;
+#endif
             return deviceRotation;
         }
     }

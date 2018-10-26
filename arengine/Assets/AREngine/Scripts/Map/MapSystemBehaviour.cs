@@ -806,24 +806,27 @@ public class MapSystemBehaviour : MonoBehaviour
     private int NumTouches()
     {
 #if UNITY_EDITOR || UNITY_STANDALONE
-        if (Input.GetMouseButton(1) && ! Input.GetMouseButtonUp(1))
+        if (! UnityEditor.EditorApplication.isRemoteConnected)
         {
-            if (ignoreTouch)
+            if (Input.GetMouseButton(1) && ! Input.GetMouseButtonUp(1))
+            {
+                if (ignoreTouch)
+                    return 0;
+                return 2;
+            }
+            else if (Input.GetMouseButton(0) && ! Input.GetMouseButtonUp(0))
+            {
+                if (ignoreTouch)
+                    return 0;
+                return 1;
+            }
+            else
+            {
+                ignoreTouch = false;  // any touch that was meant for some other component has ended
                 return 0;
-            return 2;
+            }
         }
-        else if (Input.GetMouseButton(0) && ! Input.GetMouseButtonUp(0))
-        {
-            if (ignoreTouch)
-                return 0;
-            return 1;
-        }
-        else
-        {
-            ignoreTouch = false;  // any touch that was meant for some other component has ended
-            return 0;
-        }
-#else
+#endif
         if (Input.touchCount == 2)
         {
             if (ignoreTouch)
@@ -852,7 +855,6 @@ public class MapSystemBehaviour : MonoBehaviour
             ignoreTouch = true;  // if more than two touches, ignore input until all touches are released
             return 0;
         }
-#endif
     }
 
     private bool IsTouchStarting()
@@ -860,21 +862,25 @@ public class MapSystemBehaviour : MonoBehaviour
         if (NumTouches() == 2)
         {
 #if UNITY_EDITOR || UNITY_STANDALONE
-            return Input.GetMouseButtonDown(1);
-#else
+            if (! UnityEditor.EditorApplication.isRemoteConnected)
+            {
+                return Input.GetMouseButtonDown(1);
+            }
+#endif
             // there is apparently no guarantee in the order of touches
             return Input.GetTouch(0).phase == TouchPhase.Began
                    || Input.GetTouch(1).phase == TouchPhase.Began;
-#endif
         }
         else if (NumTouches() == 1)
         {
 #if UNITY_EDITOR || UNITY_STANDALONE
-            return Input.GetMouseButtonUp(1) || Input.GetMouseButtonDown(0);
-#else
+            if (! UnityEditor.EditorApplication.isRemoteConnected)
+            {
+                return Input.GetMouseButtonUp(1) || Input.GetMouseButtonDown(0);
+            }
+#endif
             // if NumTouches returns 1 when there are actually 2, one has ended (must reinitialize anyway)
             return Input.touchCount == 2 || Input.GetTouch(0).phase == TouchPhase.Began;
-#endif
         }
         else
             return false;
@@ -884,38 +890,43 @@ public class MapSystemBehaviour : MonoBehaviour
     {
         Vector2 result = Vector2.negativeInfinity;
 #if UNITY_EDITOR || UNITY_STANDALONE
-        if (index == 0 && NumTouches() == 2)
+        if (! UnityEditor.EditorApplication.isRemoteConnected)
         {
-            // for mouse emulation, the first touch never moves unless left button is down
-            // (in which case, it takes on the value of the second touch)
-            if (Input.GetMouseButton(0) && ! IsTouchStarting())
+            if (index == 0 && NumTouches() == 2)
             {
-                previousTouch0 = previousTouch1;
-                result = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-            }
-            else
-            {
-                result = previousTouch0;
-                if (result.Equals(Vector2.negativeInfinity))
+                // for mouse emulation, the first touch never moves unless left button is down
+                // (in which case, it takes on the value of the second touch)
+                if (Input.GetMouseButton(0) && ! IsTouchStarting())
+                {
+                    previousTouch0 = previousTouch1;
                     result = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                }
+                else
+                {
+                    result = previousTouch0;
+                    if (result.Equals(Vector2.negativeInfinity))
+                        result = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                }
             }
-        }
-        else
-            result = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-#else
-        if (index >= NumTouches())
-            return result;  // cannot access a touch that doesn't exist
-        else if (NumTouches() == 1 && Input.touchCount == 2)
-        {
-            // return the touch that has not ended
-            if (_TouchEnding(0))
-                result = Input.GetTouch(1).position;
             else
-                result = Input.GetTouch(0).position;
+                result = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
         }
         else
-            result = Input.GetTouch(index).position;
 #endif
+        {
+            if (index >= NumTouches())
+                return result;  // cannot access a touch that doesn't exist
+            else if (NumTouches() == 1 && Input.touchCount == 2)
+            {
+                // return the touch that has not ended
+                if (_TouchEnding(0))
+                    result = Input.GetTouch(1).position;
+                else
+                    result = Input.GetTouch(0).position;
+            }
+            else
+                result = Input.GetTouch(index).position;
+        }
 
         if (result.x < 0)
             result.x = 0;
@@ -1056,15 +1067,18 @@ public class MapSystemBehaviour : MonoBehaviour
         }
 
 #if UNITY_EDITOR || UNITY_STANDALONE
-        // draw special segment for pinch
-        DeleteSegment("#mapsystem#1", "#mapsystem#2");
-        DeleteWaypoint("#mapsystem#1");
-        DeleteWaypoint("#mapsystem#2");
-        if (NumTouches() == 2)
+        if (! UnityEditor.EditorApplication.isRemoteConnected)
         {
-            CreateWaypoint("#mapsystem#1", null, ScreenPointToWorld(currentTouch0));
-            CreateWaypoint("#mapsystem#2", null, ScreenPointToWorld(currentTouch1));
-            CreateSegment("#mapsystem#1", "#mapsystem#2", 2.0f, Color.red, 99);
+            // draw special segment for pinch
+            DeleteSegment("#mapsystem#1", "#mapsystem#2");
+            DeleteWaypoint("#mapsystem#1");
+            DeleteWaypoint("#mapsystem#2");
+            if (NumTouches() == 2)
+            {
+                CreateWaypoint("#mapsystem#1", null, ScreenPointToWorld(currentTouch0));
+                CreateWaypoint("#mapsystem#2", null, ScreenPointToWorld(currentTouch1));
+                CreateSegment("#mapsystem#1", "#mapsystem#2", 2.0f, Color.red, 99);
+            }
         }
 #endif
 

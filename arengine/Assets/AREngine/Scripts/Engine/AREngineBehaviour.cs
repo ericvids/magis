@@ -333,6 +333,9 @@ public class AREngineBehaviour : MonoBehaviour, IAREngine
                 return null;
             if (trackingStartedCounter == -1)
                 trackingStartedCounter = 0;
+#if UNITY_EDITOR
+            arCameraTargetFound = false;   // allows Unity Remote gyroscope to function
+#endif
         }
         else
         {
