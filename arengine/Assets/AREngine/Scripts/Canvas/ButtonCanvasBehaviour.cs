@@ -615,9 +615,9 @@ public class ButtonCanvasBehaviour : MonoBehaviour
             }
         }
 
-        // if changing status, or overlay is visible, or dialogue is visible when the highest status is just
-        // game progress, hide the status
-        if (changingStatus != -1 || overlayCanvas != null || highestStatus == 0 && text != "")
+        // if changing status, or overlay is visible, or dialogue or fader is visible when the highest status
+        // is just game progress, hide the status
+        if (changingStatus != -1 || overlayCanvas != null || highestStatus == 0 && (text != "" || faderActive))
         {
             if (statusTime > 0)
             {
@@ -699,7 +699,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
 
         // calculate zoom factor of the dynamic group and transform the graphics accordingly
         float zoom = Mathf.Abs(currentZoomTime) / BUTTON_ZOOM_TIME;
-        dynamicPanel.SetActive(text == "" && overlayCanvas == null);
+        dynamicPanel.SetActive(text == "" && overlayCanvas == null && ! faderActive);
         dynamicPanel.transform.localScale = new Vector3(zoom, zoom, 1.0f);
         Vector3 position = new Vector3((1.0f - zoom) * (fromX * GetComponent<RectTransform>().rect.width),
                                        (1.0f - zoom) * ((fromY - 0.5f) * GetComponent<RectTransform>().rect.height),
@@ -734,14 +734,14 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         }
 
         // show the static panel without any zoom
-        staticPanel.SetActive(text == "" && overlayCanvas == null);
+        staticPanel.SetActive(text == "" && overlayCanvas == null && ! faderActive);
         staticPanel.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         staticPanel.GetComponent<RectTransform>().anchoredPosition3D = new Vector3();
     }
 
     private void UpdateDialogue()
     {
-        dialogue.GetComponent<CanvasGroup>().interactable = (text != "" && faderTime == 0 && overlayCanvas == null);
+        dialogue.GetComponent<CanvasGroup>().interactable = (text != "" && ! faderActive && overlayCanvas == null);
         if (dialogue.GetComponent<CanvasGroup>().interactable)
         {
             dialogue.GetComponent<CanvasGroup>().alpha += Time.deltaTime * 5;

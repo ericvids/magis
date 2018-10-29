@@ -35,6 +35,8 @@ public class CreditsCanvasBehaviour : CanvasBehaviour
 
     public void Done()
     {
-        buttonCanvas.HideOverlay();
+        Vector2 pos = text.GetComponent<RectTransform>().anchoredPosition;
+        if (pos.y > -150.0f)
+            buttonCanvas.HideOverlay();
     }
 }

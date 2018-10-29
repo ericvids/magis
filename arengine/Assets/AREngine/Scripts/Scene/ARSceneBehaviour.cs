@@ -342,6 +342,10 @@ public class ARSceneBehaviour : SceneBehaviour
             {
                 buttonCanvas.ShowCreditsOverlay();
             }
+            else if (parameters[0] == "@resetautorun")
+            {
+                autorun.Clear();
+            }
             else if (parameters[0] == "@exit")
             {
                 if (! isSubscene)
@@ -366,7 +370,7 @@ public class ARSceneBehaviour : SceneBehaviour
                     gameState.glowingButton = null;
                     gameState.LoadScene("MapScene");
                 }
-                return true;
+                return false;  // script is done
             }
             else if (parameters[0] == "@analytics")
             {
@@ -381,7 +385,7 @@ public class ARSceneBehaviour : SceneBehaviour
             gameState.SaveFlags();  // only save the new game state after a dialogue is done
             dialogue = null;
             buttonCanvas.SetDialogue(null);
-            return false;
+            return false;  // script is done
         }
         else
         {
@@ -762,6 +766,13 @@ public class ARSceneBehaviour : SceneBehaviour
                     dialogueLine++;
                     DoDialogue();
                 }
+                staticButtonIndex = 0;
+                dynamicButtonIndex = 0;
+                buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
+                while (staticButtonIndex != ButtonCanvasBehaviour.NUM_BUTTONS_PER_GROUP)
+                    buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, staticButtonIndex++, null);
+                while (dynamicButtonIndex != ButtonCanvasBehaviour.NUM_BUTTONS_PER_GROUP)
+                    buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, dynamicButtonIndex++, null);
                 return;
             }
 
@@ -900,14 +911,24 @@ public class ARSceneBehaviour : SceneBehaviour
         }
 
         if (actionExecuted)
+        {
             Debug.Log("Stopping script for the next frame");
+            staticButtonIndex = 0;
+            dynamicButtonIndex = 0;
+            buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
+            while (staticButtonIndex != ButtonCanvasBehaviour.NUM_BUTTONS_PER_GROUP)
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, staticButtonIndex++, null);
+            while (dynamicButtonIndex != ButtonCanvasBehaviour.NUM_BUTTONS_PER_GROUP)
+                buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, dynamicButtonIndex++, null);
+            return;
+        }
         else if (sameFrame)
             Debug.Log("Ending script on the same frame");
 
         // clear remaining buttons
         while (staticButtonIndex != ButtonCanvasBehaviour.NUM_BUTTONS_PER_GROUP)
             buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, staticButtonIndex++, null);
-        while (dynamicButtonIndex != ButtonCanvasBehaviour.NUM_BUTTONS_PER_GROUP && ! actionExecuted && (currentObject == objectInFocus || ! buttonCanvas.showDynamicGroup))
+        while (dynamicButtonIndex != ButtonCanvasBehaviour.NUM_BUTTONS_PER_GROUP && (currentObject == objectInFocus || ! buttonCanvas.showDynamicGroup))
             buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, dynamicButtonIndex++, null);
     }
 
