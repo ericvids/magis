@@ -564,15 +564,30 @@ public class ARSceneBehaviour : SceneBehaviour
             }
 
             dialogue = null;
-            if ((Time.timeSinceLevelLoad % (SAFETY_WARNING_TIMEOUT + MARKER_TIMEOUT)) < SAFETY_WARNING_TIMEOUT)
+            if (tsv.Lookup()[1].StartsWith("_NW "))
+                buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "MarkerStatuses/" + tsv.Lookup()[1].Substring(4) + "#Take a photo of the " + tsv.Lookup()[1].Substring(4) + "! See the example below.");
+            else if ((Time.timeSinceLevelLoad % (SAFETY_WARNING_TIMEOUT + MARKER_TIMEOUT)) < SAFETY_WARNING_TIMEOUT)
                 buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "Statuses/SafetyWarning#CAUTION: Be mindful of your surroundings! Stay off the road!");
             else
-                buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "MarkerStatuses/" + tsv.Lookup()[1] + "#Find the marker in this area and take a photo of it! (See the example below.)");
+                buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "MarkerStatuses/" + tsv.Lookup()[1] + "#Take a photo of the marker! See the example below.");
             buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
             buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
             buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
             fading = false;
             buttonCanvas.SetDialogue(null);
+
+            if (startTime == -1)
+            {
+                startTime = 0;
+                startWithoutMarker = false;
+
+                // reset game state to last-known-good state
+                buttonCanvas.StopMusic();
+                gameState.LoadFlags();
+
+                // for a main scene (not subscene), we setup objects at this point
+                SetupObjects();
+            }
 
             if (gameState.sceneName == "M0%Scene1" && ! gameState.GetFlag("M0%Scene1%End") && ! introTextShown)
             {
@@ -587,30 +602,37 @@ public class ARSceneBehaviour : SceneBehaviour
                     }
                 );
             }
-            else if (engine.currentlySeenARMarker == null || markerNotNeeded)
+            else if (engine.currentlySeenARMarker == null || markerNotNeeded || tsv.Lookup()[1].StartsWith("_BT "))
             {
-                if (startTime == -1)
+                if (startWithoutMarker || tsv.Lookup()[1].StartsWith("_BT "))
                 {
-                    startTime = 0;
-                    startWithoutMarker = false;
-
-                    // reset game state to last-known-good state
-                    buttonCanvas.StopMusic();
-                    gameState.LoadFlags();
-
-                    // for a main scene (not subscene), we setup objects at this point
-                    SetupObjects();
-                }
-
-                buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
-                buttonCanvas.showDynamicGroup = false;
-
-                if (startWithoutMarker || markerNotNeeded)
-                {
-                    if (markerNotNeeded)
-                        buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "Statuses/NoMarker#Hold the device directly in front of you, perpendicular to the ground.");
+                    if (tsv.Lookup()[1].StartsWith("_BT "))
+                        buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "MarkerStatuses/" + tsv.Lookup()[1].Substring(4) + "#Take a photo of the " + tsv.Lookup()[1].Substring(4) + "!");
                     else
-                        buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "Statuses/FakeMarker#Face the marker, then hold the device perpendicular to the ground.");
+                        buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "Statuses/FakeMarker#Try taking a photo of the marker now!");
+                    buttonCanvas.SetCrosshair(KeepOnScreen(new Vector3(Screen.width * 0.5f - Screen.height / 3, Screen.height * 0.5f - Screen.height / 3)),
+                                              KeepOnScreen(new Vector3(Screen.width * 0.5f + Screen.height / 3, Screen.height * 0.5f + Screen.height / 3)));
+                    buttonCanvas.SetDynamicGroupOrigin(new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0.0f));
+                    buttonCanvas.showDynamicGroup = true;
+                    buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, dynamicButtonIndex++, "Take photo");
+                    objectInFocus = currentObject;  // force clearing the other buttons
+                    if (buttonCanvas.pressedButton == "Take photo")
+                    {
+                        startTime = 0;
+                        startWithoutMarker = true;  // logic after here should assume that we startWithoutMarker
+
+                        buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
+                        engine.StartTracking(GameObject.Find(tsv.Lookup()[1]));
+
+                        UnityAnalyticsIntegration.SceneStart (gameState, gameState.sceneName, false);
+                    }
+                }
+                else if (markerNotNeeded)
+                {
+                    buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "Statuses/NoMarker#Hold the device directly in front of you, perpendicular to the ground.");
+                    buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
+                    buttonCanvas.showDynamicGroup = false;
+
                     Vector3 deviceAngles = DeviceInput.attitude.eulerAngles;
                     if (DeviceInput.accelerometerMalfunctioning)
                         deviceAngles.x = deviceAngles.z = 0;
@@ -623,29 +645,29 @@ public class ARSceneBehaviour : SceneBehaviour
                         if (startTime >= NO_MARKER_DURATION)
                         {
                             startTime = 0;
-                            startWithoutMarker = true;  // in case marker was not needed
+                            startWithoutMarker = true;  // logic after here should assume that we startWithoutMarker
 
                             buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
-                            foreach (GameObject obj in GameObject.FindGameObjectsWithTag("ARMarker"))
-                            {
-                                if (obj.name != "ARTemporaryMarker")
-                                {
-                                    engine.StartTracking(obj);
-                                    break;
-                                }
-                            }
+                            engine.StartTracking(GameObject.Find(tsv.Lookup()[1]));
 
-                            UnityAnalyticsIntegration.SceneStart (gameState, gameState.sceneName, markerNotNeeded);
+                            UnityAnalyticsIntegration.SceneStart (gameState, gameState.sceneName, true);
                         }
                     }
                     else
                         startTime = 0;
                 }
                 else if (startTime == 0)
+                {
                     startTime = Time.realtimeSinceStartup;
+                    buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
+                    buttonCanvas.showDynamicGroup = false;
+                }
                 else if (Time.realtimeSinceStartup - startTime >= NO_MARKER_TIMEOUT && gameState.GetFlag("Global%GPSValid"))
                 {
                     buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, staticButtonIndex++, "Help! The marker won't scan!");
+                    buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
+                    buttonCanvas.showDynamicGroup = false;
+
                     if (buttonCanvas.pressedButton == "Help! The marker won't scan!")
                     {
                         startTime = 0;
