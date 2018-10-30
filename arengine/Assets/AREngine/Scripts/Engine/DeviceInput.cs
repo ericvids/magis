@@ -263,6 +263,8 @@ public class DeviceInput
                     Input.location.Stop();
                 return true;
             }
+            else if (GameObject.Find("TitleScene") != null)
+                return true;  // don't warn about turning on location in title screen
             else
                 return Input.location.status == LocationServiceStatus.Running;
         }

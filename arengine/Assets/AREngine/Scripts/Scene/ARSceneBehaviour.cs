@@ -39,7 +39,7 @@ public class ARSceneBehaviour : SceneBehaviour
     private float centerPitch = float.PositiveInfinity;
     private float startTime = -1;
     private bool startWithoutMarker;
-    private bool currentlyTracking;
+    private int trackingInterval;
     private float lastTrackingTime;
 
     private bool markerNotNeeded;
@@ -306,8 +306,11 @@ public class ARSceneBehaviour : SceneBehaviour
                                                float.Parse(parameters[3]),
                                                float.Parse(parameters[4])),
                                      float.Parse(parameters[5]));
-                fading = true;
-                return true;
+                if (float.Parse(parameters[5]) > 0)
+                {
+                    fading = true;
+                    return true;
+                }
             }
             else if (parameters[0] == "@showstill")
             {
@@ -389,6 +392,7 @@ public class ARSceneBehaviour : SceneBehaviour
         }
         else
         {
+            Debug.Log(dialogue[dialogueLine]);
             buttonCanvas.SetDialogue(dialogue[dialogueLine].Replace("\\n", "\n"));
             return true;
         }
@@ -701,22 +705,6 @@ public class ARSceneBehaviour : SceneBehaviour
                 }
             }
         }
-        else if (engine.markerState == IARMarkerState.LOST && ! gameState.GetFlag(gameState.sceneName + "%PitchOnly"))
-        {
-            if (startTime != -1)
-            {
-                gameState.selectedItem = "";
-                currentObject = "dummy";
-                autorun.Clear();
-                startTime = -1;
-            }
-            if (startWithoutMarker)
-                buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, "Tracking lost, hold still! (If this doesn't work, try looking at a far-away area.)");
-            else
-                buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, "Tracking lost, hold still! (If this doesn't work, try looking at the marker again.)");
-            buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
-            buttonCanvas.showDynamicGroup = false;
-        }
         else if (engine.markerState != IARMarkerState.STARTING)
         {
             if (startTime != -1)
@@ -727,35 +715,54 @@ public class ARSceneBehaviour : SceneBehaviour
                 startTime = -1;
             }
             buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
+            buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
 
             if (engine.isARMarkerActuallyVisible)
                 startWithoutMarker = false;  // we found the marker legitimately; set this false in case we started without the marker
 
             // display tip to resynchronize; do it sparingly if we haven't lost tracking, do it more often if we have lost tracking
-            if (engine.markerState == IARMarkerState.TEMPORARY && ! gameState.GetFlag(gameState.sceneName + "%PitchOnly"))
+            if (engine.markerState == IARMarkerState.LOST && ! gameState.GetFlag(gameState.sceneName + "%PitchOnly"))
             {
-                if (currentlyTracking)
+                if (trackingInterval != 0)
                 {
                     lastTrackingTime = Time.realtimeSinceStartup;
-                    currentlyTracking = false;
+                    trackingInterval = 0;
+                }
+            }
+            else if (engine.markerState == IARMarkerState.TEMPORARY && ! gameState.GetFlag(gameState.sceneName + "%PitchOnly"))
+            {
+                if (trackingInterval != 30)
+                {
+                    lastTrackingTime = Time.realtimeSinceStartup;
+                    trackingInterval = 30;
                 }
             }
             else
             {
-                if (! currentlyTracking)
+                if (trackingInterval != 120)
                 {
                     lastTrackingTime = Time.realtimeSinceStartup;
-                    currentlyTracking = true;
+                    trackingInterval = 120;
                 }
             }
 
             long secondsSince = (long) (Time.realtimeSinceStartup - lastTrackingTime);
-            long interval = currentlyTracking ? 120 : 30;  // every 2 minutes normally, every half a minute if we lost tracking
 
-            if (secondsSince % interval >= interval - 10 && ! startWithoutMarker)
-                buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, "If the virtual objects seem misaligned/unstable, try looking at the marker again.");
+            if (trackingInterval == 0)
+            {
+                if (secondsSince >= 2)
+                {
+                    if (startWithoutMarker)
+                        buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, "Tracking lost, hold still! (If this doesn't work, try looking at a far-away area.)");
+                    else
+                        buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, "Tracking lost, hold still! (If this doesn't work, try looking at the marker again.)");
+                }
+            }
             else
-                buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
+            {
+                if (secondsSince % trackingInterval >= trackingInterval - 10 && ! startWithoutMarker)
+                    buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, "If the virtual objects seem misaligned/unstable, try looking at the marker again.");
+            }
 
             if (dialogue != null)
             {
@@ -883,9 +890,9 @@ public class ARSceneBehaviour : SceneBehaviour
                             if (! sameFrame)
                             {
                                 sameFrame = true;
-                                Debug.Log("Starting script");
+                                Debug.Log("=======");
                             }
-                            Debug.Log(gameState.sceneName + " " + action + " " + target + " " + flags);
+                            Debug.Log("--- Starting script: " + gameState.sceneName + " " + action + " " + target + " " + flags);
                             if (gameState.glowingButton == buttonName)
                                 gameState.glowingButton = null;
                             if (action == "Autorun")
@@ -912,7 +919,6 @@ public class ARSceneBehaviour : SceneBehaviour
 
         if (actionExecuted)
         {
-            Debug.Log("Stopping script for the next frame");
             staticButtonIndex = 0;
             dynamicButtonIndex = 0;
             buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
@@ -923,7 +929,7 @@ public class ARSceneBehaviour : SceneBehaviour
             return;
         }
         else if (sameFrame)
-            Debug.Log("Ending script on the same frame");
+            Debug.Log("--- Ending script on the same frame");
 
         // clear remaining buttons
         while (staticButtonIndex != ButtonCanvasBehaviour.NUM_BUTTONS_PER_GROUP)

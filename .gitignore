@@ -19,15 +19,6 @@ Obj/
 temp/
 Temp/
 RegisterIcalls.cpp
-arengine/Assets/Editor/Vuforia/CylinderTargetTextures*
-arengine/Assets/Editor/Vuforia/Emulator*
-arengine/Assets/Editor/Vuforia/ForPrint*
-arengine/Assets/Editor/Vuforia/ImageTargetTextures/VuforiaEmulator*
-arengine/Assets/Editor/Vuforia/ImageTargetTextures/VuforiaMars_*
-arengine/Assets/Editor/Vuforia/TargetsetData*
-arengine/Assets/Editor/Vuforia/VuforiaMars_*
-arengine/Assets/Models*
-arengine/Assets/StreamingAssets/Vuforia/VuforiaMars_*
 arengine/Assets/Vuforia*
 arengine/Assets/DownloadObbExample.cs*
 arengine/Assets/README.txt*

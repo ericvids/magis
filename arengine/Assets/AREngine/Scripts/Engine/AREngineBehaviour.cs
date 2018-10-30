@@ -135,10 +135,7 @@ public class AREngineBehaviour : MonoBehaviour, IAREngine
 
                 // change the render texture alpha according to the current marker state
                 if (markerState == IARMarkerState.LOST)
-                {
-                    if (GameObject.Find("ARCanvas").GetComponent<UnityEngine.UI.RawImage>().color.a != 0.0f)
-                        GameObject.Find("ARCanvas").GetComponent<UnityEngine.UI.RawImage>().color = new Color(1.0f, 1.0f, 1.0f, 0.33f);
-                }
+                    GameObject.Find("ARCanvas").GetComponent<UnityEngine.UI.RawImage>().color = new Color(1.0f, 1.0f, 1.0f, 0.33f);
                 else
                     GameObject.Find("ARCanvas").GetComponent<UnityEngine.UI.RawImage>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
             }

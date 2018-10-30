@@ -153,6 +153,12 @@ public class Autorun
                 foreach (string guid in AssetDatabase.FindAssets("t:Object", new[]{ "Assets/StreamingAssets/Vuforia" }))
                 {
                     string asset = AssetDatabase.GUIDToAssetPath(guid);
+                    if (asset.EndsWith(".xml"))  // move xml first before dat to avoid warnings
+                        AssetDatabase.MoveAsset(asset, asset.Replace("/StreamingAssets/", "/StreamingAssetsBackup/"));
+                }
+                foreach (string guid in AssetDatabase.FindAssets("t:Object", new[]{ "Assets/StreamingAssets/Vuforia" }))
+                {
+                    string asset = AssetDatabase.GUIDToAssetPath(guid);
                     AssetDatabase.MoveAsset(asset, asset.Replace("/StreamingAssets/", "/StreamingAssetsBackup/"));
                 }
                 AssetDatabase.DeleteAsset("Assets/StreamingAssets/Vuforia");

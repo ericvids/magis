@@ -344,13 +344,13 @@ public class GameStateBehaviour : MonoBehaviour
         if (! GetFlag("System%AlreadyRunOnce"))
         {
             DeviceInput.gyro = DeviceInput.gyroPresent;
-            DeviceInput.compass = DeviceInput.compassPresent;
+            DeviceInput.compass = DeviceInput.compassPresent && ! DeviceInput.gyro;
             SetFlag("System%AlreadyRunOnce", true);
         }
         else
         {
             DeviceInput.gyro = GetFlag("System%UseGyroscope");
-            DeviceInput.compass = GetFlag("System%UseCompass");
+            DeviceInput.compass = GetFlag("System%UseCompass") && ! DeviceInput.gyro;
         }
         SetFlag("System%UseGyroscope", DeviceInput.gyro);
         SetFlag("System%UseCompass", DeviceInput.compass);

@@ -68,12 +68,14 @@ public class ARMarkerBehaviour : MonoBehaviour, ITrackableEventHandler
         Debug.Log("=== STARTING WITH MARKER: " + gameObject.name);
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("ARMarker"))
         {
+            /* not needed in new vuforia
             // since only one marker can be extended-tracked at a time, we stop it for all markers
             if (obj.GetComponentInChildren<ImageTargetBehaviour>().ImageTarget != null)
             {
                 if (! obj.GetComponentInChildren<ImageTargetBehaviour>().ImageTarget.StopExtendedTracking())
                     Debug.Log("=== WARNING: Extended tracking cannot be stopped for marker " + obj.name);
             }
+            */
 
             if (obj == gameObject)
             {
@@ -95,11 +97,13 @@ public class ARMarkerBehaviour : MonoBehaviour, ITrackableEventHandler
             }
         }
 
+        /* not needed in new vuforia
         if (GetComponentInChildren<ImageTargetBehaviour>().ImageTarget != null)
         {
             if (! GetComponentInChildren<ImageTargetBehaviour>().ImageTarget.StartExtendedTracking())
                 Debug.Log("=== WARNING: Extended tracking cannot be started for marker " + gameObject.name);
         }
+        */
     }
 
     public static void ResetTracking()
@@ -107,11 +111,13 @@ public class ARMarkerBehaviour : MonoBehaviour, ITrackableEventHandler
         Debug.Log("=== RESETTING");
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("ARMarker"))
         {
+            /* not needed in new vuforia
             if (obj.GetComponentInChildren<ImageTargetBehaviour>().ImageTarget != null)
             {
                 if (! obj.GetComponentInChildren<ImageTargetBehaviour>().ImageTarget.StopExtendedTracking())
                     Debug.Log("=== WARNING: Extended tracking cannot be stopped for marker " + obj.name);
             }
+            */
 
             // enable everything except the temporary marker
             if (obj.GetComponentInChildren<ImageTargetBehaviour>().enabled != (obj.name != "ARTemporaryMarker"))
