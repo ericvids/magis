@@ -85,11 +85,13 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
     {
         bool isOn = GameObject.Find("Panel/UseGyroscope").GetComponent<UnityEngine.UI.Toggle>().isOn;
         DeviceInput.gyro = isOn;
+#if UNITY_ANDROID
         if (isOn)  // turning on gyroscope also turns off compass
         {
             GameObject.Find("Panel/UseCompass").GetComponent<UnityEngine.UI.Toggle>().isOn = false;
             DeviceInput.compass = false;
         }
+#endif
         gameState.SetFlag("System%UseGyroscope", isOn);
     }
 

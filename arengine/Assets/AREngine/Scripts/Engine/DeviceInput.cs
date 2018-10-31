@@ -41,6 +41,7 @@ public class DeviceInput
     private static bool _compassPresent = false;
     private static float accelerometerInstabilityCounter = 0.0f;
     private static QuaternionMovingAverage average = new QuaternionMovingAverage();
+    private static bool _gyro = false;
 
 #if UNITY_ANDROID && ! UNITY_EDITOR
     // android-only state
@@ -63,16 +64,12 @@ public class DeviceInput
         StartBattery();
 #endif
 
-#if UNITY_EDITOR
-        // in editor, gyro functionality can be provided by Unity remote but cannot be toggled
-        _gyroPresent = false;
+        Input.gyro.updateInterval = 1.0f / 60.0f;
         Input.gyro.enabled = true;
-#else
-        Input.gyro.updateInterval = Time.fixedDeltaTime;
-        bool oldGyro = Input.gyro.enabled;
-        Input.gyro.enabled = true;
-        _gyroPresent = Input.gyro.enabled;
-        Input.gyro.enabled = oldGyro;
+#if ! UNITY_EDITOR
+        // when in editor, gyro functionality can be provided by Unity Remote but cannot
+        // (and should not) be toggled by the user; never set _gyroPresent to true there
+        _gyroPresent = _gyro = Input.gyro.enabled;
 #endif
     }
 
@@ -103,16 +100,21 @@ public class DeviceInput
     {
         get
         {
-            return Input.gyro.enabled;
+            return _gyro;
         }
         set
         {
             if (! gyroPresent)
                 return;
 
-            if (Input.gyro.enabled == value)
+            if (_gyro == value)
                 return;
-            Input.gyro.enabled = value;
+            _gyro = value;
+#if UNITY_ANDROID
+            // TODO remove the surrounding #if as soon as Unity fixes their regression bug
+            // https://issuetracker.unity3d.com/issues/ios-the-accelerometer-stops-working-when-disabling-the-gyroscope-in-build
+            Input.gyro.enabled = _gyro;
+#endif
             average.Reset();
 
             GameObject engine = GameObject.FindWithTag("AREngine");

@@ -11,9 +11,9 @@ PlayerSettings:
   defaultScreenOrientation: 4
   targetDevice: 2
   useOnDemandResources: 0
-  accelerometerFrequency: 100
+  accelerometerFrequency: 60
   companyName: Ateneo Laboratory for the Learning Sciences
-  productName: '_SampleGame'
+  productName: _SampleGame
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -861,7 +861,7 @@ PlayerSettings:
   facebookSdkVersion: 7.9.4
   apiCompatibilityLevel: 2
   cloudProjectId: b76c8b2c-b435-4682-b68e-81d5d538c558
-  projectName: 'magis'
+  projectName: magis
   organizationId: ateneo-laboratory-for-the-learning-sciences
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
