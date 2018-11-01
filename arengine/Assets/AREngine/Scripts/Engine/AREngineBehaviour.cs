@@ -61,28 +61,26 @@ public class AREngineBehaviour : MonoBehaviour, IAREngine
 
         if (arCameraTarget != null)
         {
-            // find the ARCamera's rotation
-            GameObject arCamera = GameObject.FindWithTag("MainCamera");
-            arCameraAngles = arCamera.transform.rotation.eulerAngles;
+            arCameraAngles = Vector3.zero;
 
             // find the ARCamera's relative position with the AR-system-dependent GameObject inside the ARMarker object,
             // determine the angle it makes on the XZ plane, then subtract it from the ARCamera's rotation; this will make
             // the marker's position the "forward direction" regardless of the viewing angle of the marker
-            Vector3 arCameraPosition = (arCamera.transform.localPosition - arCameraTarget.transform.GetChild(0).position).normalized;
-            arCameraAngles.y -= Mathf.Atan2(-arCameraPosition.x, -arCameraPosition.z) / Mathf.PI * 180;
+            Vector3 arCameraPosition = (-arCameraTarget.transform.GetChild(0).position).normalized;
+            arCameraAngles.y = -Mathf.Atan2(-arCameraPosition.x, -arCameraPosition.z) / Mathf.PI * 180;
+            arCameraAngles.x = Mathf.Atan2(-arCameraPosition.y, -arCameraPosition.z) / Mathf.PI * 180;
+
+            // add the saved pitch from the last tracking-lost event, if any
+            arCameraAngles.x += arCameraTarget.transform.localRotation.eulerAngles.x;
 
             // find the device's rotation according to the device sensors
             Vector3 deviceAngles = DeviceInput.attitude.eulerAngles;
 
-            bool unstable = false;
             if (! DeviceInput.isAttitudeYawStable && DeviceInput.accelerometerMalfunctioning)
             {
                 // if gyro/compass is unavailable and accelerometer is unstable,
-                // use AR camera's angles instead of the device's, and set the roll to 0
-                deviceAngles.x = arCameraTargetFound ? arCameraAngles.x : currentRotation.eulerAngles.x;
-                deviceAngles.y = arCameraTargetFound ? arCameraAngles.y : currentRotation.eulerAngles.y;
-                deviceAngles.z = 0;
-                unstable = true;
+                // use AR camera's angles instead of the device's
+                deviceAngles = arCameraTargetFound ? arCameraAngles : currentRotation.eulerAngles;
             }
 
             // when initializing for the first time, or whenever the ar camera is valid, use the current device rotation as the base yaw
@@ -96,14 +94,11 @@ public class AREngineBehaviour : MonoBehaviour, IAREngine
                                                       || arCameraTarget.name != "ARTemporaryMarker"
                                                          && ! arCameraTarget.GetComponent<ARMarkerBehaviour>().visible))
             {
-                // create a temporary marker whenever the marker is not found (or if we are extended-tracking the real marker)
+                // create a temporary marker whenever the marker is not found
                 if (temporaryMarker.GetComponent<ARTemporaryMarkerBehaviour>().MakeNewMarker())
                 {
-                    // adjust transform of marker to the current device angles (except when accelerometer is unstable)
-                    if (unstable)
-                        temporaryMarker.transform.localRotation = Quaternion.identity;
-                    else
-                        temporaryMarker.transform.localRotation = Quaternion.Euler(new Vector3(deviceAngles.x, 0.0f, deviceAngles.z));
+                    // save the pitch and roll when tracking is lost; we'll continue from that
+                    temporaryMarker.transform.localRotation = Quaternion.Euler(new Vector3(deviceAngles.x, 0.0f, deviceAngles.z));
                     Debug.Log("Adjusting new marker... " + temporaryMarker.transform.localRotation.eulerAngles);
                 }
             }

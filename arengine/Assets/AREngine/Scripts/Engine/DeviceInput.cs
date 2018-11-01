@@ -224,7 +224,11 @@ public class DeviceInput
         get
         {
 #if UNITY_EDITOR
-            return true;
+            // Vuforia play mode will return an image if a webcam is connected;
+            // if we get this image, report that the yaw is "unstable" so the engine
+            // will use the image feed to determine pose (otherwise the engine will
+            // depend solely on the arrow keys)
+            return Vuforia.CameraDevice.Instance.GetCameraImage(Vuforia.Image.PIXEL_FORMAT.RGBA8888) == null;
 #else
             return compass || gyro;
 #endif
@@ -251,7 +255,12 @@ public class DeviceInput
     {
         get
         {
+#if UNITY_EDITOR
+            // PC webcams don't have accelerometers
+            return true;
+#else
             return accelerometerInstabilityCounter >= ACCELEROMETER_INSTABILITY_TIMEOUT;
+#endif
         }
     }
 

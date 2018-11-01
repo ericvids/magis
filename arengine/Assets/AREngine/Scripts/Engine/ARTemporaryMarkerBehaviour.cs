@@ -178,7 +178,7 @@ public class ARTemporaryMarkerBehaviour : MonoBehaviour, IUserDefinedTargetEvent
         {
             scanningDelay = -1;
             Debug.Log("Making new marker...");
-            GetComponent<UserDefinedTargetBuildingBehaviour>().BuildNewTarget("ARTemporaryMarker", 10.0f);
+            GetComponent<UserDefinedTargetBuildingBehaviour>().BuildNewTarget("ARTemporaryMarker", 20.0f);
             return true;
         }
         else if (scanningDelay > 0)
