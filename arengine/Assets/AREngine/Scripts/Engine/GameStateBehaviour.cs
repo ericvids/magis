@@ -402,7 +402,7 @@ public class GameStateBehaviour : MonoBehaviour
         // allow async level load to proceed only when button canvas animation is finished
         if (baseScene != null)
         {
-            if (! buttonCanvas.showDynamicGroup)
+            if (buttonCanvas.readyToLoadLevel)
             {
                 baseScene.allowSceneActivation = true;
                 buttonCanvas.showLoading = true;

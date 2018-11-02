@@ -72,6 +72,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     // fader
     private Color faderTargetColor;
     private float faderTime;
+    private bool faderSuppressingText;
 
     // status
     public const float STATUS_BASE = 42.0f;    // position of status
@@ -112,6 +113,14 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     private Dictionary<string, AudioClip> preloadedClips = new Dictionary<string, AudioClip>();
     private string lastMusic = null;
     private float volumeDecreasePerSecond = 0.0f;
+
+    public bool readyToLoadLevel
+    {
+        get
+        {
+            return showDynamicGroup == false && oldOverlayCanvas == null;
+        }
+    }
 
     public void SetCrosshair(Vector3 lowerLeft, Vector3 upperRight)
     {
@@ -156,7 +165,10 @@ public class ButtonCanvasBehaviour : MonoBehaviour
             faderEnabled = (faderTargetColor.a != 0);
         }
         else
+        {
             faderEnabled = true;
+            faderSuppressingText = true;
+        }
         faderTime = time;
     }
 
@@ -270,6 +282,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
 
     public void SetDialogue(string text)
     {
+        faderSuppressingText = false;
         if (text == null)
             text = "";
 
@@ -617,7 +630,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
 
         // if changing status, or overlay is visible, or dialogue or fader is visible when the highest status
         // is just game progress, hide the status
-        if (changingStatus != -1 || overlayCanvas != null || highestStatus == 0 && (text != "" || faderTime != 0))
+        if (changingStatus != -1 || overlayCanvas != null || highestStatus == 0 && (text != "" || faderSuppressingText))
         {
             if (statusTime > 0)
             {
@@ -699,7 +712,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
 
         // calculate zoom factor of the dynamic group and transform the graphics accordingly
         float zoom = Mathf.Abs(currentZoomTime) / BUTTON_ZOOM_TIME;
-        dynamicPanel.SetActive(text == "" && overlayCanvas == null && faderTime == 0);
+        dynamicPanel.SetActive(text == "" && overlayCanvas == null && ! faderSuppressingText);
         dynamicPanel.transform.localScale = new Vector3(zoom, zoom, 1.0f);
         Vector3 position = new Vector3((1.0f - zoom) * (fromX * GetComponent<RectTransform>().rect.width),
                                        (1.0f - zoom) * ((fromY - 0.5f) * GetComponent<RectTransform>().rect.height),
@@ -734,14 +747,14 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         }
 
         // show the static panel without any zoom
-        staticPanel.SetActive(text == "" && overlayCanvas == null && faderTime == 0);
+        staticPanel.SetActive(text == "" && overlayCanvas == null && ! faderSuppressingText);
         staticPanel.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         staticPanel.GetComponent<RectTransform>().anchoredPosition3D = new Vector3();
     }
 
     private void UpdateDialogue()
     {
-        dialogue.GetComponent<CanvasGroup>().interactable = (text != "" && overlayCanvas == null && faderTime == 0);
+        dialogue.GetComponent<CanvasGroup>().interactable = (text != "" && overlayCanvas == null && ! faderSuppressingText);
         if (dialogue.GetComponent<CanvasGroup>().interactable)
         {
             dialogue.GetComponent<CanvasGroup>().alpha += Time.deltaTime * 5;

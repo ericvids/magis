@@ -34,6 +34,7 @@ public class ARSceneBehaviour : SceneBehaviour
 
     private Dictionary<string, bool> autorun = new Dictionary<string, bool>();
     private bool fading;
+    private bool waitAfterFading;
     private bool finished;
 
     private float centerPitch = float.PositiveInfinity;
@@ -316,6 +317,7 @@ public class ARSceneBehaviour : SceneBehaviour
             {
                 buttonCanvas.SetFade(Color.white, 0.25f, "Stills/" + parameters[1]);
                 fading = true;
+                waitAfterFading = true;
                 return true;
             }
             else if (parameters[0] == "@hidestill")
@@ -582,6 +584,7 @@ public class ARSceneBehaviour : SceneBehaviour
             buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
             buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
             fading = false;
+            waitAfterFading = false;
             buttonCanvas.SetDialogue(null);
 
             if (startTime == -1)
@@ -769,9 +772,17 @@ public class ARSceneBehaviour : SceneBehaviour
                 buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
                 if (! fading && buttonCanvas.pressedButton == "Dialogue" || fading && ! buttonCanvas.faderActive)
                 {
-                    fading = false;
-                    dialogueLine++;
-                    DoDialogue();
+                    if (waitAfterFading)
+                    {
+                        buttonCanvas.SetFade(Color.white, 1.0f, ""); // do not change the image
+                        waitAfterFading = false;
+                    }
+                    else
+                    {
+                        fading = false;
+                        dialogueLine++;
+                        DoDialogue();
+                    }
                 }
                 staticButtonIndex = 0;
                 dynamicButtonIndex = 0;
