@@ -156,7 +156,11 @@ public class DeviceInput
         get
         {
             Quaternion deviceRotation;
+#if UNITY_EDITOR
+            if (UnityEditor.EditorApplication.isRemoteConnected)
+#else
             if (gyro)
+#endif
             {
                 // convert this quaternion to Unity's coordinate system
                 deviceRotation = Quaternion.Euler(-90, 0, 0) * Input.gyro.attitude;
@@ -228,7 +232,8 @@ public class DeviceInput
             // if we get this image, report that the yaw is "unstable" so the engine
             // will use the image feed to determine pose (otherwise the engine will
             // depend solely on the arrow keys)
-            return Vuforia.CameraDevice.Instance.GetCameraImage(Vuforia.Image.PIXEL_FORMAT.RGBA8888) == null;
+            return UnityEditor.EditorApplication.isRemoteConnected
+                || Vuforia.CameraDevice.Instance.GetCameraImage(Vuforia.Image.PIXEL_FORMAT.RGBA8888) == null;
 #else
             return compass || gyro;
 #endif
@@ -256,8 +261,9 @@ public class DeviceInput
         get
         {
 #if UNITY_EDITOR
-            // PC webcams don't have accelerometers
-            return true;
+            // if there is no device with gyro connected,
+            // report malfunction so the PC webcam can be used on its own
+            return ! UnityEditor.EditorApplication.isRemoteConnected;
 #else
             return accelerometerInstabilityCounter >= ACCELEROMETER_INSTABILITY_TIMEOUT;
 #endif

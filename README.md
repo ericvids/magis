@@ -24,13 +24,14 @@ Setup Instructions
 
   *  Use the mouse to perform touchscreen commands, and use the arrow keys on your keyboard to navigate within an AR scene.
   *  If you connect a webcam to your computer, you may use it to simulate AR scenes in conjunction with printouts of the sample marker images at arengine/Assets/Editor/Vuforia/ImageTargetTextures/magis-default/.  You will need to go to Vuforia Configuration and uncheck "Disable Vuforia Play Mode" near the bottom of the Inspector.
-  *  You may also connect a device with Unity Remote 5 installed to use its gyroscope and touchscreen.  Go to Edit->Project Settings->Editor and under Unity Remote->Device, select "Any Android Device" or "Any iOS Device" depending on your device.  Note that due to Vuforia limitations, it is not possible to use the device's camera for AR tracking in Play Mode.
+  *  You may also connect a device with Unity Remote 5 installed to use its gyroscope and touchscreen.  Go to Edit->Project Settings->Editor and under Unity Remote->Device, select "Any Android Device" or "Any iOS Device" depending on your device.  Note that due to Vuforia limitations, it is not possible to use the device's back-facing camera for AR tracking in Play Mode, but you may attach your webcam to the back of your device to simulate it.
 
 7.  All assets of the sample game are found in arengine/Assets/ARGames/_SampleGame/ and arengine/Assets/ARPrefabs/_SampleGame/.  Feel free to modify these to your own liking.
 
 8.  Before deploying to a device or publishing to the Play Store or App Store, make sure to do the following:
 
-  *  In Unity's File->Build Settings, turn off Development Build (unless you are debugging intentionally).
+  *  Acquire all the necessary tools for publishing on your selected platform.  For Android, see https://docs.unity3d.com/Manual/android-sdksetup.html (only the JDK and Android SDK are needed; you may skip the NDK).  For iOS, see https://docs.unity3d.com/Manual/iphone-GettingStarted.html (a macOS system with Xcode 10 or above is required).
+  *  In Unity's File->Build Settings, turn off Development Build (unless you want this intentionally, e.g., to build a map of the GPS locations of your real-world markers).
   *  In Unity's File->Build Settings->Player Settings, change your Company Name and Product Name to your own preferred names.
   *  In Unity's File->Build Settings->Player Settings->Settings for (Android|iOS)->Other Settings->Identification, change the Package Name (Android) or Bundle Identifier (iOS) to your own preferred id.  _**Do not use edu.ateneo.magis or any name prefixed with edu.ateneo.magis.*; these are reserved for Ateneo's own apps.**_
   *  Rename the arengine/Assets/ARGames/_SampleGame/ folder to your chosen Product Name, but remove any spaces and non-alphanumeric characters (except for underscore).  For example, the Product Name "Igpaw: Loyola 2" requires a folder name of "IgpawLoyola2".

@@ -822,22 +822,28 @@ public class ARSceneBehaviour : SceneBehaviour
                 if (gameState.GetFlag(gameState.sceneName + "%PitchOnly"))
                     obj.transform.RotateAround(bounds.center, new Vector3(0, 1, 0), Time.deltaTime * 90.0f);
             }
-#if ! UNITY_EDITOR
-            else if (engine.isARMarkerActuallyVisible && ! gameState.GetFlag(gameState.sceneName + "%PitchOnly"))
+            else
             {
-                Vector3 center = GameObject.FindWithTag("MainCamera").GetComponentInChildren<Camera>().WorldToScreenPoint(engine.currentlySeenARMarker.transform.GetChild(0).position);
-                if (center.z > 0)
+#if UNITY_EDITOR
+                if (Vuforia.CameraDevice.Instance.GetCameraImage(Vuforia.Image.PIXEL_FORMAT.RGBA8888) != null)
+#endif
                 {
-                    Vector3 lowerLeft = KeepOnScreen(new Vector3(center.x - Screen.height / 3, center.y - Screen.height / 3));
-                    Vector3 upperRight = KeepOnScreen(new Vector3(center.x + Screen.height / 3, center.y + Screen.height / 3));
-                    if (upperRight.x - lowerLeft.x > 0 && upperRight.y - lowerLeft.y > 0)
+                    if (engine.isARMarkerActuallyVisible && ! gameState.GetFlag(gameState.sceneName + "%PitchOnly"))
                     {
-                        buttonCanvas.SetCrosshair(lowerLeft, upperRight);
-                        crosshairOnMarker = true;
+                        Vector3 center = GameObject.FindWithTag("MainCamera").GetComponentInChildren<Camera>().WorldToScreenPoint(engine.currentlySeenARMarker.transform.GetChild(0).position);
+                        if (center.z > 0)
+                        {
+                            Vector3 lowerLeft = KeepOnScreen(new Vector3(center.x - Screen.height / 3, center.y - Screen.height / 3));
+                            Vector3 upperRight = KeepOnScreen(new Vector3(center.x + Screen.height / 3, center.y + Screen.height / 3));
+                            if (upperRight.x - lowerLeft.x > 0 && upperRight.y - lowerLeft.y > 0)
+                            {
+                                buttonCanvas.SetCrosshair(lowerLeft, upperRight);
+                                crosshairOnMarker = true;
+                            }
+                        }
                     }
                 }
             }
-#endif
             buttonCanvas.showDynamicGroup = (objectInFocus == currentObject && (objectInFocus != null || crosshairOnMarker));
 
             List<string> targets = new List<string>();

@@ -1122,7 +1122,10 @@ public class MapSystemBehaviour : MonoBehaviour
             if (Input.location.status == LocationServiceStatus.Stopped
                 || Input.location.status == LocationServiceStatus.Failed)
             {
+#if UNITY_EDITOR || UNITY_STANDALONE
+#else
                 Input.location.Start(0.1f, 0.1f);
+#endif
                 lastLocationTimestamp = 0.0;
                 lastRealTime = Time.realtimeSinceStartup;
                 Input.compass.enabled = true;
