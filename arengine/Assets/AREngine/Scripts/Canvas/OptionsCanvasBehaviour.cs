@@ -11,6 +11,7 @@ You should have received a copy of the GNU General Public License v2 along with 
 ************************************************************************************************************/
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class OptionsCanvasBehaviour : CanvasBehaviour
@@ -28,6 +29,15 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
         GameObject.Find("Panel/AppDetails/AppTitle").GetComponent<UnityEngine.UI.Text>().text = Application.productName;
         GameObject.Find("Panel/AppDetails/AppVersion").GetComponent<UnityEngine.UI.Text>().text = "Version " + Application.version + "  <color=#000080>Credits...</color>";
 
+        bool tutorialExists = false;
+        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        {
+            string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+            scenePath = scenePath.Substring(scenePath.LastIndexOf("/") + 1);
+            if (scenePath == "M0%Scene1.unity")
+                tutorialExists = true;
+        }
+
         if (engine != null)
         {
             if (gameState.sceneName == "M0%Scene1" && ! gameState.GetFlag("M0%Scene1%End"))
@@ -37,12 +47,24 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
         }
         else if (! gameState.GetFlag("Global%GameEnd"))
         {
-            GameObject.Find("Panel/ReturnToMap/Label").GetComponent<UnityEngine.UI.Text>().text = "Replay tutorial";
+            if (tutorialExists)
+                GameObject.Find("Panel/ReturnToMap/Label").GetComponent<UnityEngine.UI.Text>().text = "Replay tutorial";
+            else
+                Destroy(GameObject.Find("Panel/ReturnToMap"));
             Destroy(GameObject.Find("Panel/ReplayTutorial"));
             Destroy(GameObject.Find("Panel/ReplayEnding"));
         }
         else
-            Destroy(GameObject.Find("Panel/ReturnToMap"));
+        {
+            if (tutorialExists)
+                Destroy(GameObject.Find("Panel/ReturnToMap"));
+            else
+            {
+                GameObject.Find("Panel/ReturnToMap/Label").GetComponent<UnityEngine.UI.Text>().text = "Replay ending";
+                Destroy(GameObject.Find("Panel/ReplayTutorial"));
+                Destroy(GameObject.Find("Panel/ReplayEnding"));
+            }
+        }
 
         GameObject.Find("Panel/LeftHandedMode").GetComponent<UnityEngine.UI.Toggle>().isOn = gameState.GetFlag("System%SwapButtonGroups");
         if (! DeviceInput.gyroPresent)
@@ -223,6 +245,13 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
     {
         if (engine == null)
         {
+            if (gameState.GetFlag("Global%GameEnd"))
+            {
+                // return to map was replaced by replay ending button
+                ReplayEnding();
+                return;
+            }
+
             // return to map was replaced by replay tutorial button
             ReplayTutorial();
             return;

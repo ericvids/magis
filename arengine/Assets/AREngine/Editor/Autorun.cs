@@ -256,6 +256,18 @@ public class Autorun
                         if (rows[i].EndsWith("\r"))
                             rows[i] = rows[i].Substring(0, rows[i].Length - 1);
 
+                        int versionMajor = System.DateTime.Now.Year - 2015;  // Igpaw's first release was in 2015
+                        int versionMinor = System.DateTime.Now.Month;
+                        int versionRevision = System.DateTime.Now.Day;
+                        string versionString = versionMajor + "." + versionMinor + "." + versionRevision;
+                        int versionCode = versionMajor * 10000 + versionMinor * 100 + versionRevision;
+
+                        if (rows[i].StartsWith("  bundleVersion: "))
+                            rows[i] = "  bundleVersion: " + versionString;
+                        if (rows[i].StartsWith("    iOS: ") && rows[i][9] >= '0' && rows[i][9] <= '9' && rows[i].Length > 10 && rows[i][10] >= '0' && rows[i][10] <= '9')
+                            rows[i] = "    iOS: " + versionCode;
+                        if (rows[i].StartsWith("  AndroidBundleVersionCode: "))
+                            rows[i] = "  AndroidBundleVersionCode: " + versionCode;
                         if (rows[i].StartsWith("  productName: "))
                             rows[i] = "  productName: '" + cols[0].Replace("'", "''") + "'";
                         if (rows[i].StartsWith("    iOS: ") && rows[i][9] >= 'a' && rows[i][9] <= 'z')

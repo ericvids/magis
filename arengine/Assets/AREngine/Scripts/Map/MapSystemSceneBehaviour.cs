@@ -14,6 +14,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
 using System.IO;
@@ -520,7 +521,28 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             }
 
             if (! gameState.GetFlag("M0%Scene1%End"))
-                gameState.LoadARScene("M0%Scene1");
+            {
+                // special handling for tutorial: auto-start it if it exists and it hasn't been played
+                bool tutorialExists = false;
+                for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+                {
+                    string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+                    scenePath = scenePath.Substring(scenePath.LastIndexOf("/") + 1);
+                    if (scenePath == "M0%Scene1.unity")
+                        tutorialExists = true;
+                }
+                if (tutorialExists)
+                    gameState.LoadARScene("M0%Scene1");
+                else
+                {
+                    gameState.SetFlag("M0%Scene1%End", true);
+                    if (! playedMusic)
+                    {
+                        buttonCanvas.PlayMusic(backgroundMusic);
+                        playedMusic = true;
+                    }
+                }
+            }
 
             if (gameState.loadingNewScene)
             {

@@ -38,10 +38,13 @@ public class GameStateBehaviour : MonoBehaviour
         if (baseScene != null)
             return;
 
-        buttonCanvas.StopMusic();
-        subsceneName = null;
         baseScene = SceneManager.LoadSceneAsync(sceneName);
-        baseScene.allowSceneActivation = false;
+        if (baseScene != null)
+        {
+            baseScene.allowSceneActivation = false;
+            buttonCanvas.StopMusic();
+            subsceneName = null;
+        }
     }
 
     public void LoadARScene(string sceneName)
@@ -49,11 +52,14 @@ public class GameStateBehaviour : MonoBehaviour
         if (baseScene != null)
             return;
 
-        buttonCanvas.StopMusic();
-        subsceneName = null;
         baseScene = SceneManager.LoadSceneAsync(sceneName);
-        addedScene = SceneManager.LoadSceneAsync("ARScene", LoadSceneMode.Additive);
-        baseScene.allowSceneActivation = false;
+        if (baseScene != null)
+        {
+            baseScene.allowSceneActivation = false;
+            buttonCanvas.StopMusic();
+            subsceneName = null;
+            addedScene = SceneManager.LoadSceneAsync("ARScene", LoadSceneMode.Additive);
+        }
     }
 
     public void LoadARSubscene(string subsceneName)

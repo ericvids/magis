@@ -353,6 +353,7 @@ public class ARSceneBehaviour : SceneBehaviour
             }
             else if (parameters[0] == "@exit")
             {
+                gameState.SaveFlags();
                 if (! isSubscene)
                 {
                     buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
@@ -718,7 +719,10 @@ public class ARSceneBehaviour : SceneBehaviour
                 startTime = -1;
             }
             buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
-            buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
+            if (gameState.GetFlag(gameState.sceneName + "%PitchOnly"))
+                buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, "Tilt your device up or down to choose an object.");
+            else
+                buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
 
             if (engine.isARMarkerActuallyVisible)
                 startWithoutMarker = false;  // we found the marker legitimately; set this false in case we started without the marker
