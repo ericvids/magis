@@ -275,9 +275,9 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 1, null);
             buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 2, null);
 
-            if (gameState.GetFlag("M0%Scene1%End") && gameEnded)
+            if (gameEnded)
             {
-                playedMusic = true;
+                playedMusic = true;  // promise to play music immediately after dialog box
                 buttonCanvas.StopMusic();
                 buttonCanvas.PreloadSound(backgroundMusic);
                 buttonCanvas.ShowQuestionOverlay(
@@ -294,10 +294,18 @@ public class MapSystemSceneBehaviour : SceneBehaviour
         }
         buttonCanvas.showDynamicGroup = false;
 
-        if (gameState.GetFlag("M0%Scene1%End") && ! playedMusic)
+        // if tutorial has not been played, do not start the music
+        if ((gameState.GetFlag("M0%Scene1%End") || gameState.GetFlag("Global%FinishedFirstTutorial")) && ! playedMusic)
         {
             buttonCanvas.PlayMusic(backgroundMusic);
             playedMusic = true;
+        }
+
+        // playedMusic flag doubles as a signal to not start with the tutorial anymore
+        if (playedMusic)
+        {
+            gameState.SetFlag("M0%Scene1%End", true);
+            gameState.SetFlag("Global%FinishedFirstTutorial", true);
         }
     }
 
@@ -531,11 +539,15 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                     if (scenePath == "M0%Scene1.unity")
                         tutorialExists = true;
                 }
-                if (tutorialExists)
+                // if the music has been played, the tutorial is being played due to a user retrigger;
+                // if the music has NOT been played, play the tutorial only if it has not run before
+                // (this prevents the edge case where the player retriggers the tutorial then exits the game)
+                if (tutorialExists && (playedMusic || ! gameState.GetFlag("Global%FinishedFirstTutorial")))
                     gameState.LoadARScene("M0%Scene1");
                 else
                 {
                     gameState.SetFlag("M0%Scene1%End", true);
+                    gameState.SetFlag("Global%FinishedFirstTutorial", true);
                     if (! playedMusic)
                     {
                         buttonCanvas.PlayMusic(backgroundMusic);

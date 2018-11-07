@@ -601,7 +601,7 @@ public class ARSceneBehaviour : SceneBehaviour
                 SetupObjects();
             }
 
-            if (gameState.sceneName == "M0%Scene1" && ! gameState.GetFlag("M0%Scene1%End") && ! introTextShown)
+            if (gameState.sceneName == "M0%Scene1" && ! gameState.GetFlag("Global%FinishedFirstTutorial") && ! introTextShown)
             {
                 buttonCanvas.ShowQuestionOverlay(
                     "Before we begin, let us do a quick tutorial.\n\nWe will now calibrate your device. Make sure your camera lens is unobstructed.",

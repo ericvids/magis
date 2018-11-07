@@ -84,7 +84,9 @@ public class MapSystemBehaviour : MonoBehaviour
     private Dictionary<string, float>  waypointDiameters    = new Dictionary<string, float>();
     private string                     draggingWaypoint     = null;
 
+#if ! MAGIS_NOGPS
     private double lastLocationTimestamp    = 0.0;
+#endif
     private float  lastRealTime             = 0.0f;
     private bool   validated                = false;
     private bool   withinMap                = false;
@@ -1082,6 +1084,26 @@ public class MapSystemBehaviour : MonoBehaviour
         }
 #endif
 
+#if MAGIS_NOGPS
+        // even though the compass orientation doesn't show on the map in no-gps mode,
+        // we calculate it here so that GetDeviceCompassOrientation() may be used outside
+        if (! Input.compass.enabled)
+            Input.compass.enabled = true;
+        float compassLerp = Time.deltaTime;  // reaction time of 1 second
+        Quaternion newCompass = Quaternion.Slerp(
+                                    Quaternion.Euler(0.0f, filteredCompass, 0.0f),
+                                    Quaternion.Euler(0.0f, Input.compass.magneticHeading, 0.0f),
+                                    compassLerp
+                                );
+        Vector3 axis;
+        newCompass.ToAngleAxis(out filteredCompass, out axis);
+        if (axis.y < 0.0f)  // handle singularity
+            filteredCompass = -filteredCompass;
+        SetWaypointOrientation("#mapsystem#compass", filteredCompass);
+
+        // TODO use alternative method to find user's position
+        withinMap = false;
+#else
         // update the device position
         if (Input.location.status == LocationServiceStatus.Running)
         {
@@ -1122,16 +1144,18 @@ public class MapSystemBehaviour : MonoBehaviour
             if (Input.location.status == LocationServiceStatus.Stopped
                 || Input.location.status == LocationServiceStatus.Failed)
             {
-#if UNITY_EDITOR || UNITY_STANDALONE
-#else
+# if UNITY_EDITOR || UNITY_STANDALONE
+# else
                 Input.location.Start(0.1f, 0.1f);
-#endif
+# endif
                 lastLocationTimestamp = 0.0;
                 lastRealTime = Time.realtimeSinceStartup;
-                Input.compass.enabled = true;
+                if (! Input.compass.enabled)
+                    Input.compass.enabled = true;
             }
             withinMap = false;
         }
+#endif
         if (withinMap && Time.realtimeSinceStartup - lastRealTime < gpsTimeout)
         {
             SetWaypointColor("#mapsystem#compass", compassColor);

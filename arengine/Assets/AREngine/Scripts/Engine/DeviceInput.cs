@@ -274,6 +274,9 @@ public class DeviceInput
     {
         get
         {
+#if MAGIS_NOGPS
+            return true;
+#else
             if (GameObject.FindWithTag("AREngine") != null)
             {
                 if (Input.location.status == LocationServiceStatus.Running)
@@ -284,6 +287,7 @@ public class DeviceInput
                 return true;  // don't warn about turning on location in title screen
             else
                 return Input.location.status == LocationServiceStatus.Running;
+#endif
         }
     }
 
@@ -291,7 +295,7 @@ public class DeviceInput
     {
         get
         {
-#if UNITY_ANDROID && ! UNITY_EDITOR
+#if UNITY_ANDROID && ! UNITY_EDITOR && ! MAGIS_NOGPS
             return Input.location.status != LocationServiceStatus.Running
                    || androidActivity.Call<AndroidJavaObject>("getSystemService", "location").Call<bool>("isProviderEnabled", "gps");
 #else

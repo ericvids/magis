@@ -28,6 +28,16 @@ public class Autorun
     public static bool readyToBuild = false;
     public static bool singleGameProject = false;
 
+    enum ARGameList
+    {
+        GPS_SUPPORT = 0,
+        PRODUCT_NAME,
+        IOS_ID,
+        ANDROID_ID,
+        CLOUD_PROJECT_ID,
+        CLOUD_PROJECT_NAME
+    };
+
     static Autorun()
     {
         EditorApplication.update += Update;
@@ -42,8 +52,8 @@ public class Autorun
                 if (rows[i].EndsWith("\r"))
                     rows[i] = rows[i].Substring(0, rows[i].Length - 1);
                 string[] cols = rows[i].Split(',');
-                if (cols.Length > 3)
-                    productNameToCloudProjectId[cols[0]] = cols[3];
+                if (cols.Length > (int) ARGameList.CLOUD_PROJECT_ID)
+                    productNameToCloudProjectId[cols[(int) ARGameList.PRODUCT_NAME]] = cols[(int) ARGameList.CLOUD_PROJECT_ID];
             }
         }
         catch (Exception)
@@ -245,7 +255,7 @@ public class Autorun
                 if (rows[i].EndsWith("\r"))
                     rows[i] = rows[i].Substring(0, rows[i].Length - 1);
                 string[] cols = rows[i].Split(',');
-                if (cols[0] == Application.productName)
+                if (cols[(int) ARGameList.PRODUCT_NAME] == Application.productName)
                 {
                     reader = new StreamReader("ProjectSettings/ProjectSettings.asset");
                     rows = reader.ReadToEnd().Split('\n');
@@ -269,15 +279,15 @@ public class Autorun
                         if (rows[i].StartsWith("  AndroidBundleVersionCode: "))
                             rows[i] = "  AndroidBundleVersionCode: " + versionCode;
                         if (rows[i].StartsWith("  productName: "))
-                            rows[i] = "  productName: '" + cols[0].Replace("'", "''") + "'";
+                            rows[i] = "  productName: '" + cols[(int) ARGameList.PRODUCT_NAME].Replace("'", "''") + "'";
                         if (rows[i].StartsWith("    iOS: ") && rows[i][9] >= 'a' && rows[i][9] <= 'z')
-                            rows[i] = "    iOS: " + cols[1];
+                            rows[i] = "    iOS: " + cols[(int) ARGameList.IOS_ID];
                         if (rows[i].StartsWith("    Android: ") && rows[i][13] >= 'a' && rows[i][13] <= 'z')
-                            rows[i] = "    Android: " + cols[2];
+                            rows[i] = "    Android: " + cols[(int) ARGameList.ANDROID_ID];
                         if (rows[i].StartsWith("  cloudProjectId: "))
-                            rows[i] = "  cloudProjectId: " + cols[3];
+                            rows[i] = "  cloudProjectId: " + cols[(int) ARGameList.CLOUD_PROJECT_ID];
                         if (rows[i].StartsWith("  projectName: "))
-                            rows[i] = "  projectName: '" + cols[4].Replace("'", "''") + "'";
+                            rows[i] = "  projectName: '" + cols[(int) ARGameList.CLOUD_PROJECT_NAME].Replace("'", "''") + "'";
                         if (rows[i].StartsWith("  androidSplashScreen: {fileID: 2800000, guid: "))
                         {
                             reader = new StreamReader("Assets/ARGames/" + DeviceInput.GameName() + "/Resources/LoadingScreen.png.meta");
@@ -295,9 +305,9 @@ public class Autorun
                             rows[i] = "      m_Icon: {fileID: 2800000, guid: " + guid + ", type: 3}";
                         }
                         if (rows[i].StartsWith("    4: VUFORIA_IOS_SETTINGS"))
-                            rows[i] = "    4: VUFORIA_IOS_SETTINGS;MAGIS_" + DeviceInput.GameName();
+                            rows[i] = "    4: VUFORIA_IOS_SETTINGS;MAGIS_" + DeviceInput.GameName() + (int.Parse(cols[(int) ARGameList.GPS_SUPPORT]) == 0 ? ";MAGIS_NOGPS" : "");
                         if (rows[i].StartsWith("    7: VUFORIA_ANDROID_SETTINGS"))
-                            rows[i] = "    7: VUFORIA_ANDROID_SETTINGS;MAGIS_" + DeviceInput.GameName();
+                            rows[i] = "    7: VUFORIA_ANDROID_SETTINGS;MAGIS_" + DeviceInput.GameName() + (int.Parse(cols[(int) ARGameList.GPS_SUPPORT]) == 0 ? ";MAGIS_NOGPS" : "");
                     }
                     if (rows[rows.Length - 1] == "")
                         Array.Resize(ref rows, rows.Length - 1);

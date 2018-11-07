@@ -184,7 +184,7 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
             });
         }
 #endif
-        buttonCanvas.ShowQuestionOverlay("Are you sure you want to reset the game and restart from the very beginning?",
+        buttonCanvas.ShowQuestionOverlay("Are you sure you want to reset your game progress?",
                                          "Reset",
                                          "Do not reset",
                                          delegate(string pressedButton)
@@ -194,7 +194,7 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
                 buttonCanvas.ShowOptionsOverlay();
             else
             {
-                buttonCanvas.ShowQuestionOverlay("Are you REALLY sure?\n\nAll game progress will be lost and you will start from the opening tutorial.",
+                buttonCanvas.ShowQuestionOverlay("Are you REALLY sure?\n\nALL YOUR CURRENT PROGRESS WILL BE LOST.\nYou will restart from the very beginning.",
                                                  "Do not reset",
                                                  "I'm sure, reset!",
                                                  delegate(string pressedButton2)
@@ -260,6 +260,7 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
         buttonCanvas.HideOverlay();
 
         bool sceneFinished = gameState.GetFlag(gameState.sceneName + "%End")
+                             || gameState.sceneName == "M0%Scene1" && gameState.GetFlag("Global%FinishedFirstTutorial")
                              || gameState.GetFlag("Global%Module" + gameState.moduleName.Substring(1) + "End");
         if (sceneFinished)
         {
@@ -277,7 +278,7 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
             return;
         }
 
-        bool tutorial = (gameState.sceneName == "M0%Scene1" && ! gameState.GetFlag("M0%Scene1%End"));
+        bool tutorial = (gameState.sceneName == "M0%Scene1");
         buttonCanvas.ShowQuestionOverlay(tutorial ? "Are you sure you want to skip the tutorial?\n\nYou can still access the tutorial in the future by tapping \"Replay tutorial\" in the Options screen."
                                                   : "You are not finished here yet! Are you sure you want to return to the map screen?\n\nYour current progress here will be saved.",
                                          tutorial ? "Skip tutorial" : "Return to map",
