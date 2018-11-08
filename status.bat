@@ -1,5 +1,5 @@
 @echo off
-git status --ignored=matching --untracked-files
+git status --ignored
 echo.
 echo Skipped files:
 git ls-files -v | grep "^[^H]"

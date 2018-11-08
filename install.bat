@@ -19,6 +19,7 @@ for %%f in (arengine\*.apk) do (
             rem DO NOT PUSH FILES DIRECTLY TO AN ANDROID OBB DIRECTORY. Samsung Galaxy Tab S has a problem with this.
             "%ANDROID_HOME%\platform-tools\adb" shell mkdir /sdcard/Android/obb/%%b
             "%ANDROID_HOME%\platform-tools\adb" shell mv /sdcard/main.%%o.%%b.obb /sdcard/Android/obb/%%b/
+            goto :end
         )
     )
 )
