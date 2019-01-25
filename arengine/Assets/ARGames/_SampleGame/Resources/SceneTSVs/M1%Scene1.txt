@@ -203,13 +203,20 @@ Ateneo Seal	-	Autorun	-	@playsound SystemStart
 				Aria#You might need to charge your mobile device. Or maybe you have things to do in your world.
 				@animate Agent_Aria Talk
 				Aria#When you feel like helping us out, just check your Spirit Gear to see where your skills are needed.
+				@showstill Picture_Badge
 				@animate Agent_Aria Talk
 				Aria#Ah, I almost forgot. Take this badge. It's proof that you're a member of the Department of M.A.G.I.S.
 				@animate Agent_Aria Yes
 				Aria#Take care of yourself. See you again soon!
+				@hidestill Picture_Badge
 				@set Progress 5
 				@settrue End
-				Congratulations! You've completed Module 1!
+				@showstill Picture_Card
+				Congratulations! You've completed Module 1! You earned a [card]!
+				@incr Album%CardCount
+				@settrue Album%Card15
+				@card Card15
+				You may view all the cards that you have collected so far in the [Album], accessible from the Map screen.
 				It is highly recommended that you take a break after each module and resume play on the following day.
 				@exit
 		Use_[Immortal_Key]_	Progress==2	@animate Agent_Aria No

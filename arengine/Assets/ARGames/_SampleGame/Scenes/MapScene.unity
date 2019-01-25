@@ -202,7 +202,10 @@ MonoBehaviour:
   selectedColor: {r: 1, g: 0, b: 1, a: 1}
   segmentColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   directionsColor: {r: 0, g: 1, b: 1, a: 1}
+  buttonColor: {r: 1, g: 1, b: 1, a: 1}
+  panelColor: {r: 1, g: 1, b: 1, a: 1}
   enterRadiusSquared: 500
+  enterTimeout: 30
   backgroundMusic: BGM6
   selectMarkerStatus: Tap a red marker, then navigate to it in the real world!
   navigateMarkerStatus: Switch to compass view by tapping Navigate!

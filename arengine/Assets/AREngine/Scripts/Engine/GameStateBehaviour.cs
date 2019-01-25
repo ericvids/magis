@@ -43,6 +43,7 @@ public class GameStateBehaviour : MonoBehaviour
         {
             baseScene.allowSceneActivation = false;
             buttonCanvas.StopMusic();
+            glowingButton = null;
             subsceneName = null;
         }
     }
@@ -57,6 +58,7 @@ public class GameStateBehaviour : MonoBehaviour
         {
             baseScene.allowSceneActivation = false;
             buttonCanvas.StopMusic();
+            glowingButton = null;
             subsceneName = null;
             addedScene = SceneManager.LoadSceneAsync("ARScene", LoadSceneMode.Additive);
         }
@@ -72,6 +74,59 @@ public class GameStateBehaviour : MonoBehaviour
     public void UnloadARSubscene()
     {
         subsceneName = null;
+    }
+
+    public void ReturnToMap()
+    {
+        bool sceneFinished = GetFlag(sceneName + "%End")
+                             || sceneName == "M0%Scene1" && GetFlag("Global%FinishedFirstTutorial")
+                             || GetFlag("Global%Module" + moduleName.Substring(1) + "End");
+        bool secretAvailable = GetFlag(sceneName + "%SecretAvailable");
+        if (sceneFinished && ! secretAvailable)
+        {
+            LoadScene("MapScene");
+            buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
+            buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
+            buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
+            buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
+            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
+            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
+            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 2, null);
+            buttonCanvas.showDynamicGroup = false;
+            buttonCanvas.SetDialogue(null);
+            return;
+        }
+
+        bool tutorial = (sceneName == "M0%Scene1");
+        buttonCanvas.ShowQuestionOverlay(tutorial ? "Are you sure you want to skip the tutorial?\n\nYou can still access the tutorial in the future by tapping \"Replay tutorial\" in the Options screen."
+                                                  : (sceneFinished && secretAvailable) ? "You seem to be done here, but are you sure you want to leave now?\n\nYou might be leaving something behind..."
+                                                                                       : "You are not finished here yet! Are you sure you want to leave now?\n\nIf you leave now, your current progress here will be saved so you can continue the game later.",
+                                         tutorial ? "Skip tutorial" : "Leave",
+                                         "Continue playing",
+                                         delegate(string pressedButton)
+        {
+            buttonCanvas.HideOverlay();
+            if (pressedButton != "Continue playing")
+            {
+                if (tutorial)
+                {
+                    SetFlag("M0%Scene1%End", true);
+
+                    // Send an analytics event when the tutorial is skipped
+                    UnityAnalyticsIntegration.TutorialSkip (this, sceneName);
+                }
+                LoadScene("MapScene");
+                buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
+                buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
+                buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
+                buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 2, null);
+                buttonCanvas.showDynamicGroup = false;
+                buttonCanvas.SetDialogue(null);
+            }
+        });
     }
 
     public string moduleName
@@ -264,6 +319,9 @@ public class GameStateBehaviour : MonoBehaviour
     {
         bool stillTrue = true;
         bool negate = false;
+
+        if (flags == "-")
+            return true;
 
         // eliminate special cases
         flags = flags

@@ -30,8 +30,11 @@ public class MapSystemSceneBehaviour : SceneBehaviour
     public Color selectedColor            = Color.magenta;
     public Color segmentColor             = Color.gray;
     public Color directionsColor          = Color.cyan;
+    public Color buttonColor              = Color.white;
+    public Color panelColor               = Color.white;
 
     public float enterRadiusSquared       = 500.0f;
+    public float enterTimeout             = 30.0f;
     public string backgroundMusic         = "BGM6";
 
     public string selectMarkerStatus      = "Tap a red marker, then navigate to it in the real world!";
@@ -47,6 +50,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
     public string normalResetPrompt       = "Replaying $. Do you wish to proceed?";
     public string specialResetPrompt      = "Replaying $. Since this module is marked \"special\", you are seeing this message instead. (Blame your programmer for not changing this string.) Do you wish to proceed?";
 
+    private bool albumEnabled = false;
     private MapSystemBehaviour mapSystem;
     private TSVLookup tsv;
     private bool hasIncrementedModuleNumber = false;
@@ -66,7 +70,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
     private int nearestWaypoint = -1;
     private int targetWaypoint = -1;
     private Vector3 lastGPSPosition = Vector3.zero;
-    private float timeSinceLastGPSPosition = 0.0f;
+    private float timeSinceGPSWasClose = float.PositiveInfinity;
     private string nearestSegmentSource;
     private string nearestSegmentDest;
 
@@ -127,6 +131,12 @@ public class MapSystemSceneBehaviour : SceneBehaviour
     {
         if (! Init())
             return;
+
+        // determine if we have an album
+        if (Resources.Load<TextAsset>("Cards/Album") != null)
+            albumEnabled = true;
+
+        // load map components
         mapSystem = GetComponent<MapSystemBehaviour>();
         tsv = new TSVLookup("MapTSV");
 
@@ -229,7 +239,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
         visited = new bool[numWaypoints];
         nearestWaypoint = targetWaypoint = -1;
         lastGPSPosition = Vector3.zero;
-        timeSinceLastGPSPosition = 0.0f;
+        timeSinceGPSWasClose = float.PositiveInfinity;
         nearestSegmentSource = nearestSegmentDest = null;
 
         // read segments
@@ -251,6 +261,8 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             mapSystem.SetDeviceShowing(true);
             mapSystem.SetWaypointDragging(true);
             buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
+            buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
+            buttonCanvas.SetColors(buttonColor, panelColor);
             buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
             buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
             buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
@@ -271,7 +283,8 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             mapSystem.SetDeviceShowing(! gameEnded);
             mapSystem.SetWaypointDragging(false);
             buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
-            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 2, null);
+            buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
+            buttonCanvas.SetColors(buttonColor, panelColor);
             buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 1, null);
             buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 2, null);
 
@@ -320,7 +333,6 @@ public class MapSystemSceneBehaviour : SceneBehaviour
         if (currentGPSPosition != lastGPSPosition || target != targetWaypoint)
         {
             lastGPSPosition = currentGPSPosition;
-            timeSinceLastGPSPosition = Time.realtimeSinceStartup;
             mapSystem.SetSegmentColor(nearestSegmentSource, nearestSegmentDest, segmentColor, 1);
             mapSystem.GetSegmentClosestToPoint(lastGPSPosition, out nearestSegmentSource, out nearestSegmentDest, out distance, out lerp);
 
@@ -621,6 +633,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                 }
                 else
                 {
+                    timeSinceGPSWasClose = float.PositiveInfinity;
                     SetCurrentWaypoint(newWaypoint);
                     newWaypoint = null;
                 }
@@ -645,19 +658,18 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                                       - mapSystem.GetWaypointPosition(currentWaypoint)).sqrMagnitude;
                     if (distance <= enterRadiusSquared)
                     {
-                        // since we're within distance, do not allow the warning dialog to display after 30 seconds if player doesn't move
-                        timeSinceLastGPSPosition = Time.realtimeSinceStartup;
+                        // since we're within distance, gps is definitely close enough
+                        timeSinceGPSWasClose = float.NegativeInfinity;
                     }
                     else if (distance <= enterRadiusSquared * 4)
                     {
-                        // only allow entering if player has not moved for at least 30 seconds
-                        if (Time.realtimeSinceStartup - timeSinceLastGPSPosition < 30.0f)
-                            enter = false;
+                        if (float.IsPositiveInfinity(timeSinceGPSWasClose))
+                            timeSinceGPSWasClose = Time.realtimeSinceStartup;
                     }
-                    else
-                    {
+
+                    // only allow entering if player has been close for at least enterTimeout seconds
+                    if (Time.realtimeSinceStartup - timeSinceGPSWasClose < enterTimeout)
                         enter = false;
-                    }
 
                     if (enter)
                     {
@@ -727,19 +739,24 @@ public class MapSystemSceneBehaviour : SceneBehaviour
 
                 if (minDistance <= enterRadiusSquared)
                 {
-                    // since we're within distance, do not allow the warning dialog to display after 30 seconds if player doesn't move
-                    timeSinceLastGPSPosition = Time.realtimeSinceStartup;
+                    // since we're within distance, gps is definitely close enough
+                    timeSinceGPSWasClose = float.NegativeInfinity;
                 }
                 else if (minDistance <= enterRadiusSquared * 4)
                 {
-                    // only allow autowaypoint to persist if player has not moved for at least 30 seconds
-                    if (Time.realtimeSinceStartup - timeSinceLastGPSPosition < 30.0f)
-                        autoWaypoint = null;
+                    if (float.IsPositiveInfinity(timeSinceGPSWasClose))
+                        timeSinceGPSWasClose = Time.realtimeSinceStartup;
                 }
                 else
                 {
-                    autoWaypoint = null;
+                    // auto-waypoint must reset when we're too far from any place
+                    // (or else player can cheat going to a faraway place by just getting halfway there)
+                    timeSinceGPSWasClose = float.PositiveInfinity;
                 }
+
+                // only allow auto-waypoint if player has been close for at least enterTimeout seconds
+                if (Time.realtimeSinceStartup - timeSinceGPSWasClose < enterTimeout)
+                    autoWaypoint = null;
 
                 if (autoWaypoint != null)
                 {
@@ -765,19 +782,29 @@ public class MapSystemSceneBehaviour : SceneBehaviour
 
             // static buttons are always there
             buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, "Options");
+            int nextButton = 1;
+            if (albumEnabled)
+            {
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, "Album");
+                nextButton = 2;
+            }
             if (! gameEnded && zoomCountdown == 0.0f && ! mapSystem.IsCentered() && mapSystem.IsDeviceGPSPositionWithinMap())
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, "Recenter");
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, "Recenter");
             else if (! gameEnded && zoomCountdown == 0.0f && ! mapSystem.IsTopView() && mapSystem.IsDeviceGPSPositionWithinMap())
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, "Top view");
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, "Top view");
             else if (! gameEnded && zoomCountdown == 0.0f && currentWaypoint != null)
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, "Cancel", "navigation");
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, "Cancel");
             else
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, null);
+            if (nextButton == 1)
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton + 1, null);
 
             // process pressed buttons
             string sceneName;
             if (buttonCanvas.pressedButton == "Options")
                 buttonCanvas.ShowOptionsOverlay();
+            else if (buttonCanvas.pressedButton == "Album")
+                buttonCanvas.ShowCardOverlay("Album");
             else if (buttonCanvas.pressedButton == "Recenter")
                 mapSystem.Recenter();
             else if (buttonCanvas.pressedButton == "Top view")
@@ -790,6 +817,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             else if (buttonCanvas.pressedButton == "Cancel")
             {
                 mapSystem.ShowWaypoints(activeWaypoints, true);
+                timeSinceGPSWasClose = float.PositiveInfinity;
                 SetCurrentWaypoint(null);
             }
             else if (buttonCanvas.pressedButton == "Navigate to")
@@ -821,7 +849,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             {
                 if (currentWaypoint == null)
                     SetCurrentWaypoint(autoWaypoint);
-                if (Time.realtimeSinceStartup - timeSinceLastGPSPosition >= 30.0f)
+                if (! float.IsNegativeInfinity(timeSinceGPSWasClose))
                 {
                     buttonCanvas.ShowQuestionOverlay(
                         notWithinMarkerPrompt.Replace("$", mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[0]),

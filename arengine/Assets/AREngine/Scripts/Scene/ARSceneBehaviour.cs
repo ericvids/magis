@@ -347,6 +347,10 @@ public class ARSceneBehaviour : SceneBehaviour
             {
                 buttonCanvas.ShowCreditsOverlay();
             }
+            else if (parameters[0] == "@card")
+            {
+                buttonCanvas.ShowCardOverlay(parameters[1]);
+            }
             else if (parameters[0] == "@resetautorun")
             {
                 autorun.Clear();
@@ -354,28 +358,19 @@ public class ARSceneBehaviour : SceneBehaviour
             else if (parameters[0] == "@exit")
             {
                 gameState.SaveFlags();
-                if (! isSubscene)
+                dialogue = null;
+                buttonCanvas.SetDialogue(null);
+                if (isSubscene)
                 {
-                    buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
-                    buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
-                    buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
+                    finished = true;
+                    buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
+                    buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
+                    buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
+                    buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 2, null);
+                    buttonCanvas.showDynamicGroup = false;
                 }
                 else
-                    finished = true;
-                // special case: do not remove fader/still on @exit
-                // (code kept here in case of future refactoring)
-                //buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
-                buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 2, null);
-                buttonCanvas.showDynamicGroup = false;
-                buttonCanvas.SetDialogue(null);
-                if (! isSubscene)
-                {
-                    gameState.glowingButton = null;
-                    gameState.LoadScene("MapScene");
-                }
+                    gameState.ReturnToMap();
                 return false;  // script is done
             }
             else if (parameters[0] == "@analytics")

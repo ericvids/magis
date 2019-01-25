@@ -2077,6 +2077,8 @@ MonoBehaviour:
   optionsCanvas: {fileID: 22454240, guid: 6cc24a2a6b3a84d439f7d539d5cab528, type: 2}
   questionCanvas: {fileID: 22428804, guid: 00c889e0f9dc8174a9ffad0d64111223, type: 2}
   creditsCanvas: {fileID: 22451060, guid: 26ebf550ac1ae3b419661a55cfa3f742, type: 2}
+  cardCanvas: {fileID: 224135518727848598, guid: 32fb5a8c96c97a847bf74c5de222c909,
+    type: 2}
   overlayCanvas: {fileID: 0}
   oldOverlayCanvas: {fileID: 0}
 --- !u!114 &1179412165

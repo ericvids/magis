@@ -258,56 +258,7 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
         }
 
         buttonCanvas.HideOverlay();
-
-        bool sceneFinished = gameState.GetFlag(gameState.sceneName + "%End")
-                             || gameState.sceneName == "M0%Scene1" && gameState.GetFlag("Global%FinishedFirstTutorial")
-                             || gameState.GetFlag("Global%Module" + gameState.moduleName.Substring(1) + "End");
-        if (sceneFinished)
-        {
-            gameState.LoadScene("MapScene");
-            buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
-            buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
-            buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
-            buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
-            buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
-            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
-            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
-            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 2, null);
-            buttonCanvas.showDynamicGroup = false;
-            buttonCanvas.SetDialogue(null);
-            return;
-        }
-
-        bool tutorial = (gameState.sceneName == "M0%Scene1");
-        buttonCanvas.ShowQuestionOverlay(tutorial ? "Are you sure you want to skip the tutorial?\n\nYou can still access the tutorial in the future by tapping \"Replay tutorial\" in the Options screen."
-                                                  : "You are not finished here yet! Are you sure you want to return to the map screen?\n\nYour current progress here will be saved.",
-                                         tutorial ? "Skip tutorial" : "Return to map",
-                                         "Continue playing",
-                                         delegate(string pressedButton)
-        {
-            buttonCanvas.HideOverlay();
-            if (pressedButton != "Continue playing")
-            {
-                if (tutorial)
-                {
-                    gameState.SetFlag("M0%Scene1%End", true);
-
-                    // Send an analytics event when the tutorial is skipped
-                    UnityAnalyticsIntegration.TutorialSkip (gameState, gameState.sceneName);
-                }
-                gameState.LoadScene("MapScene");
-                buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
-                buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
-                buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
-                buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
-                buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 2, null);
-                buttonCanvas.showDynamicGroup = false;
-                buttonCanvas.SetDialogue(null);
-            }
-        });
+        gameState.ReturnToMap();
     }
 
     public void CloseOptions()

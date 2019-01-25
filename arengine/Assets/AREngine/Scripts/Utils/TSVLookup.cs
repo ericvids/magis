@@ -21,6 +21,8 @@ public class TSVLookup
     public TSVLookup(string path)
     {
         TextAsset asset = Resources.Load<TextAsset>(path);
+        if (asset == null)
+            throw new NullReferenceException();
         string[] rows = asset.text.Replace("\r\n", "\n").Split('\n');
         string[] lastcols = null;
         for (int i = 0; i < rows.Length; i++)

@@ -25,6 +25,11 @@ public class ExampleCustomMapSceneBehaviour : SceneBehaviour
         if (! Init())
             return;
 
+        // make sure the extra features of the button subsystem is disabled at the start
+        // (or else we might not be able to see anything)
+        buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
+        buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
+
         // set the color of the global interface
         buttonCanvas.SetColors(new Color(0.7f, 0.9f, 1.0f), new Color(0.8f, 0.925f, 1.0f));
 

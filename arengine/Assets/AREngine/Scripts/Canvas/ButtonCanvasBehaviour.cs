@@ -50,6 +50,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     public Transform optionsCanvas;
     public Transform questionCanvas;
     public Transform creditsCanvas;
+    public Transform cardCanvas;
 
     public Transform overlayCanvas;
     public Transform oldOverlayCanvas;
@@ -318,7 +319,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         {
             overlayCanvas.GetComponentInChildren<UnityEngine.UI.Image>().color = new Color(panelColor.r / 4.0f, panelColor.g / 4.0f, panelColor.b / 4.0f, 0.75f);
         }
-        else
+        else if (canvas != cardCanvas)
         {
             foreach (var component in overlayCanvas.GetComponentsInChildren<UnityEngine.UI.Image>())
             {
@@ -365,6 +366,16 @@ public class ButtonCanvasBehaviour : MonoBehaviour
             return;
 
         InstantiateCanvas(creditsCanvas);
+    }
+
+    public void ShowCardOverlay(string cardName, string previousCardName = null)
+    {
+        if (overlayCanvas != null)
+            return;
+
+        InstantiateCanvas(cardCanvas);
+        overlayCanvas.GetComponent<CardCanvasBehaviour>().cardName = cardName;
+        overlayCanvas.GetComponent<CardCanvasBehaviour>().previousCardName = previousCardName;
     }
 
     public void HideOverlay()
