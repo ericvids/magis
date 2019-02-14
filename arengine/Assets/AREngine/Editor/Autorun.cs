@@ -17,6 +17,7 @@ using UnityEditor.SceneManagement;
 using System.IO;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 [InitializeOnLoad]
 public class Autorun
@@ -35,7 +36,8 @@ public class Autorun
         IOS_ID,
         ANDROID_ID,
         CLOUD_PROJECT_ID,
-        CLOUD_PROJECT_NAME
+        CLOUD_PROJECT_NAME,
+        KEYALIAS_NAME
     };
 
     static Autorun()
@@ -70,6 +72,14 @@ public class Autorun
             AssetDatabase.ImportAsset("Assets/AREngine/Scripts/Utils/TSVLookup.cs", ImportAssetOptions.ForceUpdate);
             AssetDatabase.Refresh();
         }
+    }
+
+    static string Quotify(string s)
+    {
+        string r = s.Replace("'", "''");
+        if (! Regex.IsMatch(r, @"^[_A-Za-z0-9]*$"))
+            r = "'" + r + "'";
+        return r;
     }
 
     static void Update()
@@ -279,7 +289,7 @@ public class Autorun
                         if (rows[i].StartsWith("  AndroidBundleVersionCode: "))
                             rows[i] = "  AndroidBundleVersionCode: " + versionCode;
                         if (rows[i].StartsWith("  productName: "))
-                            rows[i] = "  productName: '" + cols[(int) ARGameList.PRODUCT_NAME].Replace("'", "''") + "'";
+                            rows[i] = "  productName: " + Quotify(cols[(int) ARGameList.PRODUCT_NAME]);
                         if (rows[i].StartsWith("    iOS: ") && rows[i][9] >= 'a' && rows[i][9] <= 'z')
                             rows[i] = "    iOS: " + cols[(int) ARGameList.IOS_ID];
                         if (rows[i].StartsWith("    Android: ") && rows[i][13] >= 'a' && rows[i][13] <= 'z')
@@ -287,7 +297,21 @@ public class Autorun
                         if (rows[i].StartsWith("  cloudProjectId: "))
                             rows[i] = "  cloudProjectId: " + cols[(int) ARGameList.CLOUD_PROJECT_ID];
                         if (rows[i].StartsWith("  projectName: "))
-                            rows[i] = "  projectName: '" + cols[(int) ARGameList.CLOUD_PROJECT_NAME].Replace("'", "''") + "'";
+                            rows[i] = "  projectName: " + Quotify(cols[(int) ARGameList.CLOUD_PROJECT_NAME]);
+                        if (rows[i].StartsWith("  AndroidKeystoreName: "))
+                        {
+                            if (DeviceInput.GameName() == "_SampleGame")
+                                rows[i] = "  AndroidKeystoreName: ";
+                            else
+                                rows[i] = "  AndroidKeystoreName: " + DeviceInput.GameName() + ".keystore";
+                        }
+                        if (rows[i].StartsWith("  AndroidKeyaliasName: "))
+                        {
+                            if (DeviceInput.GameName() == "_SampleGame")
+                                rows[i] = "  AndroidKeyaliasName: ";
+                            else
+                                rows[i] = "  AndroidKeyaliasName: " + Quotify(cols[(int) ARGameList.KEYALIAS_NAME]);
+                        }
                         if (rows[i].StartsWith("  androidSplashScreen: {fileID: 2800000, guid: "))
                         {
                             reader = new StreamReader("Assets/ARGames/" + DeviceInput.GameName() + "/Resources/LoadingScreen.png.meta");

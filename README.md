@@ -10,7 +10,7 @@ You should have received a copy of the GNU General Public License v2 along with 
 Setup Instructions
 ==================
 
-1.  Install Unity 2018.2.14 (latest version as of this writing).  When prompted, add iOS, Android and Vuforia support.
+1.  Install Unity 2018.3.5 (latest version as of this writing).  When prompted, add iOS, Android and Vuforia support.
 
 2.  Open the arengine/ folder in Unity via the launcher (Projects->Open) or the menu (File->Open Project).
 

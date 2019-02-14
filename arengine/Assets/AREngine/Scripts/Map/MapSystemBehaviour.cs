@@ -15,6 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 #if UNITY_EDITOR
 using System.IO;
@@ -677,10 +678,10 @@ public class MapSystemBehaviour : MonoBehaviour
 #if UNITY_EDITOR
                 if (texture == null)
                 {
-                    using (WWW www = new WWW(tileServerURL + tileZoomLevel + "/" + i + "/" + j + ".png"))
+                    using (UnityWebRequest www = UnityWebRequestTexture.GetTexture(tileServerURL + tileZoomLevel + "/" + i + "/" + j + ".png"))
                     {
-                        yield return www;
-                        texture = www.texture;
+                        yield return www.SendWebRequest();
+                        texture = ((DownloadHandlerTexture) www.downloadHandler).texture;
                         if (! AssetDatabase.IsValidFolder("Assets/ARGames/" + DeviceInput.GameName()))
                             AssetDatabase.CreateFolder("Assets/ARGames/", DeviceInput.GameName());
                         if (! AssetDatabase.IsValidFolder("Assets/ARGames/" + DeviceInput.GameName() + "/Resources"))

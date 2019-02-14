@@ -12,6 +12,7 @@ You should have received a copy of the GNU General Public License v2 along with 
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 using System.Collections;
 using System.IO;
 
@@ -55,15 +56,14 @@ public class TitleSceneBehaviour : SceneBehaviour
     }
 
     private IEnumerator StreamFromOBB(string file, bool doNotIgnore = false)
-    {
-        WWW www = new WWW(Application.streamingAssetsPath + file);
-        while (! www.isDone)
-            yield return null;
+{
+        UnityWebRequest www = UnityWebRequest.Get(Application.streamingAssetsPath + file);
+        yield return www.SendWebRequest();
         if (string.IsNullOrEmpty(www.error))
         {
             try
             {
-                File.WriteAllBytes(Application.persistentDataPath + file, www.bytes);
+                File.WriteAllBytes(Application.persistentDataPath + file, www.downloadHandler.data);
             }
             catch
             {
