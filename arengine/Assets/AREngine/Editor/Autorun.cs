@@ -37,7 +37,8 @@ public class Autorun
         ANDROID_ID,
         CLOUD_PROJECT_ID,
         CLOUD_PROJECT_NAME,
-        KEYALIAS_NAME
+        ANDROID_KEYALIAS_NAME,
+        VUFORIA_LICENSE_KEY
     };
 
     static Autorun()
@@ -77,7 +78,7 @@ public class Autorun
     static string Quotify(string s)
     {
         string r = s.Replace("'", "''");
-        if (! Regex.IsMatch(r, @"^[_A-Za-z0-9]*$"))
+        if (! Regex.IsMatch(r, @"^[ _A-Za-z0-9]*$"))
             r = "'" + r + "'";
         return r;
     }
@@ -310,7 +311,7 @@ public class Autorun
                             if (DeviceInput.GameName() == "_SampleGame")
                                 rows[i] = "  AndroidKeyaliasName: ";
                             else
-                                rows[i] = "  AndroidKeyaliasName: " + Quotify(cols[(int) ARGameList.KEYALIAS_NAME]);
+                                rows[i] = "  AndroidKeyaliasName: " + Quotify(cols[(int) ARGameList.ANDROID_KEYALIAS_NAME]);
                         }
                         if (rows[i].StartsWith("  androidSplashScreen: {fileID: 2800000, guid: "))
                         {
@@ -337,6 +338,32 @@ public class Autorun
                         Array.Resize(ref rows, rows.Length - 1);
 
                     StreamWriter writer = new StreamWriter("ProjectSettings/ProjectSettings.asset");
+                    foreach (string row in rows)
+                    {
+                        writer.WriteLine(row);
+                    }
+                    writer.Close();
+
+                    reader = new StreamReader("Assets/Resources/VuforiaConfiguration.asset");
+                    rows = reader.ReadToEnd().Split('\n');
+                    reader.Close();
+
+                    for (i = 0; i < rows.Length; i++)
+                    {
+                        if (rows[i].EndsWith("\r"))
+                            rows[i] = rows[i].Substring(0, rows[i].Length - 1);
+
+                        if (rows[i].StartsWith("    vuforiaLicenseKey: "))
+                            rows[i] = "    vuforiaLicenseKey: " + cols[(int) ARGameList.VUFORIA_LICENSE_KEY];
+                        else if (rows[i].StartsWith("    ufoLicenseKey: "))
+                            rows[i] = "    ufoLicenseKey: ";
+                        else if (rows[i].StartsWith("    deviceNameSetInEditor: "))
+                            rows[i] = "    deviceNameSetInEditor: ";
+                        else if (rows[i].StartsWith("    turnOffWebCam: "))
+                            rows[i] = "    turnOffWebCam: 1";
+                    }
+
+                    writer = new StreamWriter("Assets/Resources/VuforiaConfiguration.asset");
                     foreach (string row in rows)
                     {
                         writer.WriteLine(row);

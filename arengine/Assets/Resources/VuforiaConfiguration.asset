@@ -64,7 +64,7 @@ MonoBehaviour:
     autoInitTracker: 0
     autoStartTracker: 0
   webcam:
-    deviceNameSetInEditor: c922 Pro Stream Webcam
+    deviceNameSetInEditor: 
     flipHorizontally: 0
     turnOffWebCam: 1
     renderTextureLayer: 30
