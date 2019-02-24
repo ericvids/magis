@@ -65,7 +65,7 @@ M0%Scene1	-	Autorun	-	@playsound SystemStart
 				Aria#If you want to know more about the Department of M.A.G.I.S., you should {Examine} that brochure to my left.
 				@animate Agent_Aria Talk
 				Aria#I will see you again soon. Have a safe journey.
-		Give_[Flower]_	-	@animate Agent_Aria Talk
+		Give_[Flower]#	-	@animate Agent_Aria Talk
 				Aria#Is this for me? Thank you very much.
 				@setfalse M0%Inventory%Flower
 				@select
@@ -134,7 +134,7 @@ M0%Scene1	-	Autorun	-	@playsound SystemStart
 				@show Brochure
 				Strangely enough, the entry for the Department of M.A.G.I.S. does not contain any contact information.
 		Pick_up	-	Maybe you should look for a brochure like this in your world instead. You doubt it will have any information about the Department of M.A.G.I.S., though.
-		Use_[Flower]_	-	You imitate the pose of the M.A.G.I.S. student in the picture. Nothing happens.
+		Use_[Flower]#	-	You imitate the pose of the M.A.G.I.S. student in the picture. Nothing happens.
 	Little_Pepe	Auto	!AutoPepe	A young boy. He looks familiar. Maybe you've seen an older version of him somewhere?
 				@settrue AutoPepe
 		Examine	-	Historical Figure, Philippine National Hero. Currently appears as he did when he was a young student in the Ateneo Municipal de Manila.
@@ -160,7 +160,7 @@ M0%Scene1	-	Autorun	-	@playsound SystemStart
 				Pepe#Finally, use your Spirit Gear to look at Aria and {Give} the flower to her.
 			Progress==3	@animate Little_Pepe Talk
 				Pepe#It was very nice to meet you, friend. Take care.
-		Show_[Flower]_	-	@animate Little_Pepe No
+		Show_[Flower]#	-	@animate Little_Pepe No
 				Pepe#Please give that flower to Agent Aria.
 	-	Put_away_[Flower]	-	@select
 	-	Inventory	M0%Inventory%Flower	@subscene M0%Inventory

@@ -9,6 +9,7 @@ TagManager:
   - ARMarker
   - SceneCamera
   - SubsceneCamera
+  - BTMarker
   - Module1
   - Module2
   - Module3

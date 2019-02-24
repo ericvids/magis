@@ -1,7 +1,5 @@
 Arete	M1%Scene1	Global%Module==1
-	M2%Scene3	Global%Module==2 M2%Scene2a%End M2%Scene2b%End
-	R1_Module 1	Global%Module==3
+	Card21	Global%Module==3
 Faura Hall	M2%Scene1	Global%Module==2
-	R2_Module 2	Global%Module==3
 Old Rizal Library	M2%Scene2a	Global%Module==2 M2%Scene1%End
 Old Comm. Dept. Bldg.	M2%Scene2b	Global%Module==2 M2%Scene1%End

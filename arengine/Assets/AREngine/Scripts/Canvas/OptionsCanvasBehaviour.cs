@@ -13,11 +13,23 @@ You should have received a copy of the GNU General Public License v2 along with 
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Net.NetworkInformation;
 
 public class OptionsCanvasBehaviour : CanvasBehaviour
 {
     private GameStateBehaviour gameState;
     private IAREngine engine;
+
+    public static string GetDeviceId()
+    {
+        string result = SystemInfo.deviceUniqueIdentifier;
+        foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces())
+        {
+            if (nic.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
+                result = nic.GetPhysicalAddress().ToString();
+        }
+        return result;
+    }
 
     private void Start()
     {
@@ -27,7 +39,7 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
 
         GameObject.Find("Panel/AppDetails/AppIconMask/AppIcon").GetComponent<UnityEngine.UI.Image>().sprite = Resources.Load<Sprite>("AppIcon");
         GameObject.Find("Panel/AppDetails/AppTitle").GetComponent<UnityEngine.UI.Text>().text = Application.productName;
-        GameObject.Find("Panel/AppDetails/AppVersion").GetComponent<UnityEngine.UI.Text>().text = "Version " + Application.version + "  <color=#000080>Credits...</color>";
+        GameObject.Find("Panel/AppDetails/AppVersion").GetComponent<UnityEngine.UI.Text>().text = "Version " + Application.version + "  <color=#000080>Credits...</color>  " + GetDeviceId();
 
         bool tutorialExists = false;
         for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)

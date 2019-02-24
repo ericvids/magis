@@ -50,7 +50,6 @@ LightmapSettings:
     m_BounceScale: 1
     m_IndirectOutputScale: 1
     m_AlbedoBoost: 1
-    m_TemporalCoherenceThreshold: 1
     m_EnvironmentLightingMode: 0
     m_EnableBakedLightmaps: 1
     m_EnableRealtimeLightmaps: 1
@@ -117,7 +116,8 @@ NavMeshSettings:
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1593162573}
@@ -134,7 +134,8 @@ GameObject:
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1593162572}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -147,7 +148,8 @@ Transform:
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1593162572}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -190,7 +192,8 @@ MonoBehaviour:
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1593162572}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -207,6 +210,7 @@ MonoBehaviour:
   enterRadiusSquared: 500
   enterTimeout: 30
   backgroundMusic: BGM6
+  endingMusic: BGM1
   selectMarkerStatus: Tap a red marker, then navigate to it in the real world!
   navigateMarkerStatus: Switch to compass view by tapping Navigate!
   followMarkerStatus: Follow the map to $. Stay alert on the road!
@@ -214,7 +218,7 @@ MonoBehaviour:
     Enter to play!
   notWithinMapStatus: You must physically visit the game's geographical area to play
     this game.
-  selectModuleStatus: Tap a red marker to replay a module!
+  endingStatus: Tap Replay to select a game module to replay!
   notWithinMapPrompt: 'WARNING: Your GPS is reporting that you are not inside the
     game''s geographical area.
 
@@ -229,8 +233,4 @@ MonoBehaviour:
 
 
     You may now select any module of the game to replay it. To choose a module, tap
-    one of the markers on the map.'
-  normalResetPrompt: Replaying $. Do you wish to proceed?
-  specialResetPrompt: Replaying $. Since this module is marked "special", you are
-    seeing this message instead. (Blame your programmer for not changing this string.)
-    Do you wish to proceed?
+    Replay.'

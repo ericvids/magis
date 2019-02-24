@@ -62,7 +62,7 @@ Ateneo Seal	-	Autorun	-	@playsound SystemStart
 				Aria#Why do monsters always have to be this stubborn?
 				@animate Agent_Aria Talk
 				Aria#{Fire} your {Anomaly Gun} at the danag again! One more shot should do it.
-		Show_[Anomaly_Gun]_	Progress==1	@stopmusic
+		Show_[Anomaly_Gun]#	Progress==1	@stopmusic
 				@animate Agent_Aria Talk
 				Aria#Good, you're now ready for your first mi---
 				@show Danag
@@ -85,7 +85,7 @@ Ateneo Seal	-	Autorun	-	@playsound SystemStart
 				@set Progress 2
 			Progress>1	@animate Agent_Aria Talk
 				Aria#What is it? Is there something wrong with your Anomaly Gun?
-		Show_[Immortal_Key]_	Progress==1	@stopmusic
+		Show_[Immortal_Key]#	Progress==1	@stopmusic
 				@animate Agent_Aria Talk
 				Aria#Good, you're now ready for your first mi---
 				@show Danag
@@ -116,8 +116,8 @@ Ateneo Seal	-	Autorun	-	@playsound SystemStart
 		Touch	Progress<2	*** Barrier stone status: ARMED ***
 			Progress==2	*** Barrier stone status: ACTIVE ***
 			Progress>2	*** Barrier stone status: DEPLETED ***
-		Aim_[Anomaly_Gun]_	-	Destroying M.A.G.I.S. property isn't going to help you pass this test.
-		Use_[Immortal_Key]_	Progress<2	It looks like the Immortal Key can be used to issue commands to the barrier stone. However, you don't know what the commands are.
+		Aim_[Anomaly_Gun]#	-	Destroying M.A.G.I.S. property isn't going to help you pass this test.
+		Use_[Immortal_Key]#	Progress<2	It looks like the Immortal Key can be used to issue commands to the barrier stone. However, you don't know what the commands are.
 			Progress==2	@playsound Unlock
 				@fade 0 1 1 0.5 0.5
 				@fade 0 0 0 0 0.5
@@ -161,7 +161,7 @@ Ateneo Seal	-	Autorun	-	@playsound SystemStart
 		Talk_to	-	It answers with an eerie wail.
 				@animate Agent_Aria No
 				Aria#Most hostile creatures would take that opportunity to land a free hit on you, you know.
-		Fire_[Anomaly_Gun]_	Progress==2	@animate Agent_Aria No
+		Fire_[Anomaly_Gun]#	Progress==2	@animate Agent_Aria No
 				Aria#Your Anomaly Gun isn't strong enough to penetrate the barrier. {Use} your {Immortal Key} on the barrier stone to disable the shield first.
 			Progress==3	@playsound ShootWeapon
 				@fade 1 1 1 1 0
@@ -213,13 +213,13 @@ Ateneo Seal	-	Autorun	-	@playsound SystemStart
 				@settrue End
 				@showstill Picture_Card
 				Congratulations! You've completed Module 1! You earned a [card]!
-				@incr Album%CardCount
-				@settrue Album%Card15
+				@incr Global%Album%CardCount
+				@settrue Global%Album%Card15
 				@card Card15
 				You may view all the cards that you have collected so far in the [Album], accessible from the Map screen.
 				It is highly recommended that you take a break after each module and resume play on the following day.
 				@exit
-		Use_[Immortal_Key]_	Progress==2	@animate Agent_Aria No
+		Use_[Immortal_Key]#	Progress==2	@animate Agent_Aria No
 				Aria#Use it on the barrier stone, not on the danag.
 			Progress>2	@animate Agent_Aria No
 				Aria#The Immortal Key wasn't designed to be used as a weapon.

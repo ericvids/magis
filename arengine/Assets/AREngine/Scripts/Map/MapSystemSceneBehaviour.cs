@@ -36,19 +36,18 @@ public class MapSystemSceneBehaviour : SceneBehaviour
     public float enterRadiusSquared       = 500.0f;
     public float enterTimeout             = 30.0f;
     public string backgroundMusic         = "BGM6";
+    public string endingMusic             = "BGM1";
 
     public string selectMarkerStatus      = "Tap a red marker, then navigate to it in the real world!";
     public string navigateMarkerStatus    = "Switch to compass view by tapping Navigate!";
     public string followMarkerStatus      = "Follow the map to $. Stay alert on the road!";
     public string enterMarkerStatus       = "MapStatuses/$#Locate the marker area, as shown below, then tap Enter to play!";
     public string notWithinMapStatus      = "You must physically visit the game's geographical area to play this game.";
-    public string selectModuleStatus      = "Tap a red marker to replay a module!";
+    public string endingStatus            = "Tap Replay to select a game module to replay!";
 
     public string notWithinMapPrompt      = "WARNING: Your GPS is reporting that you are not inside the game's geographical area.\n\nYou will need to take a photo of the marker at $. Take a photo now?";
     public string notWithinMarkerPrompt   = "WARNING: Your GPS is reporting that you are around $, but not close to the marker.\n\nYou will need to take a photo of the marker at $. Take a photo now?";
-    public string finishedGamePrompt      = "Congratulations! You have finished the game!\n\nYou may now select any module of the game to replay it. To choose a module, tap one of the markers on the map.";
-    public string normalResetPrompt       = "Replaying $. Do you wish to proceed?";
-    public string specialResetPrompt      = "Replaying $. Since this module is marked \"special\", you are seeing this message instead. (Blame your programmer for not changing this string.) Do you wish to proceed?";
+    public string finishedGamePrompt      = "Congratulations! You have finished the game!\n\nYou may now select any module of the game to replay it. To choose a module, tap Replay.";
 
     private bool albumEnabled = false;
     private MapSystemBehaviour mapSystem;
@@ -102,6 +101,8 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                 string flags = tsv.Lookup(label, scene)[0];
                 if (scene[0] == 'M')
                 {
+                    // a scene will ALWAYS be disabled if it has ended
+                    // (a MapTSV author might omit this flag because it clutters things; force it anyway)
                     flags = flags.Replace("|", " !" + scene + "%End|");
                     flags = flags + " !" + scene + "%End";
                 }
@@ -115,6 +116,8 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             {
                 if (activeScene[0] != 'M')
                     gameEnded = true;
+
+                // add a selectable waypoint
                 activeWaypoints.Add(name);
                 mapSystem.CreateWaypoint(name, Resources.Load<Sprite>("Map/MapMarker"), position);
                 mapSystem.SetWaypointLabel(name, label + ";" + activeScene);
@@ -122,6 +125,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             }
             else
             {
+                // add an invisible waypoint
                 mapSystem.CreateWaypoint(name, null, position);
             }
         }
@@ -224,7 +228,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             {
                 Debug.Log("WARNING: MapTSV.txt did not contain any activatable scenes for module " + gameState.GetFlagIntValue("Global%Module") + "!");
 
-                // prevent infinite loop by not allowing the module number to increment more than once
+                // decrement the module number that we have erroneously incremented
                 if (gameState.GetFlagIntValue("Global%Module") == gameState.GetFlagIntValue("Global%HighestModule"))
                     gameState.SetFlag("Global%HighestModule", gameState.GetFlagIntValue("Global%HighestModule") - 1);
                 gameState.SetFlag("Global%Module", gameState.GetFlagIntValue("Global%Module") - 1);
@@ -290,9 +294,8 @@ public class MapSystemSceneBehaviour : SceneBehaviour
 
             if (gameEnded)
             {
-                playedMusic = true;  // promise to play music immediately after dialog box
-                buttonCanvas.StopMusic();
-                buttonCanvas.PreloadSound(backgroundMusic);
+                buttonCanvas.PlayMusic(endingMusic);
+                playedMusic = true;
                 buttonCanvas.ShowQuestionOverlay(
                     finishedGamePrompt,
                     "Continue playing",
@@ -300,7 +303,6 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                     delegate(string pressedButton)
                     {
                         buttonCanvas.HideOverlay();
-                        buttonCanvas.PlayMusic(backgroundMusic);
                     }
                 );
             }
@@ -533,6 +535,18 @@ public class MapSystemSceneBehaviour : SceneBehaviour
         else
 #endif
         {
+            if (gameState.loadingNewScene)
+            {
+                if (currentWaypoint != null)
+                {
+                    buttonCanvas.SetDynamicGroupOrigin(
+                        Camera.main.WorldToScreenPoint(mapSystem.GetWaypointPosition(currentWaypoint))
+                    );
+                }
+                buttonCanvas.showDynamicGroup = false;
+                return;
+            }
+
             if (gameState.GetFlag("Global%GameEnd") != gameEndFlag)
             {
                 // restart when the flag changes
@@ -566,18 +580,6 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                         playedMusic = true;
                     }
                 }
-            }
-
-            if (gameState.loadingNewScene)
-            {
-                if (currentWaypoint != null)
-                {
-                    buttonCanvas.SetDynamicGroupOrigin(
-                        Camera.main.WorldToScreenPoint(mapSystem.GetWaypointPosition(currentWaypoint))
-                    );
-                }
-                buttonCanvas.showDynamicGroup = false;
-                return;
             }
 
             if (buttonCanvas.overlayShowing)
@@ -648,14 +650,14 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                 if (gameEnded)
                 {
                     buttonCanvas.showDynamicGroup = true;
-                    buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 0, "Replay",
-                                           mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[1].Split('_')[1]);
+                    buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 0, "View",
+                                           mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[0]);
                 }
                 else
                 {
                     bool enter = mapSystem.IsDeviceGPSPositionValidated();
                     float distance = (mapSystem.GetDeviceGPSPosition()
-                                      - mapSystem.GetWaypointPosition(currentWaypoint)).sqrMagnitude;
+                                        - mapSystem.GetWaypointPosition(currentWaypoint)).sqrMagnitude;
                     if (distance <= enterRadiusSquared)
                     {
                         // since we're within distance, gps is definitely close enough
@@ -776,7 +778,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             }
 
             if (gameEnded)
-                buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, selectModuleStatus);
+                buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, endingStatus);
             else if (! mapSystem.IsDeviceGPSPositionWithinMap())
                 buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, notWithinMapStatus);
 
@@ -788,11 +790,13 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                 buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, "Album");
                 nextButton = 2;
             }
-            if (! gameEnded && zoomCountdown == 0.0f && ! mapSystem.IsCentered() && mapSystem.IsDeviceGPSPositionWithinMap())
+            if (gameEnded)
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, "Replay");
+            else if (zoomCountdown == 0.0f && ! mapSystem.IsCentered() && mapSystem.IsDeviceGPSPositionWithinMap())
                 buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, "Recenter");
-            else if (! gameEnded && zoomCountdown == 0.0f && ! mapSystem.IsTopView() && mapSystem.IsDeviceGPSPositionWithinMap())
+            else if (zoomCountdown == 0.0f && ! mapSystem.IsTopView() && mapSystem.IsDeviceGPSPositionWithinMap())
                 buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, "Top view");
-            else if (! gameEnded && zoomCountdown == 0.0f && currentWaypoint != null)
+            else if (zoomCountdown == 0.0f && currentWaypoint != null)
                 buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, "Cancel");
             else
                 buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, null);
@@ -805,6 +809,8 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                 buttonCanvas.ShowOptionsOverlay();
             else if (buttonCanvas.pressedButton == "Album")
                 buttonCanvas.ShowCardOverlay("Album");
+            else if (buttonCanvas.pressedButton == "Replay")
+                buttonCanvas.ShowCardOverlay("Replay");
             else if (buttonCanvas.pressedButton == "Recenter")
                 mapSystem.Recenter();
             else if (buttonCanvas.pressedButton == "Top view")
@@ -877,28 +883,9 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                     gameState.LoadARScene(sceneName);
                 }
             }
-            else if (buttonCanvas.pressedButton == "Replay")
+            else if (buttonCanvas.pressedButton == "View")
             {
-                buttonCanvas.ShowQuestionOverlay(
-                    mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[1].Split('_')[0][0] == 'R'
-                        ? normalResetPrompt.Replace("$", mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[1].Split('_')[1])
-                        : specialResetPrompt.Replace("$", mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[1].Split('_')[1]),
-                    "Proceed",
-                    "Don't Proceed",
-                    delegate(string pressedButton)
-                    {
-                        buttonCanvas.HideOverlay();
-
-                        if (pressedButton == "Proceed")
-                        {
-                            char module = mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[1].Split('_')[0][1];
-                            gameState.SetFlag("Global%GameEnd", true);
-                            gameState.SetFlag("Global%Module", module == 'Z' ? 0 : module - '0');
-                            gameState.SetFlag("Global%ReplayModule", module == 'Z' ? 0 : module - '0');
-                            gameState.ResetFlags(gameState.GetFlagsStartingWith("M" + module + "%"));
-                        }
-                    }
-                );
+                buttonCanvas.ShowCardOverlay(mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[1]);
             }
             else if (currentWaypoint == null && autoWaypoint == null)
             {

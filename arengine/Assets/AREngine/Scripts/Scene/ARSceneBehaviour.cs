@@ -874,19 +874,28 @@ public class ARSceneBehaviour : SceneBehaviour
                         if (action == "Autorun" && autorun.ContainsKey(flags))
                             continue;
 
+                        // by default, the button name is just the action itself (with no extension)
                         string buttonName = action;
-                        string buttonNameExtension = action.Substring(action.IndexOf('[') + 1);
-                        if (buttonNameExtension.Length < action.Length)
+                        string buttonNameExtension = "";
+
+                        // if the action has a [ or #, trim the button name to that (and put the rest in extension)
+                        int terminator = action.IndexOf('[');
+                        int hash = action.IndexOf('#');
+                        if (terminator == -1 || hash != -1 && hash < terminator)
+                            terminator = hash;
+                        if (terminator != -1)
                         {
-                            buttonName = action.Substring(0, action.Length - buttonNameExtension.Length - 1);
-                            buttonNameExtension = buttonNameExtension.Replace("]", "");
+                            buttonNameExtension = action.Substring(terminator + 1).Replace('[', '_').Replace(']', '_').Replace('#', '_');
+                            buttonName = action.Substring(0, terminator);
                         }
-                        else
-                            buttonNameExtension = "";
-                        if (target != "-" && ! action.EndsWith("_"))
+
+                        // append target name to button extension (only if there is no #)
+                        if (target != "-" && hash == -1)
                             buttonNameExtension += "_" + target;
-                        buttonName = buttonName.Replace('_', ' ').Trim();
-                        buttonNameExtension = buttonNameExtension.Replace('_', ' ').Trim();
+
+                        // replace _'s and trim
+                        buttonName = buttonName.Replace('_', ' ').Replace("  ", " ").Trim();
+                        buttonNameExtension = buttonNameExtension.Replace('_', ' ').Replace("  ", " ").Trim();
                         if (action != "Auto" && action != "Autorun")
                         {
                             if (target == "-")
@@ -901,7 +910,7 @@ public class ARSceneBehaviour : SceneBehaviour
                             }
                         }
 
-                        if (action == "Auto" || action == "Autorun" || buttonName == buttonCanvas.pressedButton)
+                        if (action == "Auto" || action == "Autorun" || (buttonName == buttonCanvas.pressedButton && buttonNameExtension == buttonCanvas.pressedButtonExtension))
                         {
                             if (! sameFrame)
                             {

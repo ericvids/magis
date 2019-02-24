@@ -48,23 +48,26 @@ public class CardCanvasBehaviour : CanvasBehaviour
             int count = 0;
             foreach (string card in tsv.Lookup())
             {
-                string flags = tsv.Lookup(card)[0];
-                if (gameState.EvaluateFlags(flags))
+                foreach (string flags in tsv.Lookup(card))
                 {
-                    if (count > 0)
-                        Instantiate(transform.GetChild(0).GetChild(0), transform.GetChild(0));
+                    if (gameState.EvaluateFlags(flags))
+                    {
+                        if (count > 0)
+                            Instantiate(transform.GetChild(0).GetChild(0), transform.GetChild(0));
 
-                    Transform t = transform.GetChild(0).GetChild(count);
-                    t.gameObject.name = card;
-                    int[] coords
-                        = Array.ConvertAll<string, int>(tsv.Lookup(card, flags)[0].Split(','), int.Parse);
-                    t.GetComponent<RectTransform>().anchoredPosition
-                        = new Vector2(coords[0], 512 - coords[1] - coords[3]);
-                    t.GetComponent<RectTransform>().sizeDelta
-                        = new Vector2(coords[2], coords[3]);
-                    t.GetChild(0).GetComponent<RectTransform>().anchoredPosition
-                        = new Vector2(-coords[0], -(512 - coords[1] - coords[3]));
-                    count++;
+                        Transform t = transform.GetChild(0).GetChild(count);
+                        t.gameObject.name = card;
+                        int[] coords
+                            = Array.ConvertAll<string, int>(tsv.Lookup(card, flags)[0].Split(','), int.Parse);
+                        t.GetComponent<RectTransform>().anchoredPosition
+                            = new Vector2(coords[0], 512 - coords[1] - coords[3]);
+                        t.GetComponent<RectTransform>().sizeDelta
+                            = new Vector2(coords[2], coords[3]);
+                        t.GetChild(0).GetComponent<RectTransform>().anchoredPosition
+                            = new Vector2(-coords[0], -(512 - coords[1] - coords[3]));
+                        count++;
+                        break;
+                    }
                 }
             }
         }
@@ -74,6 +77,60 @@ public class CardCanvasBehaviour : CanvasBehaviour
     {
         string nextCard = EventSystem.current.currentSelectedGameObject.name;
         buttonCanvas.HideOverlay();
+        try
+        {
+            TSVLookup tsv = new TSVLookup("Cards/" + cardName);
+            foreach (string flags in tsv.Lookup(nextCard))
+            {
+                if (gameState.EvaluateFlags(flags))
+                {
+                    string coords = tsv.Lookup(nextCard, flags)[0];
+                    string message = tsv.Lookup(nextCard, flags, coords)[0];
+                    message = message.Replace("\\n", "\n");
+                    while (message.IndexOf('{') != -1)
+                    {
+                        int i = message.IndexOf('{');
+                        int j = i + 1;
+                        while (j < message.Length && message[j] != '}')
+                            j++;
+                        string variableName = message.Substring(i + 1, j - i - 1);
+                        string variableValue;
+                        if (variableName == "SERIAL")
+                            variableValue = OptionsCanvasBehaviour.GetDeviceId();
+                        else
+                            variableValue = "" + gameState.GetFlagIntValue(variableName);
+                        if (j != message.Length)
+                            j++;
+                        message = message.Substring(0, i) + variableValue + message.Substring(j);
+                    }
+                    buttonCanvas.ShowQuestionOverlay(
+                        message,
+                        nextCard[0] >= '0' && nextCard[0] <= '9' ? "Proceed" : "OK",
+                        nextCard[0] >= '0' && nextCard[0] <= '9' ? "Don't Proceed" : null,
+                        delegate(string pressedButton)
+                        {
+                            buttonCanvas.HideOverlay();
+                            if (pressedButton == "Proceed")
+                            {
+                                gameState.ResetFlags(gameState.GetFlagsStartingWith("M"));
+                                gameState.SetFlag("Global%Module", int.Parse(nextCard));
+                                gameState.SetFlag("Global%ReplayModule", int.Parse(nextCard));
+                                gameState.SetFlag("Global%GameEnd", true);
+                            }
+                            else
+                                buttonCanvas.ShowCardOverlay(cardName, previousCardName);
+                        }
+                    );
+                    return;
+                }
+            }
+        }
+        catch (NullReferenceException)
+        {
+        }
+        catch (UnityException)
+        {
+        }
         if (nextCard != "Close")
             buttonCanvas.ShowCardOverlay(nextCard, cardName);
     }
