@@ -20,17 +20,6 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
     private GameStateBehaviour gameState;
     private IAREngine engine;
 
-    public static string GetDeviceId()
-    {
-        string result = SystemInfo.deviceUniqueIdentifier;
-        foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces())
-        {
-            if (nic.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
-                result = nic.GetPhysicalAddress().ToString();
-        }
-        return result;
-    }
-
     private void Start()
     {
         gameState = GameObject.Find("GameState").GetComponent<GameStateBehaviour>();
@@ -39,7 +28,7 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
 
         GameObject.Find("Panel/AppDetails/AppIconMask/AppIcon").GetComponent<UnityEngine.UI.Image>().sprite = Resources.Load<Sprite>("AppIcon");
         GameObject.Find("Panel/AppDetails/AppTitle").GetComponent<UnityEngine.UI.Text>().text = Application.productName;
-        GameObject.Find("Panel/AppDetails/AppVersion").GetComponent<UnityEngine.UI.Text>().text = "Version " + Application.version + "  <color=#000080>Credits...</color>  " + GetDeviceId();
+        GameObject.Find("Panel/AppDetails/AppVersion").GetComponent<UnityEngine.UI.Text>().text = "Version " + Application.version + "  <color=#000080>Credits...</color>  " + DeviceInput.deviceSerial;
 
         bool tutorialExists = false;
         for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)

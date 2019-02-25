@@ -23,6 +23,8 @@ public class DeviceInput
     static extern int GetBatteryLevel();
     [DllImport ("__Internal")]
     static extern void LaunchPrivacy();
+    [DllImport ("__Internal")]
+    static extern string GetDeviceSerial();
 #endif
 
     public static string GameName()
@@ -327,6 +329,20 @@ public class DeviceInput
             return GetBatteryLevel();
 #else
             return 100 - ((int) (Time.realtimeSinceStartup * 2)) % 101;
+#endif
+        }
+    }
+
+    public static string deviceSerial
+    {
+        get
+        {
+#if UNITY_ANDROID && ! UNITY_EDITOR
+            return androidPlugin.Call<string>("getDeviceSerial");
+#elif UNITY_IOS && ! UNITY_EDITOR
+            return GetDeviceSerial();
+#else
+            return "*** serial number goes here ***";
 #endif
         }
     }

@@ -118,7 +118,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 4.2.24
+  bundleVersion: 4.2.26
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -159,8 +159,8 @@ PlayerSettings:
     iOS: edu.ateneo.magis
     tvOS: edu.ateneo.magis
   buildNumber:
-    iOS: 40224
-  AndroidBundleVersionCode: 40224
+    iOS: 40226
+  AndroidBundleVersionCode: 40226
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 0

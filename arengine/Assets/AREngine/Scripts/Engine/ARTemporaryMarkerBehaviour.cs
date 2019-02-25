@@ -30,9 +30,6 @@ public class ARTemporaryMarkerBehaviour : MonoBehaviour, IUserDefinedTargetEvent
         // disable this marker at the start
         GetComponentInChildren<ImageTargetBehaviour>().enabled = false;
 
-        // set it so that the AR camera can only see the video feed and nothing else of the scene
-        GameObject.FindWithTag("MainCamera").transform.GetChild(0).gameObject.layer = 9;
-
 /* Commented out since new Vuforia
 #if ! (DEVELOPMENT_BUILD || UNITY_EDITOR)
         // stop vuforia from preventing the device to sleep
@@ -137,6 +134,9 @@ public class ARTemporaryMarkerBehaviour : MonoBehaviour, IUserDefinedTargetEvent
             // this creates an empty data set for the temporary marker
             dataSet = objectTracker.CreateDataSet();
             objectTracker.ActivateDataSet(dataSet);
+
+            // set it so that the AR camera can only see the video feed and nothing else of the scene
+            GameObject.FindWithTag("MainCamera").transform.GetChild(0).gameObject.layer = 9;  // ARBackground
         }
     }
 

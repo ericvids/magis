@@ -96,7 +96,7 @@ public class CardCanvasBehaviour : CanvasBehaviour
                         string variableName = message.Substring(i + 1, j - i - 1);
                         string variableValue;
                         if (variableName == "SERIAL")
-                            variableValue = OptionsCanvasBehaviour.GetDeviceId();
+                            variableValue = DeviceInput.deviceSerial;
                         else
                             variableValue = "" + gameState.GetFlagIntValue(variableName);
                         if (j != message.Length)
