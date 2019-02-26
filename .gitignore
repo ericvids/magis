@@ -10,8 +10,8 @@
 **/*.userprefs
 arengine/**/*.apk
 arengine/**/*.obb
-build/
-Build/
+build.*/
+Build.*/
 library/
 Library/
 obj/
@@ -19,10 +19,10 @@ Obj/
 temp/
 Temp/
 RegisterIcalls.cpp
-arengine/Assets/Vuforia*
 arengine/Assets/DownloadObbExample.cs*
 arengine/Assets/README.txt*
 arengine/QCAR
 arengine/Assets/ARGames/ARGameList.txt*
 arengine/Assets/Plugins*
+arengine/Assets/Vuforia*
 Igpaw*

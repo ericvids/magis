@@ -20,7 +20,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.BatteryManager;
-import android.provider.Settings;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -151,10 +150,5 @@ public class AndroidPlugin implements SensorEventListener
     public int getBatteryLevel()
     {
         return batteryLevel;
-    }
-
-    public String getDeviceSerial()
-    {
-        return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 }

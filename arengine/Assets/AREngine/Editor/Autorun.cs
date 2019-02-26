@@ -166,6 +166,13 @@ public class Autorun
                 }
             }
 
+            // fix to remove extraneous _TerrainAutoUpgrade
+            if (AssetDatabase.IsValidFolder("Assets/_TerrainAutoUpgrade"))
+            {
+                AssetDatabase.DeleteAsset("Assets/_TerrainAutoUpgrade");
+                modified = true;
+            }
+
             if (AssetDatabase.IsValidFolder("Assets/StreamingAssetsBackup"))
             {
                 // do this after build success/fail/cancel

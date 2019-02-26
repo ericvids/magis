@@ -26,13 +26,4 @@ extern "C"
     {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
     }
-
-    char deviceSerial[1024];
-
-    char* GetDeviceSerial()
-    {
-        const char* serial = [[[[UIDevice currentDevice] identifierForVendor] UUIDString] UTF8String];
-        strcpy(deviceSerial, serial);
-        return deviceSerial;
-    }
 }
