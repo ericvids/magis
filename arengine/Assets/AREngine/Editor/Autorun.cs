@@ -308,14 +308,14 @@ public class Autorun
                             rows[i] = "  projectName: " + Quotify(cols[(int) ARGameList.CLOUD_PROJECT_NAME]);
                         if (rows[i].StartsWith("  AndroidKeystoreName: "))
                         {
-                            if (DeviceInput.GameName() == "_SampleGame")
+                            if (cols[(int) ARGameList.ANDROID_KEYALIAS_NAME] == "")
                                 rows[i] = "  AndroidKeystoreName: ";
                             else
                                 rows[i] = "  AndroidKeystoreName: " + DeviceInput.GameName() + ".keystore";
                         }
                         if (rows[i].StartsWith("  AndroidKeyaliasName: "))
                         {
-                            if (DeviceInput.GameName() == "_SampleGame")
+                            if (cols[(int) ARGameList.ANDROID_KEYALIAS_NAME] == "")
                                 rows[i] = "  AndroidKeyaliasName: ";
                             else
                                 rows[i] = "  AndroidKeyaliasName: " + Quotify(cols[(int) ARGameList.ANDROID_KEYALIAS_NAME]);
