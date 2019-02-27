@@ -65,6 +65,8 @@ public class CardCanvasBehaviour : CanvasBehaviour
                             = new Vector2(coords[2], coords[3]);
                         t.GetChild(0).GetComponent<RectTransform>().anchoredPosition
                             = new Vector2(-coords[0], -(512 - coords[1] - coords[3]));
+                        if (coords.Length > 4 && coords[4] == 0)
+                            t.GetChild(0).GetComponent<UnityEngine.UI.Image>().sprite = background;
                         count++;
                         break;
                     }
