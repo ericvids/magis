@@ -1,6 +1,6 @@
 /************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 

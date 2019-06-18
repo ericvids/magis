@@ -1,6 +1,6 @@
 ﻿/************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -34,7 +34,7 @@ public class ARMarkerBehaviour : MonoBehaviour, ITrackableEventHandler
             && (newStatus == TrackableBehaviour.Status.TRACKED || newStatus == TrackableBehaviour.Status.EXTENDED_TRACKED))
         {
             // if we receive a tracking event even though we have already disabled the marker, something went wrong
-            Debug.Log("=== WARNING: Tracking started for disabled marker " + gameObject.name);
+            Debug.LogError("Bad tracking event received started for disabled marker " + gameObject.name);
         }
 
         GameObject engine = GameObject.FindWithTag("AREngine");
@@ -68,15 +68,6 @@ public class ARMarkerBehaviour : MonoBehaviour, ITrackableEventHandler
         Debug.Log("=== STARTING WITH MARKER: " + gameObject.name);
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("ARMarker"))
         {
-            /* not needed in new vuforia
-            // since only one marker can be extended-tracked at a time, we stop it for all markers
-            if (obj.GetComponentInChildren<ImageTargetBehaviour>().ImageTarget != null)
-            {
-                if (! obj.GetComponentInChildren<ImageTargetBehaviour>().ImageTarget.StopExtendedTracking())
-                    Debug.Log("=== WARNING: Extended tracking cannot be stopped for marker " + obj.name);
-            }
-            */
-
             if (obj == gameObject)
             {
                 // if obj is the marker we're starting tracking on, enable obj
@@ -96,14 +87,6 @@ public class ARMarkerBehaviour : MonoBehaviour, ITrackableEventHandler
                     obj.GetComponent<ARTemporaryMarkerBehaviour>().DeleteTrackable();
             }
         }
-
-        /* not needed in new vuforia
-        if (GetComponentInChildren<ImageTargetBehaviour>().ImageTarget != null)
-        {
-            if (! GetComponentInChildren<ImageTargetBehaviour>().ImageTarget.StartExtendedTracking())
-                Debug.Log("=== WARNING: Extended tracking cannot be started for marker " + gameObject.name);
-        }
-        */
     }
 
     public static void ResetTracking()
@@ -111,14 +94,6 @@ public class ARMarkerBehaviour : MonoBehaviour, ITrackableEventHandler
         Debug.Log("=== RESETTING");
         foreach (GameObject obj in GameObject.FindGameObjectsWithTag("ARMarker"))
         {
-            /* not needed in new vuforia
-            if (obj.GetComponentInChildren<ImageTargetBehaviour>().ImageTarget != null)
-            {
-                if (! obj.GetComponentInChildren<ImageTargetBehaviour>().ImageTarget.StopExtendedTracking())
-                    Debug.Log("=== WARNING: Extended tracking cannot be stopped for marker " + obj.name);
-            }
-            */
-
             // enable everything except the temporary marker
             if (obj.GetComponentInChildren<ImageTargetBehaviour>().enabled != (obj.name != "ARTemporaryMarker"))
                 obj.GetComponentInChildren<ImageTargetBehaviour>().enabled = (obj.name != "ARTemporaryMarker");

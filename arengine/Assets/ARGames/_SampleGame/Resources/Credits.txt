@@ -16,6 +16,7 @@ Eric Cesar Vidal
 Nicko Caluya
 Jayzon Ty
 Melvin Luis Mendoza
+Jonathan Casano
 
 <color=lightblue>MAGIS Asset Creators</color>
 Walfrido David Diy
@@ -34,7 +35,6 @@ Habble (https://soundcloud.com/habster)
 
 <color=lightblue>Other Staff</color>
 Ma. Rosario Madjos
-Jonathan Casano
 Jenilyn Agapito
 Richard Pagador
 Yya Antiporda
@@ -50,7 +50,7 @@ John Carlo Ariola
 Jon Ray Favorito
 Joaquin Jacinto
 Sean Policarpio
-Joal Rose Lim
+Joal Rose Lin
 
 <color=lightblue>Special Thanks to</color>
 Martin Villanueva
@@ -91,10 +91,10 @@ Laser Gun by Dpoggioli
 1BramCamera.flac by kwahmah_02
 
 MAGIS was developed using the Unity game engine.
-© 2018 Unity Technologies ApS.
+© 2019 Unity Technologies ApS.
 
 The augmented reality portions of MAGIS were developed using Vuforia™.
-© 2018 PTC, Inc.
+© 2019 PTC, Inc.
 
 MAGIS uses map data by OpenStreetMap (openstreetmap.org) under CC BY SA.
 
@@ -110,7 +110,7 @@ This sample game is a work of fiction. All likenesses of historical figures expl
 
 ==============================
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated above) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 

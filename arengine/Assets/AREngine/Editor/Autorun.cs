@@ -1,6 +1,6 @@
 ﻿/************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -26,12 +26,14 @@ public class Autorun
     static Dictionary<string, string> productNameToCloudProjectId = new Dictionary<string, string>();
     static bool restarting = false;
 
-    public static bool readyToBuild = false;
+    public static bool buildNotReady = true;
     public static bool singleGameProject = false;
 
     enum ARGameList
     {
         GPS_SUPPORT = 0,
+        BLE_SUPPORT,
+        OBB_SUPPORT,
         PRODUCT_NAME,
         IOS_ID,
         ANDROID_ID,
@@ -52,6 +54,7 @@ public class Autorun
             reader.Close();
             for (int i = 0; i < rows.Length; i++)
             {
+                // add product name to cloud id lookup
                 if (rows[i].EndsWith("\r"))
                     rows[i] = rows[i].Substring(0, rows[i].Length - 1);
                 string[] cols = rows[i].Split(',');
@@ -64,15 +67,46 @@ public class Autorun
             singleGameProject = true;
         }
 
-        // force reimport when switching from a different game
+        foreach (KeyValuePair<string, string> entry in productNameToCloudProjectId)
+        {
+            // unhide resources folder of current game, hide resources folders of other games
+            bool currentGame = (Application.productName == entry.Key);
+            string folderName = Application.dataPath + "/ARGames/" + DeviceInput.NameToFolderName(entry.Key) + "/Resources";
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            if ((int) System.Environment.OSVersion.Platform == 4 || (int) System.Environment.OSVersion.Platform == 6)
+            {
+                process.StartInfo.FileName = "chflags";
+                process.StartInfo.Arguments = (currentGame ? "nohidden \"" : "hidden \"") + folderName + "\"";
+            }
+            else
+            {
+                process.StartInfo.FileName = "attrib.exe";
+                process.StartInfo.Arguments = (currentGame ? "-h \"" : "+h \"") + folderName.Replace('/', '\\') + "\"";
+            }
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = true;
+            process.Start();
+            process.WaitForExit();
+        }
+
+        // force recompile when switching from a different game
         if (AssetDatabase.IsValidFolder("Assets/_DO NOT COMMIT RIGHT NOW - If Unity crashed, restart it now"))
         {
             AssetDatabase.DeleteAsset("Assets/_DO NOT COMMIT RIGHT NOW - If Unity crashed, restart it now");
-
-            // force-reimporting one script at the same execution level will force recompile of the whole execution level
-            AssetDatabase.ImportAsset("Assets/AREngine/Scripts/Utils/TSVLookup.cs", ImportAssetOptions.ForceUpdate);
             AssetDatabase.Refresh();
+
+            foreach (string asset in AssetDatabase.FindAssets("t:Script"))
+            {
+                string path = AssetDatabase.GUIDToAssetPath(asset);
+                if (path.StartsWith("Assets/") && path != "Assets/AREngine/Editor/Autorun.cs")
+                {
+                    AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+                }
+            }
         }
+        AssetDatabase.Refresh();
+
+        CleanUp();
     }
 
     static string Quotify(string s)
@@ -85,23 +119,6 @@ public class Autorun
 
     static void Update()
     {
-        readyToBuild = false;
-
-        // automatically switch target to iOS or Android at startup
-        if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.iOS
-            && EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
-        {
-            if ((int) System.Environment.OSVersion.Platform == 4 || (int) System.Environment.OSVersion.Platform == 6)
-            {
-                EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.iOS, BuildTarget.iOS);
-            }
-            else
-            {
-                EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
-            }
-            EditorUserBuildSettings.development = true;
-        }
-
         if (CheckIfProjectSwitchNeeded())
             return;
 
@@ -109,19 +126,38 @@ public class Autorun
         {
             if (! AssetDatabase.IsValidFolder("Assets/_DO NOT COMMIT RIGHT NOW - Unity is using the project"))
             {
+                if (buildNotReady)
+                {
+                    // do not allow running at an inconsistent state
+                    Debug.LogError("Cannot play because MAGIS project is in an inconsistent state. Please fix any issues that weren't resolved by Autorun.CleanUp() and reload the project.");
+                    EditorApplication.isPlaying = false;
+                    return;
+                }
+                buildNotReady = true;
+
                 // upon running, hide unnecessary resources
                 AssetDatabase.CreateFolder("Assets", "_DO NOT COMMIT RIGHT NOW - Unity is using the project");
-                Autorun.BackupResources();
-
                 AssetDatabase.Refresh();
 
+                // force editor to play at 1x scale or lower
+                Type type = typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView");
+                EditorWindow w = EditorWindow.GetWindow(type);
+                var areaField = type.GetField("m_ZoomArea", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                var areaObj = areaField.GetValue(w);
+                var scaleField = areaObj.GetType().GetField("m_Scale", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                Vector2 value = (Vector2) scaleField.GetValue(areaObj);
+                if (value.x > 1.0f)
+                    scaleField.SetValue(areaObj, new Vector2(1.0f, 1.0f));
+
+                loadedLevel = null;
                 if (GameObject.FindWithTag("ARMarker") != null && GameObject.FindWithTag("AREngine") == null)
                 {
                     // temporarily halt the loading of an AR editor level to load CommonScene
                     loadedLevel = SceneManager.GetActiveScene().name;
                     SceneManager.LoadScene("CommonScene");
+                    Debug.Log("Starting ARScene");
                 }
-                else
+                else if (GameObject.Find("GameState") == null)
                 {
                     // for other levels that come with arengine, always run from the beginning
                     if (SceneManager.GetActiveScene().name == "ARScene"
@@ -131,27 +167,41 @@ public class Autorun
                         || SceneManager.GetActiveScene().name == "MapScene"
                         || SceneManager.GetActiveScene().name == "")
                     {
-                        ClearLogWindow();
                         SceneManager.LoadScene("CommonScene");
+                        Debug.Log("Starting MAGIS from the title screen");
                     }
                 }
             }
-            else if (loadedLevel != null)
+            else if (buildNotReady && loadedLevel != null)
             {
-                ClearLogWindow();
-
                 // actually load the current editor level, and also load ARScene automatically if needed
                 SceneManager.LoadScene(loadedLevel);
                 SceneManager.LoadScene("ARScene", LoadSceneMode.Additive);
                 loadedLevel = null;
             }
         }
-
-        if (! EditorApplication.isPlaying && ! EditorApplication.isCompiling && ! EditorApplication.isUpdating)
+        else if (! EditorApplication.isPlaying && ! EditorApplication.isCompiling && ! EditorApplication.isUpdating)
         {
-            bool modified = false;
+            // automatically switch target to iOS or Android if the current target is Windows, macOS, etc.
+            // (doing it here intentionally because we don't want to do it during Autorun constructor)
+            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.iOS
+                && EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
+            {
+                buildNotReady = true;
+                if ((int) System.Environment.OSVersion.Platform == 4 || (int) System.Environment.OSVersion.Platform == 6)
+                {
+                    EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.iOS, BuildTarget.iOS);
+                }
+                else
+                {
+                    EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
+                }
+                EditorUserBuildSettings.development = true;
+                return;
+            }
 
             // fix to remove empty .fbm folders that create spurious meta files
+            // (doing it here intentionally because we don't want to do it during Autorun constructor)
             foreach (string asset in AssetDatabase.FindAssets(".fbm"))
             {
                 string folder = AssetDatabase.GUIDToAssetPath(asset);
@@ -159,87 +209,82 @@ public class Autorun
                 {
                     if (AssetDatabase.FindAssets("t:Object", new[]{ folder }).Length == 0)
                     {
-                        Debug.Log("Empty folder " + folder + " deleted.");
+                        buildNotReady = true;
+                        Debug.Log("Deleting empty folder " + folder);
                         AssetDatabase.DeleteAsset(folder);
-                        modified = true;
                     }
                 }
             }
 
             // fix to remove extraneous _TerrainAutoUpgrade
+            // (doing it here intentionally because we don't want to do it during Autorun constructor)
             if (AssetDatabase.IsValidFolder("Assets/_TerrainAutoUpgrade"))
             {
+                buildNotReady = true;
+                Debug.Log("Deleting migration folder _TerrainAutoUpgrade");
                 AssetDatabase.DeleteAsset("Assets/_TerrainAutoUpgrade");
-                modified = true;
             }
 
-            if (AssetDatabase.IsValidFolder("Assets/StreamingAssetsBackup"))
-            {
-                // do this after build success/fail/cancel
-
-                // move the markers from the temporary folder to their original locations
-                foreach (string guid in AssetDatabase.FindAssets("t:Object", new[]{ "Assets/StreamingAssets/Vuforia" }))
-                {
-                    string asset = AssetDatabase.GUIDToAssetPath(guid);
-                    if (asset.EndsWith(".xml"))  // move xml first before dat to avoid warnings
-                        AssetDatabase.MoveAsset(asset, asset.Replace("/StreamingAssets/", "/StreamingAssetsBackup/"));
-                }
-                foreach (string guid in AssetDatabase.FindAssets("t:Object", new[]{ "Assets/StreamingAssets/Vuforia" }))
-                {
-                    string asset = AssetDatabase.GUIDToAssetPath(guid);
-                    AssetDatabase.MoveAsset(asset, asset.Replace("/StreamingAssets/", "/StreamingAssetsBackup/"));
-                }
-                AssetDatabase.DeleteAsset("Assets/StreamingAssets/Vuforia");
-                AssetDatabase.DeleteAsset("Assets/StreamingAssets");
-                AssetDatabase.MoveAsset("Assets/StreamingAssetsBackup", "Assets/StreamingAssets");
-                modified = true;
-            }
-
-            // move ResourcesBackup back to Resources
-            if (AssetDatabase.IsValidFolder("Assets/_DO NOT COMMIT RIGHT NOW - Unity is using the project"))
-            {
-                foreach (string guid in AssetDatabase.FindAssets("t:Folder ResourcesBackup"))
-                {
-                    string folder = AssetDatabase.GUIDToAssetPath(guid);
-                    AssetDatabase.MoveAsset(folder, folder.Substring(0, folder.Length - 6));
-                }
-                AssetDatabase.DeleteAsset("Assets/_DO NOT COMMIT RIGHT NOW - Unity is using the project");
-                modified = true;
-            }
-
-            if (modified)
-                AssetDatabase.Refresh();
-            else
-                readyToBuild = true;
+            CleanUp();
         }
+        else
+            buildNotReady = true;
     }
 
-    public static void BackupResources()
+    static void RestoreFile(string file)
     {
-        if (singleGameProject)
-            return;
-
-        // to ensure that only the resources of the current game are visible,
-        // rename all other Resources to ResourcesBackup
-        foreach (string guid in AssetDatabase.FindAssets("t:Folder Resources"))
+        if (AssetDatabase.AssetPathToGUID(file + ".bak") != "")
         {
-            string folder = AssetDatabase.GUIDToAssetPath(guid);
-            if (folder != "Assets/AREngine/Resources"
-                && folder != "Assets/AREngine/Editor/Resources"
-                && folder != "Assets/ARGames/" + DeviceInput.GameName() + "/Resources"
-                && folder != "Assets/Resources")
-            {
-                AssetDatabase.MoveAsset(folder, folder + "Backup");
-            }
+            buildNotReady = true;
+            Debug.Log("Restoring " + file);
+            AssetDatabase.MoveAsset(file + ".bak", file);
         }
     }
 
-    public static void ClearLogWindow()
+    static void CleanUp()
     {
-        System.Type logEntries = System.Type.GetType("UnityEditor.LogEntries, UnityEditor.dll");
-        System.Reflection.MethodInfo clear
-            = logEntries.GetMethod("Clear", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-        clear.Invoke(null, null);
+        RestoreFile("Assets/AREngine/Plugins/iOS/Location.mm");
+        RestoreFile("Assets/Plugins/Android/AndroidManifest.xml");
+        RestoreFile("Assets/Plugins/Android/unityandroidbluetoothlelib.jar");
+        RestoreFile("Assets/Plugins/iOS/UnityBluetoothLE.mm");
+
+        if (AssetDatabase.IsValidFolder("Assets/StreamingAssetsBackup"))
+        {
+            buildNotReady = true;
+            Debug.Log("Restoring StreamingAssetsBackup");
+
+            // do this after build success/fail/cancel
+
+            // move the markers from the temporary folder to their original locations
+            foreach (string guid in AssetDatabase.FindAssets("t:Object", new[]{ "Assets/StreamingAssets/Vuforia" }))
+            {
+                string asset = AssetDatabase.GUIDToAssetPath(guid);
+                if (asset.EndsWith(".xml"))  // move xml first before dat to avoid warnings
+                    AssetDatabase.MoveAsset(asset, asset.Replace("/StreamingAssets/", "/StreamingAssetsBackup/"));
+            }
+            foreach (string guid in AssetDatabase.FindAssets("t:Object", new[]{ "Assets/StreamingAssets/Vuforia" }))
+            {
+                string asset = AssetDatabase.GUIDToAssetPath(guid);
+                AssetDatabase.MoveAsset(asset, asset.Replace("/StreamingAssets/", "/StreamingAssetsBackup/"));
+            }
+            AssetDatabase.DeleteAsset("Assets/StreamingAssets/Vuforia");
+            AssetDatabase.DeleteAsset("Assets/StreamingAssets");
+            AssetDatabase.MoveAsset("Assets/StreamingAssetsBackup", "Assets/StreamingAssets");
+        }
+
+        // lastly, remove do-not-commit marker
+        if (AssetDatabase.IsValidFolder("Assets/_DO NOT COMMIT RIGHT NOW - Unity is using the project"))
+        {
+            buildNotReady = true;
+            AssetDatabase.DeleteAsset("Assets/_DO NOT COMMIT RIGHT NOW - Unity is using the project");
+            Debug.Log("Restore finished, project assets ready to play");
+        }
+
+        if (buildNotReady)
+        {
+            AssetDatabase.Refresh();
+            buildNotReady = false;
+        }
     }
 
     static bool CheckIfProjectSwitchNeeded()
@@ -292,14 +337,14 @@ public class Autorun
 
                         if (rows[i].StartsWith("  bundleVersion: "))
                             rows[i] = "  bundleVersion: " + versionString;
-                        if (rows[i].StartsWith("    iOS: ") && rows[i][9] >= '0' && rows[i][9] <= '9' && rows[i].Length > 10 && rows[i][10] >= '0' && rows[i][10] <= '9')
-                            rows[i] = "    iOS: " + versionCode;
+                        if (rows[i].StartsWith("    iPhone: ") && rows[i].Length > 13 && rows[i][12] >= '0' && rows[i][12] <= '9' && rows[i][13] >= '0' && rows[i][13] <= '9')
+                            rows[i] = "    iPhone: " + versionCode;
                         if (rows[i].StartsWith("  AndroidBundleVersionCode: "))
                             rows[i] = "  AndroidBundleVersionCode: " + versionCode;
                         if (rows[i].StartsWith("  productName: "))
                             rows[i] = "  productName: " + Quotify(cols[(int) ARGameList.PRODUCT_NAME]);
-                        if (rows[i].StartsWith("    iOS: ") && rows[i][9] >= 'a' && rows[i][9] <= 'z')
-                            rows[i] = "    iOS: " + cols[(int) ARGameList.IOS_ID];
+                        if (rows[i].StartsWith("    iPhone: ") && rows[i][12] >= 'a' && rows[i][12] <= 'z')
+                            rows[i] = "    iPhone: " + cols[(int) ARGameList.IOS_ID];
                         if (rows[i].StartsWith("    Android: ") && rows[i][13] >= 'a' && rows[i][13] <= 'z')
                             rows[i] = "    Android: " + cols[(int) ARGameList.ANDROID_ID];
                         if (rows[i].StartsWith("  cloudProjectId: "))
@@ -311,7 +356,7 @@ public class Autorun
                             if (cols[(int) ARGameList.ANDROID_KEYALIAS_NAME] == "")
                                 rows[i] = "  AndroidKeystoreName: ";
                             else
-                                rows[i] = "  AndroidKeystoreName: " + DeviceInput.GameName() + ".keystore";
+                                rows[i] = "  AndroidKeystoreName: '{inproject}: " + DeviceInput.GameName() + ".keystore'";
                         }
                         if (rows[i].StartsWith("  AndroidKeyaliasName: "))
                         {
@@ -319,6 +364,13 @@ public class Autorun
                                 rows[i] = "  AndroidKeyaliasName: ";
                             else
                                 rows[i] = "  AndroidKeyaliasName: " + Quotify(cols[(int) ARGameList.ANDROID_KEYALIAS_NAME]);
+                        }
+                        if (rows[i].StartsWith("  androidUseCustomKeystore: "))
+                        {
+                            if (cols[(int) ARGameList.ANDROID_KEYALIAS_NAME] == "")
+                                rows[i] = "  androidUseCustomKeystore: 0";
+                            else
+                                rows[i] = "  androidUseCustomKeystore: 1";
                         }
                         if (rows[i].StartsWith("  androidSplashScreen: {fileID: 2800000, guid: "))
                         {
@@ -337,13 +389,15 @@ public class Autorun
                             rows[i] = "      m_Icon: {fileID: 2800000, guid: " + guid + ", type: 3}";
                         }
                         if (rows[i].StartsWith("    4: VUFORIA_IOS_SETTINGS"))
-                            rows[i] = "    4: VUFORIA_IOS_SETTINGS;MAGIS_" + DeviceInput.GameName() + (int.Parse(cols[(int) ARGameList.GPS_SUPPORT]) == 0 ? ";MAGIS_NOGPS" : "");
+                            rows[i] = "    4: VUFORIA_IOS_SETTINGS;MAGIS_" + DeviceInput.GameName() + (int.Parse(cols[(int) ARGameList.GPS_SUPPORT]) == 0 ? ";MAGIS_NOGPS" : "") + (int.Parse(cols[(int) ARGameList.BLE_SUPPORT]) == 0 ? "" : ";MAGIS_BLE") + (int.Parse(cols[(int) ARGameList.OBB_SUPPORT]) == 0 ? "" : ";MAGIS_OBB");
                         if (rows[i].StartsWith("    7: VUFORIA_ANDROID_SETTINGS"))
-                            rows[i] = "    7: VUFORIA_ANDROID_SETTINGS;MAGIS_" + DeviceInput.GameName() + (int.Parse(cols[(int) ARGameList.GPS_SUPPORT]) == 0 ? ";MAGIS_NOGPS" : "");
+                            rows[i] = "    7: VUFORIA_ANDROID_SETTINGS;MAGIS_" + DeviceInput.GameName() + (int.Parse(cols[(int) ARGameList.GPS_SUPPORT]) == 0 ? ";MAGIS_NOGPS" : "") + (int.Parse(cols[(int) ARGameList.BLE_SUPPORT]) == 0 ? "" : ";MAGIS_BLE") + (int.Parse(cols[(int) ARGameList.OBB_SUPPORT]) == 0 ? "" : ";MAGIS_OBB");
+                        if (rows[i].StartsWith("  APKExpansionFiles: "))
+                            rows[i] = "  APKExpansionFiles: " + (int.Parse(cols[(int) ARGameList.OBB_SUPPORT]) == 0 ? "0" : "1");
                     }
-                    if (rows[rows.Length - 1] == "")
-                        Array.Resize(ref rows, rows.Length - 1);
 
+                    while (rows[rows.Length - 1] == "")
+                        Array.Resize(ref rows, rows.Length - 1);
                     StreamWriter writer = new StreamWriter("ProjectSettings/ProjectSettings.asset");
                     foreach (string row in rows)
                     {
@@ -370,6 +424,8 @@ public class Autorun
                             rows[i] = "    turnOffWebCam: 1";
                     }
 
+                    while (rows[rows.Length - 1] == "")
+                        Array.Resize(ref rows, rows.Length - 1);
                     writer = new StreamWriter("Assets/Resources/VuforiaConfiguration.asset");
                     foreach (string row in rows)
                     {

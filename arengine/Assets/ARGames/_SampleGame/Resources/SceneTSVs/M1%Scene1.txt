@@ -211,14 +211,6 @@ Ateneo Seal	-	Autorun	-	@playsound SystemStart
 				@hidestill Picture_Badge
 				@set Progress 5
 				@settrue End
-				@showstill Picture_Card
-				Congratulations! You've completed Module 1! You earned a [card]!
-				@incr Global%Album%CardCount
-				@settrue Global%Album%Card15
-				@card Card15
-				You may view all the cards that you have collected so far in the [Album], accessible from the Map screen.
-				It is highly recommended that you take a break after each module and resume play on the following day.
-				@exit
 		Use_[Immortal_Key]#	Progress==2	@animate Agent_Aria No
 				Aria#Use it on the barrier stone, not on the danag.
 			Progress>2	@animate Agent_Aria No
@@ -226,4 +218,17 @@ Ateneo Seal	-	Autorun	-	@playsound SystemStart
 	-	Put_away_[Anomaly_Gun]	-	@select
 	-	Put_away_[Immortal_Key]	-	@select
 	-	Inventory	M1%Inventory%Anomaly_Gun | M1%Inventory%Immortal_Key	@subscene M1%Inventory
-	-	Depart	End	@exit
+	-	Autorun	End !Global%Album%Card15	@showstill Picture_Card
+				Congratulations! You've completed Module 1. You earned a [card]!
+				@incr Global%Album%CardCount
+				@incr Global%M1%CardCount
+				@settrue Global%Album%Card15
+				@card Card15
+				You may view all the cards that you have collected so far in the [Album], accessible from the Map screen.
+				@hidestill
+				@exit
+	-	Autorun	End Global%Album%Card15	@showstill Picture_Card
+				Congratulations! You've completed Module 1. You earned a [card]!
+				@card Card15
+				@hidestill
+				@exit

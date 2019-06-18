@@ -1,11 +1,13 @@
 fileFormatVersion: 2
 guid: cd1e32fe1421b494b9aee2770604f040
+labels:
+- AllStereoAudioClips
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
   defaultSettings:
     loadType: 0
-    sampleRateSetting: 0
+    sampleRateSetting: 1
     sampleRateOverride: 44100
     compressionFormat: 1
     quality: 1

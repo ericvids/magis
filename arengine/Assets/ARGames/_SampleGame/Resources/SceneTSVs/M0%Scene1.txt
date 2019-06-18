@@ -129,7 +129,7 @@ M0%Scene1	-	Autorun	-	@playsound SystemStart
 				@hidestill
 				@showstill Picture_Diwata
 				There is a picture of a M.A.G.I.S. student accepting a flower from what appears to be a diwata. Below it is the tagline:
-				\n[TWO WORLDS, ONE SPIRIT]
+				=\n=[TWO WORLDS, ONE SPIRIT]
 				@hidestill
 				@show Brochure
 				Strangely enough, the entry for the Department of M.A.G.I.S. does not contain any contact information.

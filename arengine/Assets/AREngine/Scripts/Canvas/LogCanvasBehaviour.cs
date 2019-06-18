@@ -1,6 +1,6 @@
 ﻿/************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -12,10 +12,12 @@ You should have received a copy of the GNU General Public License v2 along with 
 
 using UnityEngine;
 using System.Collections;
-using UnityEngine.EventSystems;
 
 public class LogCanvasBehaviour : MonoBehaviour
 {
+    // set to true to show the log
+    public static bool showing;
+
     public const int NUM_LINES = 30;
 
     private string log = "";
@@ -28,15 +30,17 @@ public class LogCanvasBehaviour : MonoBehaviour
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
     private void Update()
     {
-        if (Input.touchCount == 4 && Input.touches[3].phase == TouchPhase.Began || Input.GetKeyDown(KeyCode.Space))
+        if (Input.touchCount == 3 && Input.GetTouch(2).tapCount % 2 == 0 && Input.GetTouch(2).phase == TouchPhase.Began || Input.GetKeyDown(KeyCode.Space))
         {
-            if (Input.touchCount == 4 && Input.touches[3].tapCount == 2 && ! AREngineBehaviour.debuggingOverlay)
+#if ! UNITY_EDITOR
+            if (Input.touchCount == 3 && Input.GetTouch(2).tapCount % 4 == 0 && ! LogCanvasBehaviour.showing)
+#endif
                 log = "";
-            AREngineBehaviour.debuggingOverlay = ! AREngineBehaviour.debuggingOverlay;
-            if (! AREngineBehaviour.debuggingOverlay)
+            LogCanvasBehaviour.showing = ! LogCanvasBehaviour.showing;
+            if (! LogCanvasBehaviour.showing)
                 GetComponent<UnityEngine.UI.Text>().text = "";
             else
-                Debug.Log("Log display ON. Tap with four fingers again to turn off. Battery: " + DeviceInput.batteryLevel + "%\n");
+                Debug.Log("Log display ON. Double-tap with three fingers again to turn off.");
         }
     }
 #endif
@@ -60,7 +64,7 @@ public class LogCanvasBehaviour : MonoBehaviour
         }
         log = log.Substring(pos);
 
-        if (AREngineBehaviour.debuggingOverlay)
+        if (LogCanvasBehaviour.showing && this != null)  // weirdest thing ever: this pointer can actually be null during GC, causing an exception on GetComponent
             GetComponent<UnityEngine.UI.Text>().text = log;
     }
 }

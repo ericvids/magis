@@ -1,6 +1,6 @@
 /************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -24,7 +24,7 @@ public class TitleSceneBehaviour : SceneBehaviour
     {
         if (! Init())
             return;
-        GameObject.Find("ScreenCanvas/Title").GetComponent<UnityEngine.UI.Image>().sprite = Resources.Load<Sprite>("TitleScreen");
+        GameObject.Find("ScreenCanvas/Title").GetComponent<UnityEngine.UI.Image>().overrideSprite = Resources.Load<Sprite>("TitleScreen");
         StartCoroutine(Stream());
     }
 
@@ -36,14 +36,27 @@ public class TitleSceneBehaviour : SceneBehaviour
         GameObject obj = EventSystem.current.currentSelectedGameObject;
         if (obj.name == "Title" && done && ! buttonCanvas.overlayShowing)
         {
-            buttonCanvas.ShowBattery();
-            gameState.LoadScene("MapScene");
+#if DEVELOPMENT_BUILD && ! UNITY_EDITOR
+            buttonCanvas.ShowQuestionOverlay(
+                "THIS IS A DEVELOPMENT BUILD OF THE GAME.\n\nThis version of the game is for testing and evaluation purposes only. Please do not distribute.",
+                "Proceed to game",
+                null,
+                delegate(string pressedButton)
+                {
+                    buttonCanvas.HideOverlay();
+#endif
+                    buttonCanvas.ShowBattery();
+                    gameState.LoadScene("MapScene");
+#if DEVELOPMENT_BUILD && ! UNITY_EDITOR
+                }
+            );
+#endif
         }
     }
 
     private IEnumerator Stream()
     {
-#if UNITY_ANDROID && ! UNITY_EDITOR
+#if UNITY_ANDROID && ! UNITY_EDITOR && MAGIS_OBB
         if (! Directory.Exists(Application.persistentDataPath + "/Vuforia"))
             Directory.CreateDirectory(Application.persistentDataPath + "/Vuforia");
         yield return StartCoroutine(StreamFromOBB("/Vuforia/magis-default.xml", true));
@@ -56,7 +69,7 @@ public class TitleSceneBehaviour : SceneBehaviour
     }
 
     private IEnumerator StreamFromOBB(string file, bool doNotIgnore = false)
-{
+    {
         UnityWebRequest www = UnityWebRequest.Get(Application.streamingAssetsPath + file);
         yield return www.SendWebRequest();
         if (string.IsNullOrEmpty(www.error))
@@ -72,7 +85,8 @@ public class TitleSceneBehaviour : SceneBehaviour
                                                  null,
                                                  delegate(string pressedButton)
                 {
-                    Application.Quit();
+                    buttonCanvas.HideOverlay();
+                    DeviceInput.ExitGame(buttonCanvas);
                 });
             }
         }
@@ -83,7 +97,8 @@ public class TitleSceneBehaviour : SceneBehaviour
                                              null,
                                              delegate(string pressedButton)
             {
-                Application.Quit();
+                buttonCanvas.HideOverlay();
+                DeviceInput.ExitGame(buttonCanvas);
             });
         }
         yield return null;

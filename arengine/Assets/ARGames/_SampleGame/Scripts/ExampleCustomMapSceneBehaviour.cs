@@ -1,6 +1,6 @@
 /************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -27,8 +27,10 @@ public class ExampleCustomMapSceneBehaviour : SceneBehaviour
 
         // make sure the extra features of the button subsystem is disabled at the start
         // (or else we might not be able to see anything)
+        buttonCanvas.SetStill(null);
         buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
         buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
+        buttonCanvas.SetDialogue(null);
 
         // set the color of the global interface
         buttonCanvas.SetColors(new Color(0.7f, 0.9f, 1.0f), new Color(0.8f, 0.925f, 1.0f));

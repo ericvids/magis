@@ -1,6 +1,6 @@
 /************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -11,6 +11,7 @@ You should have received a copy of the GNU General Public License v2 along with 
 ************************************************************************************************************/
 
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.SceneManagement;
 using System;
 using System.Collections.Generic;
@@ -29,9 +30,15 @@ public class GameStateBehaviour : MonoBehaviour
     private string _selectedItem = "";
     private string _glowingButton = "";
 
-#if UNITY_ANDROID && ! UNITY_EDITOR
+#if UNITY_ANDROID && ! UNITY_EDITOR && MAGIS_OBB
     private float obbDelay;
 #endif
+
+    private bool hasIncrementedModuleNumber;
+    private bool gameEndFlag;
+    private bool playedMapSceneMusic;
+    private string musicToPlay;
+    private long lastMapTimeCounterUpdateTime;  // Global%MapTimeCounter is incremented whenever player is in the map
 
     public void LoadScene(string sceneName)
     {
@@ -43,6 +50,7 @@ public class GameStateBehaviour : MonoBehaviour
         {
             baseScene.allowSceneActivation = false;
             buttonCanvas.StopMusic();
+            playedMapSceneMusic = false;
             glowingButton = null;
             subsceneName = null;
         }
@@ -58,6 +66,7 @@ public class GameStateBehaviour : MonoBehaviour
         {
             baseScene.allowSceneActivation = false;
             buttonCanvas.StopMusic();
+            playedMapSceneMusic = false;
             glowingButton = null;
             subsceneName = null;
             addedScene = SceneManager.LoadSceneAsync("ARScene", LoadSceneMode.Additive);
@@ -76,13 +85,266 @@ public class GameStateBehaviour : MonoBehaviour
         subsceneName = null;
     }
 
-    public void ReturnToMap()
+    public void ProcessMapSceneModuleInitialize()
+    {
+        // track the highest module ever attained
+        if (GetFlagIntValue("Global%Module") > GetFlagIntValue("Global%HighestModule"))
+        {
+            SetFlag("Global%HighestModule", GetFlagIntValue("Global%Module"));
+        }
+
+        // if we are replaying a module but the game has moved past that module,
+        // go back to the highest module (which should be the ending screen)
+        if (GetFlagIntValue("Global%Module") != GetFlagIntValue("Global%ReplayModule"))
+        {
+            SetFlag("Global%GameEnd", false);  // Global%GameEnd == true unhides the Replay Ending button
+            SetFlag("Global%Module", GetFlagIntValue("Global%HighestModule"));
+       }
+
+        // cache game end flag
+        gameEndFlag = GetFlag("Global%GameEnd");
+
+        // prevent sleep on dev mode, enable sleep otherwise
+#if DEVELOPMENT_BUILD
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+#else
+        Screen.sleepTimeout = SleepTimeout.SystemSetting;
+#endif
+    }
+
+    public bool ProcessMapSceneModuleIncrement(bool scenesAvailable)
+    {
+        // if not in edit mode and there are no active waypoints, we have reached the end of a module
+        // and should increment the module number and reread the waypoints
+        if (scenesAvailable)
+        {
+            hasIncrementedModuleNumber = false;
+        }
+        else if (! hasIncrementedModuleNumber)
+        {
+            hasIncrementedModuleNumber = true;
+            AppendToAnalyticsString("_");
+            SetFlag("Global%Module", GetFlagIntValue("Global%Module") + 1);
+        }
+        else
+        {
+            hasIncrementedModuleNumber = false;
+            Debug.LogError("No activatable scenes for module " + GetFlagIntValue("Global%Module") + "!");
+
+            // decrement the module number that we have erroneously incremented
+            if (GetFlagIntValue("Global%Module") == GetFlagIntValue("Global%HighestModule"))
+                SetFlag("Global%HighestModule", GetFlagIntValue("Global%HighestModule") - 1);
+            SetFlag("Global%Module", GetFlagIntValue("Global%Module") - 1);
+        }
+        return hasIncrementedModuleNumber;
+    }
+
+    public void ProcessMapSceneMusicPlay(string backgroundMusic)
+    {
+        musicToPlay = backgroundMusic;
+
+        // if tutorial has been played, play the music immediately
+        if ((GetFlag("M0%Scene1%End") || GetFlag("Global%FinishedFirstTutorial")) && ! playedMapSceneMusic)
+        {
+            buttonCanvas.PlayMusic(musicToPlay, true);
+            playedMapSceneMusic = true;
+        }
+
+        // playedMapSceneMusic flag doubles as a signal to not start with the tutorial anymore
+        if (playedMapSceneMusic)
+        {
+            SetFlag("M0%Scene1%End", true);
+            SetFlag("Global%FinishedFirstTutorial", true);
+        }
+
+        Debug.Log(DeviceInput.HumanReadableEncoding(PlayerPrefs.GetString("AnalyticsCode")));
+    }
+
+    public bool ProcessMapSceneRestart()
+    {
+        if (gameEndFlag != GetFlag("Global%GameEnd"))
+        {
+            playedMapSceneMusic = false;
+            return true;
+        }
+        else
+            return false;
+    }
+
+    public bool ProcessMapSceneOverrideUpdate()
+    {
+        if (! GetFlag("M0%Scene1%End"))
+        {
+            // special handling for tutorial: auto-start it if it exists and it hasn't been played
+            bool tutorialExists = false;
+            for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+            {
+                string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+                scenePath = scenePath.Substring(scenePath.LastIndexOf("/") + 1);
+                if (scenePath == "M0%Scene1.unity")
+                    tutorialExists = true;
+            }
+            // if the music has been played, the tutorial is being played due to a user retrigger;
+            // if the music has NOT been played, play the tutorial only if it has not run before
+            // (this prevents the edge case where the player retriggers the tutorial then exits the game)
+            if (tutorialExists && (playedMapSceneMusic || ! GetFlag("Global%FinishedFirstTutorial")))
+            {
+                buttonCanvas.SetDialogue(null);  // in case a dialogue was shown
+                LoadARScene("M0%Scene1");
+                return true;
+            }
+            else
+            {
+                SetFlag("M0%Scene1%End", true);
+                SetFlag("Global%FinishedFirstTutorial", true);
+                if (! playedMapSceneMusic)
+                {
+                    buttonCanvas.PlayMusic(musicToPlay, true);
+                    playedMapSceneMusic = true;
+                }
+            }
+        }
+
+        ProcessMapSceneCounter();
+        return false;
+    }
+
+    public void ProcessMapSceneCounter()
+    {
+        if (! loadingNewScene)
+        {
+            // if map scene is continuing, log the time spent by the user in it
+            if ((long) Time.realtimeSinceStartup != lastMapTimeCounterUpdateTime)
+            {
+                if (GetFlagIntValue("Global%SceneTimeCounter") != 0)
+                    EncodeAnalyticsEndScene(false);  // exiting a scene without finishing
+
+                // regardless of actual time passed, only increment per actual gameplay second
+                // (since player may have turned the device off in the interim)
+                lastMapTimeCounterUpdateTime = (long) Time.realtimeSinceStartup;
+                SetFlag("Global%MapTimeCounter", GetFlagIntValue("Global%MapTimeCounter") + 1, false);
+            }
+        }
+    }
+
+    public void SendOnlineAnalytics(string eventName, Dictionary<string, object> eventData)
+    {
+        eventData.Add("timeStamp", (System.DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
+        eventData.Add("batteryLevel", DeviceInput.batteryLevel);
+        eventData.Add("batteryCharging", DeviceInput.batteryCharging);
+        eventData.Add("leftHanded", GetFlag("System%SwapButtonGroups"));
+        eventData.Add("gyro", GetFlag("System%UseGyroscope"));
+        eventData.Add("compass", GetFlag("System%UseCompass"));
+        eventData.Add("gyroPresent", DeviceInput.gyroPresent);
+        eventData.Add("compassPresent", DeviceInput.compassPresent);
+
+        AnalyticsResult result = AnalyticsEvent.Custom(eventName, eventData);
+        if (result != AnalyticsResult.Ok)
+        {
+            Debug.LogError("Analytics failure: " + result + " " + eventName);
+        }
+    }
+
+    public void EncodeAnalyticsLeaveMap(int option)
+    {
+        // ONLINE ANALYTICS
+        string eventName = "MapScene.Navigate";
+        int duration = GetFlagIntValue("Global%MapTimeCounter");
+        SendOnlineAnalytics(eventName, new Dictionary<string, object>
+        {
+            { "duration", duration }
+        });
+
+        // OFFLINE ANALYTICS
+        int minutes = GetFlagIntValue("Global%MapTimeCounter") / 60;
+        if (minutes > 25)
+            minutes = 25;  // out of range (though you travelled so far, boy I'm sorry you are)
+        AppendToAnalyticsString("abcdefghijklmnopqrstuvwxyz".Substring(minutes, 1));
+        if (option > 0)
+        {
+            if (option > 26)
+                option = 26;
+            AppendToAnalyticsString("abcdefghijklmnopqrstuvwxyz".Substring(option - 1, 1));
+        }
+
+        SetFlag("Global%MapTimeCounter", 0);
+        SetFlag("Global%SceneTimeCounter", 1);
+    }
+
+    public void EncodeAnalyticsBeginScene(string scene, bool markerVisible)
+    {
+        // ONLINE ANALYTICS
+        bool gpsValid = GetFlag("Global%GPSValid");
+        PlayerPrefs.SetString("AnalyticsScene", scene);
+        string eventName = scene + ".Enter";
+        SendOnlineAnalytics(eventName, new Dictionary<string, object>
+        {
+            { "markerVisible", markerVisible },
+            { "gpsValid", gpsValid },
+        });
+    }
+
+    public void EncodeAnalyticsMilestone(string milestone)
+    {
+        // ONLINE ANALYTICS
+        string scene = PlayerPrefs.GetString("AnalyticsScene", "");
+        if (scene != "" && milestone != "")
+        {
+            string eventName = scene + ".Milestone." + milestone;
+            int duration = GetFlagIntValue("Global%SceneTimeCounter");
+            SendOnlineAnalytics(eventName, new Dictionary<string, object>
+            {
+                { "duration", duration }
+            });
+        }
+    }
+
+    public void EncodeAnalyticsEndScene(bool endFlagSet)
+    {
+        // ONLINE ANALYTICS
+        string scene = PlayerPrefs.GetString("AnalyticsScene", "");
+        if (scene != "")
+        {
+            if (endFlagSet)
+                EncodeAnalyticsMilestone("Finished");
+            string eventName = scene + ".Exit";
+            int duration = GetFlagIntValue("Global%SceneTimeCounter");
+            SendOnlineAnalytics(eventName, new Dictionary<string, object>
+            {
+                { "duration", duration }
+            });
+        }
+
+        // OFFLINE ANALYTICS
+        // counter == 1 is reserved for scene loaded but not started by the player for some reason
+        // (e.g., marker failing to scan, tutorial skipped)
+        if (GetFlagIntValue("Global%SceneTimeCounter") > 1)
+        {
+            int minutes = (GetFlagIntValue("Global%SceneTimeCounter") - 1) / 60;
+            if (minutes > 25)
+                minutes = 25;  // out of range (though you travelled so far, boy I'm sorry you are)
+            AppendToAnalyticsString("ABCDEFGHIJKLMNOPQRSTUVWXYZ".Substring(minutes, 1));
+        }
+        if (! endFlagSet)
+            AppendToAnalyticsString("-");
+
+        PlayerPrefs.SetString("AnalyticsScene", "");
+        SetFlag("Global%SceneTimeCounter", 0);
+    }
+
+    public void AppendToAnalyticsString(string s)
+    {
+        PlayerPrefs.SetString("AnalyticsCode", (PlayerPrefs.GetString("AnalyticsCode") + s).TrimStart(new char[]{ '_' }));
+        PlayerPrefs.Save();
+    }
+
+    public void ProcessReturnToMap()
     {
         bool sceneFinished = GetFlag(sceneName + "%End")
                              || sceneName == "M0%Scene1" && GetFlag("Global%FinishedFirstTutorial")
                              || GetFlag("Global%Module" + moduleName.Substring(1) + "End");
         bool secretAvailable = GetFlag(sceneName + "%SecretAvailable");
-        if (sceneFinished && ! secretAvailable)
+        if (GetFlag("Global%EasyBackButton") || sceneFinished && ! secretAvailable)
         {
             LoadScene("MapScene");
             buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
@@ -108,13 +370,23 @@ public class GameStateBehaviour : MonoBehaviour
             buttonCanvas.HideOverlay();
             if (pressedButton != "Continue playing")
             {
-                if (tutorial)
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+# if UNITY_EDITOR
+                if (Input.GetMouseButton(1))
+# else
+                if (Input.touchCount > 1)
+# endif
                 {
-                    SetFlag("M0%Scene1%End", true);
-
-                    // Send an analytics event when the tutorial is skipped
-                    UnityAnalyticsIntegration.TutorialSkip (this, sceneName);
+                    if (GetFlagIntValue("Global%SceneTimeCounter") > 1)
+                    {
+                        SetFlag(sceneName + "%End", true);  // note that we DO encode analytics end scene in development build
+                        EncodeAnalyticsEndScene(true);      // if button was pressed via two-finger click/tap and the scene was begun
+                    }
                 }
+                else
+#endif
+                if (tutorial)
+                    SetFlag("M0%Scene1%End", true);  // note that we DON'T encode analytics end scene
                 LoadScene("MapScene");
                 buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
                 buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
@@ -238,7 +510,7 @@ public class GameStateBehaviour : MonoBehaviour
         {
              if (flags.ContainsKey(flagName))
             {
-                 flags.Remove(flagName);
+                flags.Remove(flagName);
                 if (saveImmediately)
                     SaveFlags();
             }
@@ -292,10 +564,23 @@ public class GameStateBehaviour : MonoBehaviour
             SetFlag(flagName, false);
     }
 
+    public void GenerateNewAnalytics()
+    {
+        PlayerPrefs.SetString("AnalyticsCode", "");
+        PlayerPrefs.SetInt("AnalyticsResetCount", PlayerPrefs.GetInt("AnalyticsResetCount", -1) + 1);
+
+        AnalyticsResult result = Analytics.SetUserId(DeviceInput.deviceSerial + "+" + PlayerPrefs.GetInt("AnalyticsResetCount", -1));
+        if (result != AnalyticsResult.Ok)
+        {
+            Debug.LogError("Analytics failure: " + result + " SetUserId");
+        }
+    }
+
     public void ResetFlags()
     {
+        GenerateNewAnalytics();
         flags.Clear();
-        SetFlag("System%AlreadyRunOnce", true);
+        SaveFlags();  // important to do this; if all flags below are false, the cleared flags are never saved
         SetFlag("System%SwapButtonGroups", buttonCanvas.swapButtonGroups);
         SetFlag("System%UseGyroscope", DeviceInput.gyro);
         SetFlag("System%UseCompass", DeviceInput.compass);
@@ -405,11 +690,11 @@ public class GameStateBehaviour : MonoBehaviour
         buttonCanvas.swapButtonGroups = GetFlag("System%SwapButtonGroups");
 
         DeviceInput.Init();
-        if (! GetFlag("System%AlreadyRunOnce"))
+        if (PlayerPrefs.GetInt("AnalyticsResetCount", -1) == -1)
         {
+            GenerateNewAnalytics();
             DeviceInput.gyro = DeviceInput.gyroPresent;
             DeviceInput.compass = DeviceInput.compassPresent && ! DeviceInput.gyro;
-            SetFlag("System%AlreadyRunOnce", true);
         }
         else
         {
@@ -431,7 +716,7 @@ public class GameStateBehaviour : MonoBehaviour
                 return;
 
             buttonCanvas.showLoading = true;
-#if UNITY_ANDROID && ! UNITY_EDITOR
+#if UNITY_ANDROID && ! UNITY_EDITOR && MAGIS_OBB
             // check first for obb
             if (obbDelay > 0.0f)
             {
@@ -452,7 +737,7 @@ public class GameStateBehaviour : MonoBehaviour
                             obbDelay = 1.0f;
                         }
                         else
-                            Application.Quit();
+                            DeviceInput.ExitGame(buttonCanvas);
                     });
                 return;
             }

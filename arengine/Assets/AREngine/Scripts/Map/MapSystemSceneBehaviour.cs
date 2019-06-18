@@ -1,6 +1,6 @@
 ﻿/************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -35,6 +35,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
 
     public float enterRadiusSquared       = 500.0f;
     public float enterTimeout             = 30.0f;
+
     public string backgroundMusic         = "BGM6";
     public string endingMusic             = "BGM1";
 
@@ -43,23 +44,25 @@ public class MapSystemSceneBehaviour : SceneBehaviour
     public string followMarkerStatus      = "Follow the map to $. Stay alert on the road!";
     public string enterMarkerStatus       = "MapStatuses/$#Locate the marker area, as shown below, then tap Enter to play!";
     public string notWithinMapStatus      = "You must physically visit the game's geographical area to play this game.";
-    public string endingStatus            = "Tap Replay to select a game module to replay!";
+    public string endingStatus            = "Tap a location to view its card!";
 
     public string notWithinMapPrompt      = "WARNING: Your GPS is reporting that you are not inside the game's geographical area.\n\nYou will need to take a photo of the marker at $. Take a photo now?";
     public string notWithinMarkerPrompt   = "WARNING: Your GPS is reporting that you are around $, but not close to the marker.\n\nYou will need to take a photo of the marker at $. Take a photo now?";
-    public string finishedGamePrompt      = "Congratulations! You have finished the game!\n\nYou may now select any module of the game to replay it. To choose a module, tap Replay.";
+    public string finishedGamePrompt      = "Congratulations! You have finished the game!";
+
+    public string takeABreakMessage       = "It's time for a break! If you are tired, we recommend that you stop now and continue the next day. Remember, don't push yourself, and safety first!";
 
     private bool albumEnabled = false;
+    private bool replayEnabled = false;
     private MapSystemBehaviour mapSystem;
     private TSVLookup tsv;
-    private bool hasIncrementedModuleNumber = false;
     private string currentWaypoint = null;
     private string newWaypoint = null;
     private string autoWaypoint = null;
-    private bool gameEnded = false;
-    private bool gameEndFlag = false;
+    private bool gameEnded;
+    private bool firstSceneInModule;
+    private static bool takeABreak = false;
     private float zoomCountdown = 0.0f;
-    private bool playedMusic = false;
     private List<string> activeWaypoints = new List<string>();
     private int numWaypoints;
     private float[,] adjacencyMatrix;
@@ -96,9 +99,11 @@ public class MapSystemSceneBehaviour : SceneBehaviour
 #endif
         {
             string activeScene = null;
+            bool hadPrerequisiteSceneInModule = false;
             foreach (string scene in tsv.Lookup(label))
             {
                 string flags = tsv.Lookup(label, scene)[0];
+                hadPrerequisiteSceneInModule = flags.Contains("%End");
                 if (scene[0] == 'M')
                 {
                     // a scene will ALWAYS be disabled if it has ended
@@ -114,6 +119,14 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             }
             if (activeScene != null)
             {
+                // if a scene with a prerequisite is already active, suppress chapter message
+                if (hadPrerequisiteSceneInModule)
+                {
+                    firstSceneInModule = false;
+                    takeABreak = true;  // when we get to the start of the next module, display take a break message
+                }
+
+                // if the scene to load does not start with M, the game has ended
                 if (activeScene[0] != 'M')
                     gameEnded = true;
 
@@ -136,32 +149,21 @@ public class MapSystemSceneBehaviour : SceneBehaviour
         if (! Init())
             return;
 
-        // determine if we have an album
+        // determine if we have album or replay functionality
         if (Resources.Load<TextAsset>("Cards/Album") != null)
             albumEnabled = true;
+        if (Resources.Load<TextAsset>("Cards/Replay") != null)
+            replayEnabled = true;
 
         // load map components
         mapSystem = GetComponent<MapSystemBehaviour>();
         tsv = new TSVLookup("MapTSV");
 
-        // track the highest module ever attained
-        if (gameState.GetFlagIntValue("Global%Module") > gameState.GetFlagIntValue("Global%HighestModule"))
-        {
-            gameState.SetFlag("Global%HighestModule", gameState.GetFlagIntValue("Global%Module"));
-        }
-
-        // if we are replaying a module but the game has moved past that module,
-        // go back to the highest module (which should be the ending screen)
-        if (gameState.GetFlagIntValue("Global%Module") != gameState.GetFlagIntValue("Global%ReplayModule"))
-        {
-            gameState.SetFlag("Global%GameEnd", false);  // Global%GameEnd == true unhides the Replay Ending button
-            gameState.SetFlag("Global%Module", gameState.GetFlagIntValue("Global%HighestModule"));
-        }
+        gameState.ProcessMapSceneModuleInitialize();
 
         // reinitialize locals
         currentWaypoint = newWaypoint = autoWaypoint = null;
         gameEnded = false;
-        gameEndFlag = gameState.GetFlag("Global%GameEnd");
         zoomCountdown = 2.0f;
         activeWaypoints = new List<string>();
 
@@ -185,7 +187,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             mapData = reader.ReadToEnd();
             reader.Close();
 # if ! UNITY_EDITOR
-            Debug.Log("WARNING: Currently using new MapData.txt in " + Application.persistentDataPath + ". Don't forget to copy this file over to ARGames/" + DeviceInput.GameName() + "/Resources to make this permanent!");
+            Debug.LogWarning("Currently using new MapData.txt in " + Application.persistentDataPath + ". Don't forget to copy this file over to ARGames/" + DeviceInput.GameName() + "/Resources to make this permanent!");
 # endif
         }
         catch (Exception) {}
@@ -196,6 +198,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
         // read waypoints
         int num = int.Parse(mapStrings[line++]);
         numWaypoints = 0;
+        firstSceneInModule = true;  // guilty until CreateWaypoint() proves it innocent
         for (int i = 0; i < num; i++)
         {
             string name = mapStrings[line++];
@@ -213,28 +216,11 @@ public class MapSystemSceneBehaviour : SceneBehaviour
         }
         else
 #endif
-        if (activeWaypoints.Count == 0)
+        if (gameState.ProcessMapSceneModuleIncrement(activeWaypoints.Count > 0 || gameEnded))
         {
-            // if not in edit mode and there are no active waypoints, we have reached the end of a module
-            // and should increment the module number and reread the waypoints
-            if (! hasIncrementedModuleNumber)
-            {
-                hasIncrementedModuleNumber = true;
-                gameState.SetFlag("Global%Module", gameState.GetFlagIntValue("Global%Module") + 1);
-                Start();
-                return;
-            }
-            else
-            {
-                Debug.Log("WARNING: MapTSV.txt did not contain any activatable scenes for module " + gameState.GetFlagIntValue("Global%Module") + "!");
-
-                // decrement the module number that we have erroneously incremented
-                if (gameState.GetFlagIntValue("Global%Module") == gameState.GetFlagIntValue("Global%HighestModule"))
-                    gameState.SetFlag("Global%HighestModule", gameState.GetFlagIntValue("Global%HighestModule") - 1);
-                gameState.SetFlag("Global%Module", gameState.GetFlagIntValue("Global%Module") - 1);
-            }
+            Start();
+            return;
         }
-        hasIncrementedModuleNumber = false;
 
         // ... to build pathfinding structures
         adjacencyMatrix = new float[numWaypoints, numWaypoints];
@@ -264,9 +250,9 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             edited = false;
             mapSystem.SetDeviceShowing(true);
             mapSystem.SetWaypointDragging(true);
+            buttonCanvas.SetStill(null);
             buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
             buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
-            buttonCanvas.SetColors(buttonColor, panelColor);
             buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
             buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
             buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
@@ -274,6 +260,8 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 0, null);
             buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 1, null);
             buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 2, null);
+            buttonCanvas.SetDialogue(null);
+            buttonCanvas.SetColors(buttonColor, panelColor);
 
             // visit all waypoints once to detect bad ones
             foreach (string waypoint in mapSystem.GetAllWaypoints())
@@ -286,16 +274,16 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             mapSystem.CameraCenterNudge(new Vector2(0.0f, 25.0f));
             mapSystem.SetDeviceShowing(! gameEnded);
             mapSystem.SetWaypointDragging(false);
+            buttonCanvas.SetStill(null);
             buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
             buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
-            buttonCanvas.SetColors(buttonColor, panelColor);
             buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 1, null);
             buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 2, null);
+            buttonCanvas.SetDialogue(null);
+            buttonCanvas.SetColors(buttonColor, panelColor);
 
             if (gameEnded)
             {
-                buttonCanvas.PlayMusic(endingMusic);
-                playedMusic = true;
                 buttonCanvas.ShowQuestionOverlay(
                     finishedGamePrompt,
                     "Continue playing",
@@ -306,22 +294,21 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                     }
                 );
             }
+            else if (firstSceneInModule)
+            {
+                TSVLookup tsv = new TSVLookup("ModuleNameTSV");
+                List<string> dialogue = tsv.Lookup("" + gameState.GetFlagIntValue("Global%Module"));
+                if (dialogue.Count > 0)
+                {
+                    buttonCanvas.SetDialogue(dialogue[0]);
+                    if (gameState.GetFlagIntValue("Global%Module") <= 1)
+                        takeABreak = false;  // suppress taking a break on first module (may happen if game progress is reset)
+                }
+            }
         }
         buttonCanvas.showDynamicGroup = false;
 
-        // if tutorial has not been played, do not start the music
-        if ((gameState.GetFlag("M0%Scene1%End") || gameState.GetFlag("Global%FinishedFirstTutorial")) && ! playedMusic)
-        {
-            buttonCanvas.PlayMusic(backgroundMusic);
-            playedMusic = true;
-        }
-
-        // playedMusic flag doubles as a signal to not start with the tutorial anymore
-        if (playedMusic)
-        {
-            gameState.SetFlag("M0%Scene1%End", true);
-            gameState.SetFlag("Global%FinishedFirstTutorial", true);
-        }
+        gameState.ProcessMapSceneMusicPlay(gameEnded ? endingMusic : backgroundMusic);
     }
 
     private void Pathfinder()
@@ -414,7 +401,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
         if (distance < 25.0f)
         {
             mapSystem.SetWaypointColor(currentWaypoint, Color.yellow);
-            Debug.Log("Bad waypoint '" + currentWaypoint + "' found with distance " + distance + " from " + source + "->" + dest + "(" + lerp + ")");
+            Debug.LogError("Bad waypoint '" + currentWaypoint + "' found with distance " + distance + " from " + source + "->" + dest + "(" + lerp + ")");
         }
         else if (mapSystem.GetWaypointLabel(currentWaypoint) == null)
             mapSystem.SetWaypointColor(currentWaypoint, waypointColor);
@@ -546,43 +533,17 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                 buttonCanvas.showDynamicGroup = false;
                 return;
             }
-
-            if (gameState.GetFlag("Global%GameEnd") != gameEndFlag)
+            else if (gameState.ProcessMapSceneRestart())
             {
-                // restart when the flag changes
                 Start();
                 return;
             }
-
-            if (! gameState.GetFlag("M0%Scene1%End"))
+            else if (gameState.ProcessMapSceneOverrideUpdate())
             {
-                // special handling for tutorial: auto-start it if it exists and it hasn't been played
-                bool tutorialExists = false;
-                for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
-                {
-                    string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
-                    scenePath = scenePath.Substring(scenePath.LastIndexOf("/") + 1);
-                    if (scenePath == "M0%Scene1.unity")
-                        tutorialExists = true;
-                }
-                // if the music has been played, the tutorial is being played due to a user retrigger;
-                // if the music has NOT been played, play the tutorial only if it has not run before
-                // (this prevents the edge case where the player retriggers the tutorial then exits the game)
-                if (tutorialExists && (playedMusic || ! gameState.GetFlag("Global%FinishedFirstTutorial")))
-                    gameState.LoadARScene("M0%Scene1");
-                else
-                {
-                    gameState.SetFlag("M0%Scene1%End", true);
-                    gameState.SetFlag("Global%FinishedFirstTutorial", true);
-                    if (! playedMusic)
-                    {
-                        buttonCanvas.PlayMusic(backgroundMusic);
-                        playedMusic = true;
-                    }
-                }
+                return;
             }
 
-            if (buttonCanvas.overlayShowing)
+            if (buttonCanvas.overlayShowing || buttonCanvas.dialogueShowing)
                 mapSystem.IgnoreTouchesUntilReleased();
 
             // countdown before zooming out
@@ -724,7 +685,8 @@ public class MapSystemSceneBehaviour : SceneBehaviour
 
             // if very close to a waypoint that's not selected, show Enter anyway
             autoWaypoint = null;
-            if (! gameEnded && currentWaypoint == null && mapSystem.IsDeviceGPSPositionValidated())
+            if (! gameEnded && currentWaypoint == null && mapSystem.IsDeviceGPSPositionValidated()
+                && ! buttonCanvas.dialogueShowing && ! buttonCanvas.overlayShowing)  // if dialogue/overlay is showing, thumbnail appears in wrong position
             {
                 buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, selectMarkerStatus);
                 float minDistance = float.PositiveInfinity;
@@ -791,7 +753,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                 nextButton = 2;
             }
             if (gameEnded)
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, "Replay");
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, replayEnabled ? "Replay" : null);
             else if (zoomCountdown == 0.0f && ! mapSystem.IsCentered() && mapSystem.IsDeviceGPSPositionWithinMap())
                 buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton, "Recenter");
             else if (zoomCountdown == 0.0f && ! mapSystem.IsTopView() && mapSystem.IsDeviceGPSPositionWithinMap())
@@ -804,7 +766,6 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                 buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, nextButton + 1, null);
 
             // process pressed buttons
-            string sceneName;
             if (buttonCanvas.pressedButton == "Options")
                 buttonCanvas.ShowOptionsOverlay();
             else if (buttonCanvas.pressedButton == "Album")
@@ -840,10 +801,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
 
                             if (pressedButton == "Proceed")
                             {
-                                gameState.SetFlag("Global%GPSValid", false);
-                                sceneName = mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[1];
-                                UnityAnalyticsIntegration.SceneEnter(gameState, sceneName, 0.0f, 0.0f, false);
-                                gameState.LoadARScene(sceneName);
+                                LoadScene(currentWaypoint, false, false);
                             }
                         }
                     );
@@ -867,25 +825,29 @@ public class MapSystemSceneBehaviour : SceneBehaviour
 
                             if (pressedButton == "Proceed")
                             {
-                                gameState.SetFlag("Global%GPSValid", true);
-                                sceneName = mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[1];
-                                UnityAnalyticsIntegration.SceneEnter(gameState, sceneName, 0.0f, 0.0f, false);  // report as bad gps
-                                gameState.LoadARScene(sceneName);
+                                LoadScene(currentWaypoint, true, false);
                             }
                         }
                     );
                 }
                 else
                 {
-                    gameState.SetFlag("Global%GPSValid", true);
-                    sceneName = mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[1];
-                    UnityAnalyticsIntegration.SceneEnter(gameState, sceneName, 0.0f, 0.0f);
-                    gameState.LoadARScene(sceneName);
+                    LoadScene(currentWaypoint, true, false);
                 }
             }
             else if (buttonCanvas.pressedButton == "View")
             {
                 buttonCanvas.ShowCardOverlay(mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[1]);
+            }
+            else if (buttonCanvas.pressedButton == "Dialogue")
+            {
+                if (takeABreak)
+                {
+                    takeABreak = false;
+                    buttonCanvas.SetDialogue(takeABreakMessage);
+                }
+                else
+                    buttonCanvas.SetDialogue(null);
             }
             else if (currentWaypoint == null && autoWaypoint == null)
             {
@@ -902,11 +864,12 @@ public class MapSystemSceneBehaviour : SceneBehaviour
         if (GUIUtility.hotControl != 0)
             mapSystem.IgnoreTouchesUntilReleased();
 
+        Vector2 guiScale = MapSystemBehaviour.GetGUIScale();
         if (editMode)
         {
             if (! edited)
             {
-                if (GUI.Button(new Rect(Screen.width - 100.0f, 0.0f, 100.0f, 100.0f), "Play Mode"))
+                if (GUI.Button(new Rect(guiScale.x - 100.0f, 0.0f, 100.0f, 100.0f), "Play Mode"))
                 {
                     gameState.SetFlag("Global%MarkerTest", false);
                     editMode = false;
@@ -914,7 +877,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                     Start();
                     return;
                 }
-                else if (GUI.Button(new Rect(Screen.width - 100.0f, 200.0f, 100.0f, 100.0f), "Marker Test"))
+                else if (GUI.Button(new Rect(guiScale.x - 100.0f, 200.0f, 100.0f, 100.0f), "Marker Test"))
                 {
                     gameState.SetFlag("Global%MarkerTest", true);
                     editMode = false;
@@ -925,12 +888,12 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             }
             else
             {
-                if (GUI.Button(new Rect(Screen.width - 100.0f, 0.0f, 100.0f, 100.0f), "Revert"))
+                if (GUI.Button(new Rect(guiScale.x - 100.0f, 0.0f, 100.0f, 100.0f), "Revert"))
                 {
                     Start();
                     return;
                 }
-                else if (GUI.Button(new Rect(Screen.width - 100.0f, 200.0f, 100.0f, 100.0f), "Save"))
+                else if (GUI.Button(new Rect(guiScale.x - 100.0f, 200.0f, 100.0f, 100.0f), "Save"))
                 {
                     try
                     {
@@ -1014,13 +977,9 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                 }
             }
         }
-#if UNITY_EDITOR
-        else if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-#else
-        else
-#endif
+        else if (LogCanvasBehaviour.showing)
         {
-            if (GUI.Button(new Rect(Screen.width - 100.0f, 0.0f, 100.0f, 100.0f), "Edit Mode"))
+            if (GUI.Button(new Rect(guiScale.x - 100.0f, 0.0f, 100.0f, 100.0f), "Edit Mode"))
             {
                 editMode = true;
                 savedScaleForMaxZoom = mapSystem.scaleForMaxZoom;
@@ -1032,13 +991,14 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             {
                 if (GUI.Button(new Rect(0.0f, 0.0f, 200.0f, 100.0f), "Finish Module " + gameState.GetFlagIntValue("Global%Module")))
                 {
+                    gameState.AppendToAnalyticsString("_");
                     gameState.SetFlag("Global%Module", gameState.GetFlagIntValue("Global%Module") + 1);
                     Start();
                     return;
                 }
                 if (currentWaypoint != null && GUI.Button(new Rect(0.0f, 100.0f, 200.0f, 100.0f), "Finish " + mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[1]))
                 {
-                    gameState.SetFlag(mapSystem.GetWaypointLabel(currentWaypoint).Split(';')[1] + "%End", true);
+                    LoadScene(currentWaypoint, true, true);
                     Start();
                     return;
                 }
@@ -1046,4 +1006,36 @@ public class MapSystemSceneBehaviour : SceneBehaviour
         }
     }
 #endif
+
+    private void LoadScene(string whichWaypoint, bool gpsValid, bool fake)
+    {
+        gameState.SetFlag("Global%GPSValid", gpsValid);
+
+        SortedList list = new SortedList();
+        foreach (string waypoint in activeWaypoints)
+        {
+            // sort the list of current waypoints
+            list.Add(mapSystem.GetWaypointLabel(waypoint).Split(';')[1], waypoint == whichWaypoint);
+        }
+        int counter = 0;
+        foreach (string sceneCode in list.Keys)
+        {
+            // count how many scenes occur before the current scene
+            if ((bool) list[sceneCode])
+            {
+                gameState.EncodeAnalyticsLeaveMap(counter);
+                if (fake)
+                {
+                    gameState.EncodeAnalyticsBeginScene(sceneCode, false);
+                    gameState.SetFlag("Global%SceneTimeCounter", 2);
+                    gameState.SetFlag(sceneCode + "%End", true);
+                    gameState.EncodeAnalyticsEndScene(true);
+                }
+                else
+                    gameState.LoadARScene(sceneCode);
+                break;
+            }
+            counter++;
+        }
+    }
 }

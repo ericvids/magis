@@ -1,6 +1,6 @@
 ﻿/************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -30,6 +30,7 @@ public enum ButtonCanvasStatusType
 }
 
 public delegate void QuestionDelegate(string pressedButton);
+public delegate void CloseDelegate();
 
 public class ButtonCanvasBehaviour : MonoBehaviour
 {
@@ -38,6 +39,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
 
     // game objects for assignment into the editor
     public GameObject[] crosshair;
+    public GameObject still;
     public GameObject fader;
     public GameObject status;
     public GameObject statusImage;
@@ -55,16 +57,14 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     public Transform overlayCanvas;
     public Transform oldOverlayCanvas;
 
-    private static GUIStyle fontStyle;
-
     public Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
 
     // messages
     private float timeSinceSceneStart;
     private bool noRotationShown;
     private bool accelerometerMalfunctioningShown;
-    private bool locationDisabledShown;
-    private bool gpsDisabledShown;
+    private bool locationPermissionDisabledShown;
+    private bool locationHardwareDisabledShown;
 
     // crosshair
     public const int NUM_CROSSHAIR_FRAMES = 9;     // number of frames the crosshair will animate
@@ -74,15 +74,16 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     private Color faderTargetColor;
     private float faderTime;
     private bool faderSuppressingText;
+    private bool faderTurningToStill;
 
     // status
     public const float STATUS_BASE = 42.0f;    // position of status
     public const float STATUS_OFFSET = 30.0f;  // Y units to move status into view when it is showing
     public const float STATUS_FACTOR = 90.0f;  // amount to multiply to Time.deltaTime for offsetting the status for the next frame
     private Color[] statusColor = new [] {     // background colors for each of the status types
-        new Color(0.0f, 0.25f, 0.5f, 0.75f),
-        new Color(0.5f, 0.25f, 0.0f, 0.75f),
-        new Color(0.5f, 0.0f, 0.0f, 0.75f)
+        new Color(0.0f, 0.25f, 0.5f, 0.875f),
+        new Color(0.5f, 0.25f, 0.0f, 0.875f),
+        new Color(0.5f, 0.0f, 0.0f, 0.875f)
     };
     private string[] statusString = new string[(int) ButtonCanvasStatusType.NUM_STATUS_TYPES];
     private string[] queuedStatusString = new string[(int) ButtonCanvasStatusType.NUM_STATUS_TYPES];
@@ -102,11 +103,14 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     private float currentZoomTime;
 
     // dialogue
-    public const float CHARACTERS_PER_SECOND = 60.0f;  // number of characters to show per second (cps)
-    public const float TEXT_SPEEDUP_FACTOR = 12.0f;    // factor to multiply to cps when user presses the dialogue button in advance
-    public const float DIALOGUE_DELAY = 0.25f;         // number of seconds before user is allowed to tap the dialogue button
+    public const float CHARACTERS_PER_SECOND = 120.0f;  // number of characters to show per second (cps)
+    public const float TEXT_SPEEDUP_FACTOR = 12.0f;     // factor to multiply to cps when user presses the dialogue button in advance
+    public const float DIALOGUE_DELAY = 0.25f;          // number of seconds before user is allowed to tap the dialogue button
+    public const float DIALOGUE_LINGERING = 10.0f;      // number of seconds before user is warned that he's taking too long
     private string text = "";
-    private float textLength;
+    private float textDisplayedFinalLength;
+    private float textDisplayedLength;
+    private float textInternalLength;
     private float textDelay;
     private bool advancing;
 
@@ -119,7 +123,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     {
         get
         {
-            return showDynamicGroup == false && oldOverlayCanvas == null;
+            return ! showDynamicGroup && ! dialogueShowing && ! overlayShowing && oldOverlayCanvas == null;
         }
     }
 
@@ -129,6 +133,18 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         crossY = (lowerLeft.y / Screen.height);
         crossWidth = ((upperRight.x - lowerLeft.x) / Screen.width);
         crossHeight = ((upperRight.y - lowerLeft.y) / Screen.height);
+    }
+
+    private bool stillEnabled
+    {
+        get
+        {
+            return still.GetComponent<UnityEngine.UI.Image>().enabled;
+        }
+        set
+        {
+            still.GetComponent<UnityEngine.UI.Image>().enabled = value;
+        }
     }
 
     private bool faderEnabled
@@ -151,14 +167,50 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         }
     }
 
-    // if fadeImage == null, the fader is reset to the blank (white) image
-    // if fadeImage == "", the fader is NOT reset
-    public void SetFade(Color targetColor, float time, string fadeImage = null)
+    public bool SetStill(string stillImage)
     {
-        if (fadeImage == null)
-            fader.GetComponent<UnityEngine.UI.Image>().sprite = Resources.Load<Sprite>("White");
-        else if (fadeImage != "")
-            fader.GetComponent<UnityEngine.UI.Image>().sprite = Resources.Load<Sprite>(fadeImage);
+        faderTurningToStill = false;
+        if (faderTargetColor.a != 0)
+        {
+            // direct change to still
+            if (stillImage == null)
+                stillEnabled = false;
+            else
+            {
+                still.GetComponent<UnityEngine.UI.Image>().overrideSprite = Resources.Load<Sprite>(stillImage);
+                stillEnabled = true;
+            }
+            return true;
+        }
+        else
+        {
+            if (stillImage == null)
+            {
+                if (! stillEnabled)
+                    return true;
+                fader.GetComponent<UnityEngine.UI.Image>().overrideSprite = still.GetComponent<UnityEngine.UI.Image>().overrideSprite;
+                fader.GetComponent<UnityEngine.UI.Image>().color = Color.white;
+                faderTargetColor = new Color(0, 0, 0, 0);
+                stillEnabled = false;
+            }
+            else
+            {
+                fader.GetComponent<UnityEngine.UI.Image>().overrideSprite = Resources.Load<Sprite>(stillImage);
+                fader.GetComponent<UnityEngine.UI.Image>().color = new Color(0, 0, 0, 0);
+                faderTargetColor = Color.white;
+                faderTurningToStill = true;
+            }
+            faderEnabled = true;
+            faderSuppressingText = true;
+            faderTime = 0.25f;
+            return false;
+        }
+    }
+
+    public void SetFade(Color targetColor, float time)
+    {
+        faderTurningToStill = false;
+        fader.GetComponent<UnityEngine.UI.Image>().overrideSprite = null;
         faderTargetColor = targetColor;
         if (time == 0)
         {
@@ -203,9 +255,9 @@ public class ButtonCanvasBehaviour : MonoBehaviour
                     bool active = objStatic.activeSelf;
                     objStatic.SetActive(objDynamic.activeSelf);
                     objDynamic.SetActive(active);
-                    Sprite sprite = objStatic.GetComponent<UnityEngine.UI.Image>().sprite;
-                    objStatic.GetComponent<UnityEngine.UI.Image>().sprite = objDynamic.GetComponent<UnityEngine.UI.Image>().sprite;
-                    objDynamic.GetComponent<UnityEngine.UI.Image>().sprite = sprite;
+                    Sprite sprite = objStatic.GetComponent<UnityEngine.UI.Image>().overrideSprite;
+                    objStatic.GetComponent<UnityEngine.UI.Image>().overrideSprite = objDynamic.GetComponent<UnityEngine.UI.Image>().overrideSprite;
+                    objDynamic.GetComponent<UnityEngine.UI.Image>().overrideSprite = sprite;
                     string buttonName = objStatic.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>().text;
                     objStatic.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>().text = objDynamic.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>().text;
                     objDynamic.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>().text = buttonName;
@@ -232,7 +284,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
             obj.SetActive(true);
             if (! sprites.ContainsKey(buttonName))
                 sprites.Add(buttonName, Resources.Load<Sprite>("Buttons/" + buttonName));
-            obj.GetComponent<UnityEngine.UI.Image>().sprite = sprites[buttonName];
+            obj.GetComponent<UnityEngine.UI.Image>().overrideSprite = sprites[buttonName];
             obj.transform.GetChild(0).GetComponent<UnityEngine.UI.Text>().text = buttonName + buttonNameExtension;
         }
         buttonGlow[(int) whichGroup, whichButton] = glow;
@@ -269,6 +321,9 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     {
         get
         {
+            // if a pressed button is being queried by some other script,
+            // the button is "consumed" immediately
+            pressedButtonIsNew = false;
             return _pressedButton;
         }
     }
@@ -277,7 +332,26 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     {
         get
         {
+            // if a pressed button is being queried by some other script,
+            // the button is "consumed" immediately
+            pressedButtonIsNew = false;
             return _pressedButtonExtension;
+        }
+    }
+
+    public bool dialogueShowing
+    {
+        get
+        {
+            return dialogue.GetComponent<CanvasGroup>().alpha > 0.0f;
+        }
+    }
+
+    public bool dialogueLingering
+    {
+        get
+        {
+            return textDelay >= DIALOGUE_LINGERING;
         }
     }
 
@@ -286,22 +360,28 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         faderSuppressingText = false;
         if (text == null)
             text = "";
+        else
+            text = text.Replace("\\n", "\n");
 
         int start = text.IndexOf("#");
         string speaker = "";
-        if (start != -1)
+        if (start != -1 && (start == 0 || text[start - 1] != '\\'))
             speaker = text.Substring(0, start);
-        this.text = InsertNewlines(text.Substring(start + 1));
-        textLength = -1;
+        else
+            start = -1;
+        this.text = CenterText(InsertNewlines(text.Substring(start + 1).Replace("\\#", "#")));
+        textDisplayedFinalLength = this.text.Replace("{", "").Replace("}", "").Replace("[", "").Replace("]", "").Replace("\u200a", "").Length;
+        textDisplayedLength = 0;
+        textInternalLength = 0;
         textDelay = 0;
 
         dialogue.transform.GetChild(1).gameObject.GetComponent<UnityEngine.UI.Text>().text = "";
         dialogue.transform.GetChild(2).gameObject.GetComponent<UnityEngine.UI.Text>().text = speaker;
 
-        if (speaker == "")
+        if (start == -1)  // if there's no #, make the dialogue transparent
             dialogue.transform.GetChild(0).gameObject.GetComponent<UnityEngine.UI.Image>().color = new Color(panelColor.r / 2.0f, panelColor.g / 2.0f, panelColor.b / 2.0f, 0.75f);
-        else
-            dialogue.transform.GetChild(0).gameObject.GetComponent<UnityEngine.UI.Image>().color = new Color(panelColor.r / 2.0f, panelColor.g / 2.0f, panelColor.b / 2.0f, 1.0f);
+        else              // # will make the dialogue opaque even if the speaker is ""
+            dialogue.transform.GetChild(0).gameObject.GetComponent<UnityEngine.UI.Image>().color = new Color(panelColor.r / 2.0f, panelColor.g / 2.0f, panelColor.b / 2.0f, 0.95f);
 
         if (text != "")
         {
@@ -332,12 +412,13 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         overlayCanvas.GetComponent<CanvasBehaviour>().SetButtonCanvas(this);
     }
 
-    public void ShowOptionsOverlay()
+    public void ShowOptionsOverlay(CloseDelegate closeDelegate = null)
     {
         if (overlayCanvas != null)
             return;
 
         InstantiateCanvas(optionsCanvas);
+        overlayCanvas.GetComponent<OptionsCanvasBehaviour>().closeDelegate = closeDelegate;
     }
 
     public bool ShowQuestionOverlay(string question, string button1, string button2, QuestionDelegate questionDelegate)
@@ -360,12 +441,13 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         return true;
     }
 
-    public void ShowCreditsOverlay()
+    public void ShowCreditsOverlay(CloseDelegate closeDelegate = null)
     {
         if (overlayCanvas != null)
             return;
 
         InstantiateCanvas(creditsCanvas);
+        overlayCanvas.GetComponent<CreditsCanvasBehaviour>().closeDelegate = closeDelegate;
     }
 
     public void ShowCardOverlay(string cardName, string previousCardName = null)
@@ -419,14 +501,9 @@ public class ButtonCanvasBehaviour : MonoBehaviour
 
     private float LineHeight(string text)
     {
-        if (fontStyle == null)
-        {
-            fontStyle = new GUIStyle();
-            fontStyle.wordWrap = true;
-            fontStyle.fontSize = 12;
-            fontStyle.font = Resources.Load<Font>("SourceSansPro");
-        }
-        return fontStyle.CalcHeight(new GUIContent(text), 380.0f);
+        UnityEngine.UI.Text t = dialogue.transform.GetChild(1).gameObject.GetComponent<UnityEngine.UI.Text>();
+        t.text = text;
+        return t.preferredHeight;
     }
 
     private string InsertNewlines(string text)
@@ -452,6 +529,36 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         return current;
     }
 
+    private string CenterText(string text)
+    {
+        string result = "";
+        string[] lines = text.Split('\n');
+        foreach (string line in lines)
+        {
+            string newline;
+            if (line.Length > 0 && line[0] == '=')
+            {
+                newline = line.Substring(1);
+                while (true)
+                {
+                    string option1 = newline.Replace("{", "").Replace("}", "").Replace("[", "").Replace("]", "");
+                    string option2 = "\u200a" + option1 + "\u200a";
+                    if (LineHeight(option1) < LineHeight(option2))
+                        break;
+                    newline = "\u200a" + newline + "\u200a";
+                }
+            }
+            else
+                newline = line;
+
+            if (result == "")
+                result = newline;
+            else
+                result = result + "\n" + newline;
+        }
+        return result;
+    }
+
     private string Colorize(string text, string open, string close, string color)
     {
         // close up any open brackets
@@ -474,22 +581,16 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         SetButton(ButtonCanvasGroup.STATIC, 0, null);
         SetButton(ButtonCanvasGroup.STATIC, 1, null);
         SetButton(ButtonCanvasGroup.STATIC, 2, null);
+        stillEnabled = false;
         faderEnabled = false;
         dialogue.GetComponent<CanvasGroup>().alpha = 0.0f;
-        statusImage.GetComponent<UnityEngine.UI.Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
     }
 
     private void MessageResponse(string pressedButton)
     {
         HideOverlay();
         if (pressedButton == "Exit game")
-        {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
-        }
+            DeviceInput.ExitGame(this);
         else if (pressedButton == "Take me to Settings")
             DeviceInput.ShowLocationAccess();
     }
@@ -523,21 +624,28 @@ public class ButtonCanvasBehaviour : MonoBehaviour
                                 "Continue playing",
                                 MessageResponse);
         }
-        else if (! locationDisabledShown && ! DeviceInput.locationEnabled)
+        else if (! locationPermissionDisabledShown && ! DeviceInput.locationPermissionEnabled)
         {
-            locationDisabledShown = true;
-            ShowQuestionOverlay("This game requires your device's location during play.\n\nPlease enable Location in your device's Settings. (If it's already enabled and you still get this message, you might need to power off and restart your phone.)",
+            locationPermissionDisabledShown = true;
+            ShowQuestionOverlay("This game requires your device's location during play.\n\nPlease ensure that you have given this app permission to access your Location in your device's Settings.",
                                 "Take me to Settings",
                                 "Continue playing",
                                 MessageResponse);
         }
-        else if (! gpsDisabledShown && ! DeviceInput.gpsEnabled)
+        else if (! locationHardwareDisabledShown && ! DeviceInput.locationHardwareEnabled)
         {
-            gpsDisabledShown = true;
-            ShowQuestionOverlay("Your device's GPS has been disabled (or is not found).\n\nPlease ensure that GPS is included as a location source (also known as \"high-accuracy\" mode) in your device's Settings.",
+            locationHardwareDisabledShown = true;
+# if ! MAGIS_NOGPS
+            ShowQuestionOverlay("Your device's location hardware has been disabled (or has not been found).\n\nPlease enable Location in your device's Settings, and also ensure that \"high-accuracy\" mode (GPS) is enabled.",
                                 "Take me to Settings",
                                 "Continue playing",
                                 MessageResponse);
+# elif MAGIS_BLE
+            ShowQuestionOverlay("Your device's location hardware has been disabled (or has not been found).\n\nPlease enable Location in your device's Settings.",
+                                "Take me to Settings",
+                                "Continue playing",
+                                MessageResponse);
+# endif
         }
 #endif
     }
@@ -609,6 +717,13 @@ public class ButtonCanvasBehaviour : MonoBehaviour
             if (faderTime <= float.Epsilon)
             {
                 faderTime = float.Epsilon;
+                if (faderTurningToStill)
+                {
+                    faderTurningToStill = false;
+                    still.GetComponent<UnityEngine.UI.Image>().overrideSprite = fader.GetComponent<UnityEngine.UI.Image>().overrideSprite;
+                    stillEnabled = true;
+                    faderTargetColor = fader.GetComponent<UnityEngine.UI.Image>().color = new Color(0, 0, 0, 0);
+                }
                 if (faderTargetColor.a == 0)
                     faderEnabled = false;
             }
@@ -639,9 +754,10 @@ public class ButtonCanvasBehaviour : MonoBehaviour
             }
         }
 
-        // if changing status, or overlay is visible, or dialogue or fader is visible when the highest status
+        // if changing status, or non-card overlay is visible, or if dialogue/fader/card overlay is visible when the highest status
         // is just game progress, hide the status
-        if (changingStatus != -1 || overlayCanvas != null || highestStatus == 0 && (text != "" || faderSuppressingText))
+        if (changingStatus != -1 || overlayCanvas != null && overlayCanvas.GetComponent<CardCanvasBehaviour>() == null
+            || highestStatus == 0 && (text != "" || faderSuppressingText || overlayCanvas != null))
         {
             if (statusTime > 0)
             {
@@ -653,7 +769,14 @@ public class ButtonCanvasBehaviour : MonoBehaviour
             {
                 // only if status frame is zero can we actually do the change
                 if (changingStatus != -1)
+                {
                     statusString[changingStatus] = queuedStatusString[changingStatus];
+
+                    // reposition the status image depending on whether the dialogue is active
+                    Vector3 v = statusImage.GetComponent<RectTransform>().anchoredPosition3D;
+                    v.y = (text != "" ? dialogue.transform.parent.GetComponent<RectTransform>().rect.height * 3.0f / 5.0f : 40.0f);
+                    statusImage.GetComponent<RectTransform>().anchoredPosition3D = v;
+                }
             }
         }
         else if (highestStatus != -1)
@@ -673,16 +796,16 @@ public class ButtonCanvasBehaviour : MonoBehaviour
             string statusImageFile = "";
             if (start != -1)
                 statusImageFile = statusString[highestStatus].Substring(0, start);
-            string statusText = statusString[highestStatus].Substring(start + 1);
+            string statusText = Colorize(Colorize(statusString[highestStatus].Substring(start + 1), "{", "}", "#ff8080"), "[", "]", "#80ff80");
             status.transform.GetChild(0).gameObject.GetComponent<UnityEngine.UI.Text>().text = statusText;
             status.GetComponent<UnityEngine.UI.Image>().color = statusColor[highestStatus];
             if (statusImageFile != "")
             {
                 if (! sprites.ContainsKey(statusImageFile))
                     sprites.Add(statusImageFile, Resources.Load<Sprite>(statusImageFile));
-                if (sprites[statusImageFile] != null && text == "")
+                if (sprites[statusImageFile] != null)
                 {
-                    statusImage.GetComponent<UnityEngine.UI.Image>().sprite = sprites[statusImageFile];
+                    statusImage.GetComponent<UnityEngine.UI.Image>().overrideSprite = sprites[statusImageFile];
                     float alpha = Mathf.Abs(statusTime / STATUS_OFFSET);
                     statusImage.transform.localScale = new Vector3(alpha * 0.2f + 0.8f, alpha * 0.2f + 0.8f, 1.0f);
                     statusImage.GetComponent<UnityEngine.UI.Image>().color = new Color(1.0f, 1.0f, 1.0f, alpha);
@@ -697,11 +820,16 @@ public class ButtonCanvasBehaviour : MonoBehaviour
 
     private void UpdateButtons()
     {
-        // allow the last pressed button to be reported to other modules for one tick
         if (pressedButtonIsNew)
-            pressedButtonIsNew = false;
-        else if (_pressedButton != null)
         {
+            // in case the pressed button is not consumed by another script,
+            // we "consume" it here (but still make it available for one tick
+            // in case the intended consuming script was delayed)
+            pressedButtonIsNew = false;
+        }
+        else
+        {
+            // if the pressed button is already consumed, clear it
             _pressedButton = null;
             _pressedButtonExtension = null;
         }
@@ -788,16 +916,32 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         {
             bool blink = true;
 
-            textLength += (advancing ? TEXT_SPEEDUP_FACTOR : 1) * Time.deltaTime * CHARACTERS_PER_SECOND;
-            if (textLength >= text.Length)
+            if (dialogue.GetComponent<CanvasGroup>().alpha == 1.0f)
             {
-                textLength = text.Length;
+                float delta = (advancing ? TEXT_SPEEDUP_FACTOR : 1) * Time.deltaTime * CHARACTERS_PER_SECOND;
+                textDisplayedLength += delta;
+                textInternalLength += delta;
+            }
+            if (textDisplayedLength >= textDisplayedFinalLength)
+            {
+                textDisplayedLength = textDisplayedFinalLength;
+                textInternalLength = text.Length;
                 textDelay += Time.deltaTime;
             }
-            if (textLength == text.Length && textDelay >= DIALOGUE_DELAY)
+            if (textDisplayedLength == textDisplayedFinalLength && textDelay >= DIALOGUE_DELAY)
                 blink = ((textDelay - DIALOGUE_DELAY) * 2.0f - Mathf.Floor((textDelay - DIALOGUE_DELAY) * 2.0f)) < 0.5f;
 
-            string colorizedText = Colorize(Colorize(text.Substring(0, (int) textLength), "{", "}", "#ff8080"), "[", "]", "#80ff80");
+            string actualText;
+            int actualLength;
+            do
+            {
+                actualText = text.Substring(0, (int) textInternalLength);
+                actualLength = actualText.Replace("{", "").Replace("}", "").Replace("[", "").Replace("]", "").Replace("\u200a", "").Length;
+                if (actualLength < textDisplayedLength)
+                    textInternalLength = ((int) textInternalLength) + 1;
+            }
+            while (actualLength < textDisplayedLength);
+            string colorizedText = Colorize(Colorize(actualText, "{", "}", "#ff8080"), "[", "]", "#80ff80");
 
             dialogue.transform.GetChild(1).gameObject.GetComponent<UnityEngine.UI.Text>().text = colorizedText;
             dialogue.transform.GetChild(3).localScale = (blink ? new Vector3(0.0f, 0.0f, 0.0f) : new Vector3(1.0f, 1.0f, 1.0f));
@@ -808,28 +952,35 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     {
         battery.GetComponent<UnityEngine.UI.Text>().text = DeviceInput.batteryLevel + "%";
 
+        // determine battery color
+        Color color;
+        if (DeviceInput.batteryLevel > 30 || DeviceInput.batteryCharging)
+            color = new Color(0.125f, 0.875f, 0.375f);
+        else if (DeviceInput.batteryLevel > 15)
+            color = new Color(0.75f, 0.625f, 0.25f);
+        else
+            color = new Color(0.875f, 0.25f, 0.25f);
+
+        // if charging, pulsate the battery color
+        float add = Mathf.Abs(Time.time - ((long) Time.time) - 0.5f);
+        if (DeviceInput.batteryCharging)
+            color = new Color(color.r + add, color.g + add, color.b + add);
+
+        // set battery color
+        battery.GetComponent<UnityEngine.UI.Text>().color =
+            battery.transform.GetChild(3).GetComponent<UnityEngine.UI.Image>().color = color;
+
+        // set cell contact color to battery color if fully charged
         if (DeviceInput.batteryLevel == 100)
-            battery.transform.GetChild(0).GetComponent<UnityEngine.UI.Image>().color = new Color(0.25f, 1.0f, 0.25f);
+            battery.transform.GetChild(1).GetComponent<UnityEngine.UI.Image>().color = color;
         else
-            battery.transform.GetChild(0).GetComponent<UnityEngine.UI.Image>().color = new Color(0.5f, 0.5f, 0.5f);
+            battery.transform.GetChild(1).GetComponent<UnityEngine.UI.Image>().color = new Color(0.5f, 0.5f, 0.5f);
 
-        if (DeviceInput.batteryLevel > 66)
-        {
-            battery.GetComponent<UnityEngine.UI.Text>().color =
-                battery.transform.GetChild(2).GetComponent<UnityEngine.UI.Image>().color = new Color(0.25f, 1.0f, 0.25f);
-        }
-        else if (DeviceInput.batteryLevel > 33)
-        {
-            battery.GetComponent<UnityEngine.UI.Text>().color =
-                battery.transform.GetChild(2).GetComponent<UnityEngine.UI.Image>().color = new Color(1.0f, 0.5f, 0.125f);
-        }
-        else
-        {
-            battery.GetComponent<UnityEngine.UI.Text>().color =
-                battery.transform.GetChild(2).GetComponent<UnityEngine.UI.Image>().color = new Color(1.0f, 0.125f, 0.125f);
-        }
+        // resize battery cell according to level
+        battery.transform.GetChild(3).GetComponent<RectTransform>().sizeDelta = new Vector2(DeviceInput.batteryLevel + 10, 50);
 
-        battery.transform.GetChild(2).GetComponent<RectTransform>().sizeDelta = new Vector2(DeviceInput.batteryLevel + 5, 50);
+        // add charging icon if applicable
+        battery.transform.GetChild(4).GetComponent<UnityEngine.UI.Image>().enabled = DeviceInput.batteryCharging;
     }
 
     public void UnloadSounds()
@@ -867,10 +1018,26 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         source.PlayOneShot(PreloadSound(sound));
     }
 
-    public void PlayMusic(string sound)
+    private System.Collections.IEnumerator PlayMusicCoroutine(string sound)
+    {
+        yield return new WaitUntil(() => (volumeDecreasePerSecond == 0.0f));
+        PlayMusic(sound);
+    }
+
+    public void PlayMusic(string sound, bool playAfterStoppingFade = false)
     {
         if (lastMusic == sound)
             return;
+
+        if (playAfterStoppingFade)
+        {
+            StopMusic();
+            PreloadSound(sound);
+            PreloadSound(sound + "-intro");
+            StartCoroutine(PlayMusicCoroutine(sound));
+            return;
+        }
+
         lastMusic = sound;
         AudioSource source = GetComponent<AudioSource>();
         volumeDecreasePerSecond = 0.0f;
@@ -912,7 +1079,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
 
     private void Start()
     {
-        GameObject.Find("ButtonCanvas/Loading").GetComponent<UnityEngine.UI.Image>().sprite = Resources.Load<Sprite>("LoadingScreen");
+        GameObject.Find("ButtonCanvas/Loading").GetComponent<UnityEngine.UI.Image>().overrideSprite = Resources.Load<Sprite>("LoadingScreen");
     }
 
     private void Update()
@@ -932,6 +1099,9 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     public void ButtonPress()
     {
         GameObject obj = EventSystem.current.currentSelectedGameObject;
+        EventSystem.current.SetSelectedGameObject(null, null);  // prevent Unity Editor spacebar from pressing the button again
+        if (obj == null)
+            return;
         if (obj.transform.parent.gameObject == dynamicPanel || obj.transform.parent.gameObject == staticPanel)
         {
             if (obj.transform.parent.gameObject == staticPanel || currentZoomTime == BUTTON_ZOOM_TIME)
@@ -954,7 +1124,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
             if (obj == dialogue)
             {
                 advancing = true;
-                if (textLength < text.Length || textDelay < DIALOGUE_DELAY)
+                if (textDisplayedLength < textDisplayedFinalLength || textDelay < DIALOGUE_DELAY)
                     return;
 
                 _pressedButton = obj.name;
@@ -968,8 +1138,8 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     {
         timeSinceSceneStart = 0.0f;
 #if ! UNITY_EDITOR
-        locationDisabledShown = false;
-        gpsDisabledShown = false;
+        locationPermissionDisabledShown = false;
+        locationHardwareDisabledShown = false;
 #endif
     }
 }

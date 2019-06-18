@@ -1,6 +1,6 @@
 ﻿/************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -17,17 +17,22 @@ using System.Text.RegularExpressions;
 public class DeviceInput
 {
 #if UNITY_IOS && ! UNITY_EDITOR
+# if ! MAGIS_NOGPS || MAGIS_BLE
     [DllImport ("__Internal")]
-    static extern void StartBattery();
+    static extern int IsLocationPermitted();
+# endif
     [DllImport ("__Internal")]
-    static extern int GetBatteryLevel();
-    [DllImport ("__Internal")]
-    static extern void LaunchPrivacy();
+    static extern string GetApplicationSettingsURL();
 #endif
+
+    public static string NameToFolderName(string name)
+    {
+        return Regex.Replace(name, @"[^_A-Za-z0-9]", "");
+    }
 
     public static string GameName()
     {
-        return Regex.Replace(Application.productName, @"[^_A-Za-z0-9]", "");
+        return NameToFolderName(Application.productName);
     }
 
     // if accelerometer becomes unstable for more than this number of seconds, disable device angle pitch and roll readings
@@ -55,13 +60,11 @@ public class DeviceInput
 #if UNITY_ANDROID && ! UNITY_EDITOR
         // get the rotation sensor implemented in java
         androidActivity = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
-        androidPlugin = new AndroidJavaObject("AndroidPlugin", androidActivity, (int) (Time.fixedDeltaTime * 1000000));
+        androidPlugin = new AndroidJavaObject("AndroidPlugin", androidActivity, (int) (1.0f / 60.0f * 1000000));  // 60Hz
 
         _compassPresent = androidPlugin.Call<bool>("isRotationSensorAvailable");
         if (! _compassPresent)
             androidCompass = false;
-#elif UNITY_IOS && ! UNITY_EDITOR
-        StartBattery();
 #endif
 
         Input.gyro.updateInterval = 1.0f / 60.0f;
@@ -69,7 +72,7 @@ public class DeviceInput
 #if ! UNITY_EDITOR
         // when in editor, gyro functionality can be provided by Unity Remote but cannot
         // (and should not) be toggled by the user; never set _gyroPresent to true there
-        _gyroPresent = _gyro = Input.gyro.enabled;
+        _gyroPresent = Input.gyro.enabled;
 #endif
     }
 
@@ -110,11 +113,7 @@ public class DeviceInput
             if (_gyro == value)
                 return;
             _gyro = value;
-#if UNITY_ANDROID
-            // TODO remove the surrounding #if as soon as Unity fixes their regression bug
-            // https://issuetracker.unity3d.com/issues/ios-the-accelerometer-stops-working-when-disabling-the-gyroscope-in-build
             Input.gyro.enabled = _gyro;
-#endif
             average.Reset();
 
             GameObject engine = GameObject.FindWithTag("AREngine");
@@ -233,7 +232,7 @@ public class DeviceInput
             // will use the image feed to determine pose (otherwise the engine will
             // depend solely on the arrow keys)
             return UnityEditor.EditorApplication.isRemoteConnected
-                || Vuforia.CameraDevice.Instance.GetCameraImage(Vuforia.Image.PIXEL_FORMAT.RGBA8888) == null;
+                || Vuforia.CameraDevice.Instance.GetCameraImage(Vuforia.PIXEL_FORMAT.RGBA8888) == null;
 #else
             return compass || gyro;
 #endif
@@ -270,72 +269,189 @@ public class DeviceInput
         }
     }
 
-    public static bool locationEnabled
+    public static bool locationPermissionEnabled
     {
         get
         {
-#if MAGIS_NOGPS
-            return true;
-#else
-            if (GameObject.FindWithTag("AREngine") != null)
+            if (GameObject.FindWithTag("AREngine") != null || GameObject.Find("TitleScene") != null)
             {
+#if ! MAGIS_NOGPS
                 if (Input.location.status == LocationServiceStatus.Running)
                     Input.location.Stop();
+#endif
                 return true;
             }
-            else if (GameObject.Find("TitleScene") != null)
-                return true;  // don't warn about turning on location in title screen
-            else
-                return Input.location.status == LocationServiceStatus.Running;
+#if UNITY_ANDROID && ! UNITY_EDITOR
+# if MAGIS_NOGPS && MAGIS_BLE
+            return UnityEngine.Android.Permission.HasUserAuthorizedPermission(UnityEngine.Android.Permission.CoarseLocation);
+# elif ! MAGIS_NOGPS
+	        return UnityEngine.Android.Permission.HasUserAuthorizedPermission(UnityEngine.Android.Permission.FineLocation);
+# else
+            return true;
+# endif
+#elif UNITY_IOS && ! UNITY_EDITOR
+# if ! MAGIS_NOGPS || MAGIS_BLE
+            return IsLocationPermitted() != 0;
+# else
+            return true;
+# endif
+#else
+            return true;
 #endif
         }
     }
 
-    public static bool gpsEnabled
+    public static bool locationHardwareEnabled
     {
         get
         {
-#if UNITY_ANDROID && ! UNITY_EDITOR && ! MAGIS_NOGPS
-            return Input.location.status != LocationServiceStatus.Running
-                   || androidActivity.Call<AndroidJavaObject>("getSystemService", "location").Call<bool>("isProviderEnabled", "gps");
-#else
-            return true;
+            if (GameObject.FindWithTag("AREngine") != null || GameObject.Find("TitleScene") != null)
+                return true;
+            bool result = true;
+#if UNITY_ANDROID && ! UNITY_EDITOR
+# if ! NAGIS_NOGPS || MAGIS_BLE
+            // if gps provider is enabled, location hardware is enabled for both magis modes
+            result = androidActivity.Call<AndroidJavaObject>("getSystemService", "location").Call<bool>("isProviderEnabled", "gps");
+# endif
+# if MAGIS_BLE
+            // if network provider is enabled, location hardware is enabled for magis ble mode only (require gps provider otherwise)
+            result = result || androidActivity.Call<AndroidJavaObject>("getSystemService", "location").Call<bool>("isProviderEnabled", "network");
+# endif
 #endif
+            return result;
         }
     }
 
     public static void ShowLocationAccess()
     {
-        if (locationEnabled && gpsEnabled)
-            return;
-
 #if UNITY_ANDROID && ! UNITY_EDITOR
-        AndroidJavaObject intent = new AndroidJavaObject("android.content.Intent", "android.settings.LOCATION_SOURCE_SETTINGS");
-        androidActivity.Call("startActivity", intent);
+        AndroidJavaObject intent = null;
+        if (! locationPermissionEnabled)
+        {
+            intent = new AndroidJavaObject("android.content.Intent", "android.settings.APPLICATION_DETAILS_SETTINGS");
+            AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri");
+            intent.Call<AndroidJavaObject>("setData", uriClass.CallStatic<AndroidJavaObject>("fromParts", "package", Application.identifier, null));
+        }
+        else if (! locationHardwareEnabled)
+            intent = new AndroidJavaObject("android.content.Intent", "android.settings.LOCATION_SOURCE_SETTINGS");
+        if (intent != null)
+            androidActivity.Call("startActivity", intent);
 #elif UNITY_IOS && ! UNITY_EDITOR
-        LaunchPrivacy();
+        if (! locationPermissionEnabled)
+            Application.OpenURL(GetApplicationSettingsURL());
 #endif
+    }
+
+    public static bool batteryCharging
+    {
+        get
+        {
+#if UNITY_EDITOR
+            return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+#else
+            return SystemInfo.batteryStatus == BatteryStatus.Charging;
+#endif
+        }
     }
 
     public static int batteryLevel
     {
         get
         {
-#if UNITY_ANDROID && ! UNITY_EDITOR
-            return androidPlugin.Call<int>("getBatteryLevel");
-#elif UNITY_IOS && ! UNITY_EDITOR
-            return GetBatteryLevel();
+#if UNITY_EDITOR
+            return 100 - ((int) (Time.realtimeSinceStartup * 5)) % 101;
 #else
-            return 100 - ((int) (Time.realtimeSinceStartup * 2)) % 101;
+            return (int) ((SystemInfo.batteryLevel + 0.005f) * 100);
 #endif
         }
+    }
+
+    public static string Base64ToHex(string s)
+    {
+        string sub;
+        if (s.Length == 1)
+            sub = s + "A";
+        else
+            sub = s;
+
+        int value =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".IndexOf(sub[0]) * 64 +
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".IndexOf(sub[1]);
+
+        return
+            "0123456789ABCDEF".Substring(value / 256, 1) +
+            "0123456789ABCDEF".Substring((value % 256) / 16, 1) +
+            "0123456789ABCDEF".Substring(value % 16, 1) +
+            (s.Length > 2 ? Base64ToHex(s.Substring(2)) : "");
+    }
+
+    public static string HexToBase64(string s)
+    {
+        string sub;
+        if (s.Length == 1)
+            sub = s + "00";
+        else if (s.Length == 2)
+            sub = s + "0";
+        else
+            sub = s;
+
+        int value =
+            "0123456789ABCDEF".IndexOf(sub[0]) * 256 +
+            "0123456789ABCDEF".IndexOf(sub[1]) * 16 +
+            "0123456789ABCDEF".IndexOf(sub[2]);
+
+        return
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".Substring(value / 64, 1) +
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".Substring(value % 64, 1) +
+            (s.Length > 3 ? HexToBase64(s.Substring(3)) : "");
+    }
+
+    public static string HumanReadableEncoding(string s)
+    {
+        return s.Replace("l", "!").Replace("0", "*");
     }
 
     public static string deviceSerial
     {
         get
         {
-            return SystemInfo.deviceUniqueIdentifier;
+#if UNITY_ANDROID
+            int lastHex = 0;
+#else
+            int lastHex = 1;
+#endif
+            lastHex += gyroPresent ? 8 : 0;
+            lastHex += compassPresent ? 4 : 0;
+            lastHex += accelerometerMalfunctioning ? 0 : 2;
+            string lastHexChar = "0123456789ABCDEF".Substring(lastHex, 1);
+            return HexToBase64(SystemInfo.deviceUniqueIdentifier.Replace("-", "").Replace('a', 'A').Replace('b', 'B').Replace('c', 'C').Replace('d', 'D').Replace('e', 'E').Replace('f', 'F') + lastHexChar);
         }
+    }
+
+    public static void ExitGame(ButtonCanvasBehaviour buttonCanvas)
+    {
+#if ! UNITY_EDITOR
+        if (Input.touchCount > 1)
+#endif
+        {
+            string serial = HumanReadableEncoding(deviceSerial) + "\u00a0(" + Application.version + ")";
+            string analytics = HumanReadableEncoding(PlayerPrefs.GetString("AnalyticsCode"));
+            buttonCanvas.ShowQuestionOverlay("Serial:\u00a0" + serial + "\nAnalytics:\u00a0\u00a0" + analytics,
+                                             "Exit game",
+                                             null,
+                                             delegate(string pressedButton)
+            {
+                buttonCanvas.HideOverlay();
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+#else
+                Application.Quit();
+#endif
+            });
+        }
+#if ! UNITY_EDITOR
+        else
+            Application.Quit();
+#endif
     }
 }

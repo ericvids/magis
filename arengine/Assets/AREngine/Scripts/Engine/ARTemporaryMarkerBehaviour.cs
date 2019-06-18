@@ -1,6 +1,6 @@
 ﻿/************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -29,17 +29,6 @@ public class ARTemporaryMarkerBehaviour : MonoBehaviour, IUserDefinedTargetEvent
 
         // disable this marker at the start
         GetComponentInChildren<ImageTargetBehaviour>().enabled = false;
-
-/* Commented out since new Vuforia
-#if ! (DEVELOPMENT_BUILD || UNITY_EDITOR)
-        // stop vuforia from preventing the device to sleep
-        QCARBehaviour qcar = GameObject.FindWithTag("MainCamera").GetComponent<QCARBehaviour>();
-        qcar.RegisterQCARInitializedCallback(delegate()
-        {
-            QCARRuntimeUtilities.ResetSleepMode();
-        });
-#endif
-*/
     }
 
     private void OnApplicationPause(bool paused)
@@ -115,7 +104,7 @@ public class ARTemporaryMarkerBehaviour : MonoBehaviour, IUserDefinedTargetEvent
 
             // this loads the default data set
             dataSet = objectTracker.CreateDataSet();
-#if UNITY_ANDROID && ! UNITY_EDITOR
+#if UNITY_ANDROID && ! UNITY_EDITOR && MAGIS_OBB
             dataSet.Load(Application.persistentDataPath + "/Vuforia/magis-default.xml", VuforiaUnity.StorageType.STORAGE_ABSOLUTE);
 #else
             dataSet.Load("magis-default");
@@ -124,7 +113,7 @@ public class ARTemporaryMarkerBehaviour : MonoBehaviour, IUserDefinedTargetEvent
 
             // this loads the data set for the markers of the current game
             dataSet = objectTracker.CreateDataSet();
-#if UNITY_ANDROID && ! UNITY_EDITOR
+#if UNITY_ANDROID && ! UNITY_EDITOR && MAGIS_OBB
             dataSet.Load(Application.persistentDataPath + "/Vuforia/" + DeviceInput.GameName() + ".xml", VuforiaUnity.StorageType.STORAGE_ABSOLUTE);
 #else
             dataSet.Load(DeviceInput.GameName());

@@ -1,6 +1,6 @@
 ﻿/************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -25,9 +25,18 @@ public class PreBuild : IPreprocessBuildWithReport
         }
     }
 
+    void BackupFile(string file)
+    {
+        if (AssetDatabase.AssetPathToGUID(file) != "")
+        {
+            Debug.Log("Backing up " + file);
+            AssetDatabase.MoveAsset(file, file + ".bak");
+        }
+    }
+
     public void OnPreprocessBuild(BuildReport report)
     {
-        if (! Autorun.readyToBuild)
+        if (Autorun.buildNotReady || AssetDatabase.IsValidFolder("Assets/_DO NOT COMMIT RIGHT NOW - Unity is using the project"))
         {
             EditorUtility.DisplayDialog("MAGIS", "MAGIS has detected that you are attempting to perform a build while it is not in a ready state. This will lead to a corrupted build.\n\nDue to Unity missing the necessary callback, it is not possible for MAGIS to cancel the build. Please manually cancel it by pressing OK in this dialog and pressing Cancel in the progress window that appears.", "OK");
             return;
@@ -35,23 +44,18 @@ public class PreBuild : IPreprocessBuildWithReport
 
         // do this before build
 
-        Autorun.ClearLogWindow();
-
         // if we don't call this before creating the dummy folder, unity will be in a non-compiling state
         // and the dummy folder gets removed prematurely
         AssetDatabase.SaveAssets();
 
-        if (! AssetDatabase.IsValidFolder("Assets/_DO NOT COMMIT RIGHT NOW - Unity is using the project"))
-        {
-            // upon building, hide unnecessary resources
-            AssetDatabase.CreateFolder("Assets", "_DO NOT COMMIT RIGHT NOW - Unity is using the project");
-            Autorun.BackupResources();
-        }
+        // upon building, hide unnecessary resources
+        AssetDatabase.CreateFolder("Assets", "_DO NOT COMMIT RIGHT NOW - Unity is using the project");
 
         // to ensure that the only markers included in the built package are that of the current game,
         // we move all other markers to a temporary folder
         if (! Autorun.singleGameProject && ! AssetDatabase.IsValidFolder("Assets/StreamingAssetsBackup"))
         {
+            Debug.Log("Backing up StreamingAssets that are not used for this project");
             AssetDatabase.MoveAsset("Assets/StreamingAssets", "Assets/StreamingAssetsBackup");
             AssetDatabase.CreateFolder("Assets", "StreamingAssets");
             AssetDatabase.CreateFolder("Assets/StreamingAssets", "Vuforia");
@@ -64,6 +68,16 @@ public class PreBuild : IPreprocessBuildWithReport
             AssetDatabase.MoveAsset("Assets/StreamingAssetsBackup/Vuforia/" + DeviceInput.GameName() + ".xml",
                                     "Assets/StreamingAssets/Vuforia/" + DeviceInput.GameName() + ".xml");
         }
+
+#if MAGIS_NOGPS && ! MAGIS_BLE
+        BackupFile("Assets/AREngine/Plugins/iOS/Location.mm");
+#endif
+
+#if ! MAGIS_BLE
+        BackupFile("Assets/Plugins/Android/AndroidManifest.xml");
+        BackupFile("Assets/Plugins/Android/unityandroidbluetoothlelib.jar");
+        BackupFile("Assets/Plugins/iOS/UnityBluetoothLE.mm");
+#endif
 
         AssetDatabase.Refresh();
         Debug.Log("Writing " + report.summary.platform + " build to " + report.summary.outputPath);

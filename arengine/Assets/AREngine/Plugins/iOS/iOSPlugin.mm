@@ -1,6 +1,6 @@
 /************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -12,18 +12,11 @@ You should have received a copy of the GNU General Public License v2 along with 
 
 extern "C"
 {
-    void StartBattery()
+    const char *GetApplicationSettingsURL()
     {
-        [UIDevice currentDevice].batteryMonitoringEnabled = YES;
-    }
-
-    int GetBatteryLevel()
-    {
-        return (int) ([UIDevice currentDevice].batteryLevel * 100);
-    }
-
-    void LaunchPrivacy()
-    {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+        const char *string = [UIApplicationOpenSettingsURLString UTF8String];
+        char *copy = (char *) malloc(strlen(string) + 1);
+        strcpy(copy, string);
+        return copy;
     }
 }

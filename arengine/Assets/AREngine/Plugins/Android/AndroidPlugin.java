@@ -1,6 +1,6 @@
 /************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -10,18 +10,11 @@ You should have received a copy of the GNU General Public License v2 along with 
 
 ************************************************************************************************************/
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.BatteryManager;
-import android.view.WindowManager;
-import android.widget.Toast;
 
 /**
  * This class implements a software-based rotation sensor that derives its
@@ -43,21 +36,12 @@ public class AndroidPlugin implements SensorEventListener
     private float[] magneticField;
     private float[] m;
     private float[] q;
-    private int batteryLevel;
-    private BroadcastReceiver batteryReceiver = new BroadcastReceiver()
-        {
-            @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                batteryLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0) * 100 / intent.getIntExtra(BatteryManager.EXTRA_SCALE, 0);
-            }
-        };
 
-    public AndroidPlugin(Context context1, int rate)
+    public AndroidPlugin(Context context, int sensorRate)
     {
-        context = context1;
+        this.context = context;
+        this.sensorRate = sensorRate;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        sensorRate = rate;
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         accelerometer = new float[3];
@@ -70,19 +54,6 @@ public class AndroidPlugin implements SensorEventListener
             sensorManager.registerListener(this, accelerometerSensor, sensorRate);
             sensorManager.registerListener(this, magneticFieldSensor, sensorRate);
         }
-
-        context.registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-
-        /*
-        ((Activity) context).runOnUiThread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                Toast.makeText(context, "Android Plugin ON", Toast.LENGTH_SHORT).show();
-            }
-        });
-        */
     }
 
     public void onSensorChanged(SensorEvent event)
@@ -108,18 +79,6 @@ public class AndroidPlugin implements SensorEventListener
     public void destroy()
     {
         sensorManager.unregisterListener(this);
-        context.unregisterReceiver(batteryReceiver);
-
-        /*
-        ((Activity) context).runOnUiThread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                Toast.makeText(context, "Android Plugin OFF", Toast.LENGTH_SHORT).show();
-            }
-        });
-        */
     }
 
     public boolean isRotationSensorAvailable()
@@ -145,10 +104,5 @@ public class AndroidPlugin implements SensorEventListener
     public float getW()
     {
         return q[3];
-    }
-
-    public int getBatteryLevel()
-    {
-        return batteryLevel;
     }
 }

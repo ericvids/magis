@@ -1,268 +1,790 @@
 fileFormatVersion: 2
 guid: 7a3c64e2c791b264b9b68542b10f5068
+labels:
+- AllModels
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: BlendTargets
-    100002: Geo_Grp
-    100004: group23
-    100006: group28
-    100008: group28 1
-    100010: group28 2
-    100012: group28 3
-    100014: group28 4
-    100016: group34
-    100018: group36
-    100020: group38
-    100022: group50
-    100024: group51
-    100026: Head_yr_jnt
-    100028: ikHandle3
-    100030: ikHandle4
-    100032: ikHandle5
-    100034: ikHandle6
-    100036: ikHandle7
-    100038: ikHandle8
-    100040: jaw
-    100042: joint11
-    100044: joint11 1
-    100046: joint19
-    100048: joint19 1
-    100050: joint19 2
-    100052: joint19 3
-    100054: joint19 4
-    100056: joint19 5
-    100058: joint19 6
-    100060: joint19 7
-    100062: joint19 8
-    100064: joint19 9
-    100066: joint23
-    100068: joint23 1
-    100070: joint26
-    100072: joint26 1
-    100074: joint28
-    100076: joint6
-    100078: Joint_Grp
-    100080: L_ankle_yr_jnt
-    100082: L_ball_yr_jnt
-    100084: L_ball_yr_jnt 1
-    100086: L_clavicle_yr_jnt
-    100088: L_eye_yr
-    100090: L_Forearm_yr
-    100092: L_heel_yr_jnt
-    100094: L_index01_yr_jnt
-    100096: L_index02_yr_jnt
-    100098: L_index03_yr_jnt
-    100100: L_lowerleg_yr_jnt
-    100102: L_middle01_yr_jnt
-    100104: L_middle02_yr_jnt
-    100106: L_middle03_yr_jnt
-    100108: L_pinky01_yr_jnt
-    100110: L_pinky02_yr_jnt
-    100112: L_pinky03_yr_jnt
-    100114: L_ring01_yr_jnt
-    100116: L_ring02_yr_jnt
-    100118: L_ring03_yr_jnt
-    100120: L_thumb01_yr_jnt
-    100122: L_thumb02_yr_jnt
-    100124: L_thumb03_yr_jnt
-    100126: L_toe_yr_jnt
-    100128: L_upper_yr
-    100130: L_upperleg_yr_jnt
-    100132: L_Wrist
-    100134: Neck_yr_jnt
-    100136: polySurface1
-    100138: polySurface10
-    100140: polySurface3
-    100142: polySurface35
-    100144: polySurface44
-    100146: polySurface45
-    100148: polySurface46
-    100150: polySurface47
-    100152: polySurface54
-    100154: polySurface55
-    100156: polySurface56
-    100158: polySurface57
-    100160: polySurface58
-    100162: polySurface59
-    100164: R_ankle_yr_jnt
-    100166: R_ball_yr_jnt
-    100168: R_ball_yr_jnt 1
-    100170: R_clavicle_yr_jnt
-    100172: R_eye_yr
-    100174: R_Forearm_yr
-    100176: R_heel_yr_jnt
-    100178: R_index01_yr_jnt
-    100180: R_index02_yr_jnt
-    100182: R_index03_yr_jnt
-    100184: R_lowerleg_yr_jnt
-    100186: R_middle01_yr_jnt
-    100188: R_middle02_yr_jnt
-    100190: R_middle03_yr_jnt
-    100192: R_pinky01_yr_jnt
-    100194: R_pinky02_yr_jnt
-    100196: R_pinky03_yr_jnt
-    100198: R_ring01_yr_jnt
-    100200: R_ring02_yr_jnt
-    100202: R_ring03_yr_jnt
-    100204: R_thumb01_yr_jnt
-    100206: R_thumb02_yr_jnt
-    100208: R_thumb03_yr_jnt
-    100210: R_toe_yr_jnt
-    100212: R_upper_yr
-    100214: R_upperleg_yr_jnt
-    100216: R_Wrist
-    100218: Root_yr_jnt
-    100220: Spine01_yr_jnt
-    100222: Spine02_yr_jnt
-    100224: Spine03_yr_jnt
-    100226: transform1
-    100228: //RootNode
-    400000: BlendTargets
-    400002: Geo_Grp
-    400004: group23
-    400006: group28
-    400008: group28 1
-    400010: group28 2
-    400012: group28 3
-    400014: group28 4
-    400016: group34
-    400018: group36
-    400020: group38
-    400022: group50
-    400024: group51
-    400026: Head_yr_jnt
-    400028: ikHandle3
-    400030: ikHandle4
-    400032: ikHandle5
-    400034: ikHandle6
-    400036: ikHandle7
-    400038: ikHandle8
-    400040: jaw
-    400042: joint11
-    400044: joint11 1
-    400046: joint19
-    400048: joint19 1
-    400050: joint19 2
-    400052: joint19 3
-    400054: joint19 4
-    400056: joint19 5
-    400058: joint19 6
-    400060: joint19 7
-    400062: joint19 8
-    400064: joint19 9
-    400066: joint23
-    400068: joint23 1
-    400070: joint26
-    400072: joint26 1
-    400074: joint28
-    400076: joint6
-    400078: Joint_Grp
-    400080: L_ankle_yr_jnt
-    400082: L_ball_yr_jnt
-    400084: L_ball_yr_jnt 1
-    400086: L_clavicle_yr_jnt
-    400088: L_eye_yr
-    400090: L_Forearm_yr
-    400092: L_heel_yr_jnt
-    400094: L_index01_yr_jnt
-    400096: L_index02_yr_jnt
-    400098: L_index03_yr_jnt
-    400100: L_lowerleg_yr_jnt
-    400102: L_middle01_yr_jnt
-    400104: L_middle02_yr_jnt
-    400106: L_middle03_yr_jnt
-    400108: L_pinky01_yr_jnt
-    400110: L_pinky02_yr_jnt
-    400112: L_pinky03_yr_jnt
-    400114: L_ring01_yr_jnt
-    400116: L_ring02_yr_jnt
-    400118: L_ring03_yr_jnt
-    400120: L_thumb01_yr_jnt
-    400122: L_thumb02_yr_jnt
-    400124: L_thumb03_yr_jnt
-    400126: L_toe_yr_jnt
-    400128: L_upper_yr
-    400130: L_upperleg_yr_jnt
-    400132: L_Wrist
-    400134: Neck_yr_jnt
-    400136: polySurface1
-    400138: polySurface10
-    400140: polySurface3
-    400142: polySurface35
-    400144: polySurface44
-    400146: polySurface45
-    400148: polySurface46
-    400150: polySurface47
-    400152: polySurface54
-    400154: polySurface55
-    400156: polySurface56
-    400158: polySurface57
-    400160: polySurface58
-    400162: polySurface59
-    400164: R_ankle_yr_jnt
-    400166: R_ball_yr_jnt
-    400168: R_ball_yr_jnt 1
-    400170: R_clavicle_yr_jnt
-    400172: R_eye_yr
-    400174: R_Forearm_yr
-    400176: R_heel_yr_jnt
-    400178: R_index01_yr_jnt
-    400180: R_index02_yr_jnt
-    400182: R_index03_yr_jnt
-    400184: R_lowerleg_yr_jnt
-    400186: R_middle01_yr_jnt
-    400188: R_middle02_yr_jnt
-    400190: R_middle03_yr_jnt
-    400192: R_pinky01_yr_jnt
-    400194: R_pinky02_yr_jnt
-    400196: R_pinky03_yr_jnt
-    400198: R_ring01_yr_jnt
-    400200: R_ring02_yr_jnt
-    400202: R_ring03_yr_jnt
-    400204: R_thumb01_yr_jnt
-    400206: R_thumb02_yr_jnt
-    400208: R_thumb03_yr_jnt
-    400210: R_toe_yr_jnt
-    400212: R_upper_yr
-    400214: R_upperleg_yr_jnt
-    400216: R_Wrist
-    400218: Root_yr_jnt
-    400220: Spine01_yr_jnt
-    400222: Spine02_yr_jnt
-    400224: Spine03_yr_jnt
-    400226: transform1
-    400228: //RootNode
-    4300000: polySurface3
-    4300002: polySurface10
-    4300004: polySurface35
-    4300006: polySurface45
-    4300008: polySurface46
-    4300010: polySurface47
-    4300012: polySurface54
-    4300014: polySurface55
-    4300016: polySurface57
-    4300018: polySurface58
-    4300020: polySurface59
-    7400000: Take 001
-    7400002: Idle
-    7400004: Talk
-    7400006: Yes
-    7400008: No
-    7400010: Maybe
-    9500000: //RootNode
-    13700000: polySurface10
-    13700002: polySurface3
-    13700004: polySurface35
-    13700006: polySurface45
-    13700008: polySurface46
-    13700010: polySurface47
-    13700012: polySurface54
-    13700014: polySurface55
-    13700016: polySurface57
-    13700018: polySurface58
-    13700020: polySurface59
-    2186277476908879412: ImportLogs
+  serializedVersion: 25
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: BlendTargets
+  - first:
+      1: 100002
+    second: Geo_Grp
+  - first:
+      1: 100004
+    second: group23
+  - first:
+      1: 100006
+    second: group28
+  - first:
+      1: 100008
+    second: group28 1
+  - first:
+      1: 100010
+    second: group28 2
+  - first:
+      1: 100012
+    second: group28 3
+  - first:
+      1: 100014
+    second: group28 4
+  - first:
+      1: 100016
+    second: group34
+  - first:
+      1: 100018
+    second: group36
+  - first:
+      1: 100020
+    second: group38
+  - first:
+      1: 100022
+    second: group50
+  - first:
+      1: 100024
+    second: group51
+  - first:
+      1: 100026
+    second: Head_yr_jnt
+  - first:
+      1: 100028
+    second: ikHandle3
+  - first:
+      1: 100030
+    second: ikHandle4
+  - first:
+      1: 100032
+    second: ikHandle5
+  - first:
+      1: 100034
+    second: ikHandle6
+  - first:
+      1: 100036
+    second: ikHandle7
+  - first:
+      1: 100038
+    second: ikHandle8
+  - first:
+      1: 100040
+    second: jaw
+  - first:
+      1: 100042
+    second: joint11
+  - first:
+      1: 100044
+    second: joint11 1
+  - first:
+      1: 100046
+    second: joint19
+  - first:
+      1: 100048
+    second: joint19 1
+  - first:
+      1: 100050
+    second: joint19 2
+  - first:
+      1: 100052
+    second: joint19 3
+  - first:
+      1: 100054
+    second: joint19 4
+  - first:
+      1: 100056
+    second: joint19 5
+  - first:
+      1: 100058
+    second: joint19 6
+  - first:
+      1: 100060
+    second: joint19 7
+  - first:
+      1: 100062
+    second: joint19 8
+  - first:
+      1: 100064
+    second: joint19 9
+  - first:
+      1: 100066
+    second: joint23
+  - first:
+      1: 100068
+    second: joint23 1
+  - first:
+      1: 100070
+    second: joint26
+  - first:
+      1: 100072
+    second: joint26 1
+  - first:
+      1: 100074
+    second: joint28
+  - first:
+      1: 100076
+    second: joint6
+  - first:
+      1: 100078
+    second: Joint_Grp
+  - first:
+      1: 100080
+    second: L_ankle_yr_jnt
+  - first:
+      1: 100082
+    second: L_ball_yr_jnt
+  - first:
+      1: 100084
+    second: L_ball_yr_jnt 1
+  - first:
+      1: 100086
+    second: L_clavicle_yr_jnt
+  - first:
+      1: 100088
+    second: L_eye_yr
+  - first:
+      1: 100090
+    second: L_Forearm_yr
+  - first:
+      1: 100092
+    second: L_heel_yr_jnt
+  - first:
+      1: 100094
+    second: L_index01_yr_jnt
+  - first:
+      1: 100096
+    second: L_index02_yr_jnt
+  - first:
+      1: 100098
+    second: L_index03_yr_jnt
+  - first:
+      1: 100100
+    second: L_lowerleg_yr_jnt
+  - first:
+      1: 100102
+    second: L_middle01_yr_jnt
+  - first:
+      1: 100104
+    second: L_middle02_yr_jnt
+  - first:
+      1: 100106
+    second: L_middle03_yr_jnt
+  - first:
+      1: 100108
+    second: L_pinky01_yr_jnt
+  - first:
+      1: 100110
+    second: L_pinky02_yr_jnt
+  - first:
+      1: 100112
+    second: L_pinky03_yr_jnt
+  - first:
+      1: 100114
+    second: L_ring01_yr_jnt
+  - first:
+      1: 100116
+    second: L_ring02_yr_jnt
+  - first:
+      1: 100118
+    second: L_ring03_yr_jnt
+  - first:
+      1: 100120
+    second: L_thumb01_yr_jnt
+  - first:
+      1: 100122
+    second: L_thumb02_yr_jnt
+  - first:
+      1: 100124
+    second: L_thumb03_yr_jnt
+  - first:
+      1: 100126
+    second: L_toe_yr_jnt
+  - first:
+      1: 100128
+    second: L_upper_yr
+  - first:
+      1: 100130
+    second: L_upperleg_yr_jnt
+  - first:
+      1: 100132
+    second: L_Wrist
+  - first:
+      1: 100134
+    second: Neck_yr_jnt
+  - first:
+      1: 100136
+    second: polySurface1
+  - first:
+      1: 100138
+    second: polySurface10
+  - first:
+      1: 100140
+    second: polySurface3
+  - first:
+      1: 100142
+    second: polySurface35
+  - first:
+      1: 100144
+    second: polySurface44
+  - first:
+      1: 100146
+    second: polySurface45
+  - first:
+      1: 100148
+    second: polySurface46
+  - first:
+      1: 100150
+    second: polySurface47
+  - first:
+      1: 100152
+    second: polySurface54
+  - first:
+      1: 100154
+    second: polySurface55
+  - first:
+      1: 100156
+    second: polySurface56
+  - first:
+      1: 100158
+    second: polySurface57
+  - first:
+      1: 100160
+    second: polySurface58
+  - first:
+      1: 100162
+    second: polySurface59
+  - first:
+      1: 100164
+    second: R_ankle_yr_jnt
+  - first:
+      1: 100166
+    second: R_ball_yr_jnt
+  - first:
+      1: 100168
+    second: R_ball_yr_jnt 1
+  - first:
+      1: 100170
+    second: R_clavicle_yr_jnt
+  - first:
+      1: 100172
+    second: R_eye_yr
+  - first:
+      1: 100174
+    second: R_Forearm_yr
+  - first:
+      1: 100176
+    second: R_heel_yr_jnt
+  - first:
+      1: 100178
+    second: R_index01_yr_jnt
+  - first:
+      1: 100180
+    second: R_index02_yr_jnt
+  - first:
+      1: 100182
+    second: R_index03_yr_jnt
+  - first:
+      1: 100184
+    second: R_lowerleg_yr_jnt
+  - first:
+      1: 100186
+    second: R_middle01_yr_jnt
+  - first:
+      1: 100188
+    second: R_middle02_yr_jnt
+  - first:
+      1: 100190
+    second: R_middle03_yr_jnt
+  - first:
+      1: 100192
+    second: R_pinky01_yr_jnt
+  - first:
+      1: 100194
+    second: R_pinky02_yr_jnt
+  - first:
+      1: 100196
+    second: R_pinky03_yr_jnt
+  - first:
+      1: 100198
+    second: R_ring01_yr_jnt
+  - first:
+      1: 100200
+    second: R_ring02_yr_jnt
+  - first:
+      1: 100202
+    second: R_ring03_yr_jnt
+  - first:
+      1: 100204
+    second: R_thumb01_yr_jnt
+  - first:
+      1: 100206
+    second: R_thumb02_yr_jnt
+  - first:
+      1: 100208
+    second: R_thumb03_yr_jnt
+  - first:
+      1: 100210
+    second: R_toe_yr_jnt
+  - first:
+      1: 100212
+    second: R_upper_yr
+  - first:
+      1: 100214
+    second: R_upperleg_yr_jnt
+  - first:
+      1: 100216
+    second: R_Wrist
+  - first:
+      1: 100218
+    second: Root_yr_jnt
+  - first:
+      1: 100220
+    second: Spine01_yr_jnt
+  - first:
+      1: 100222
+    second: Spine02_yr_jnt
+  - first:
+      1: 100224
+    second: Spine03_yr_jnt
+  - first:
+      1: 100226
+    second: transform1
+  - first:
+      1: 100228
+    second: //RootNode
+  - first:
+      4: 400000
+    second: BlendTargets
+  - first:
+      4: 400002
+    second: Geo_Grp
+  - first:
+      4: 400004
+    second: group23
+  - first:
+      4: 400006
+    second: group28
+  - first:
+      4: 400008
+    second: group28 1
+  - first:
+      4: 400010
+    second: group28 2
+  - first:
+      4: 400012
+    second: group28 3
+  - first:
+      4: 400014
+    second: group28 4
+  - first:
+      4: 400016
+    second: group34
+  - first:
+      4: 400018
+    second: group36
+  - first:
+      4: 400020
+    second: group38
+  - first:
+      4: 400022
+    second: group50
+  - first:
+      4: 400024
+    second: group51
+  - first:
+      4: 400026
+    second: Head_yr_jnt
+  - first:
+      4: 400028
+    second: ikHandle3
+  - first:
+      4: 400030
+    second: ikHandle4
+  - first:
+      4: 400032
+    second: ikHandle5
+  - first:
+      4: 400034
+    second: ikHandle6
+  - first:
+      4: 400036
+    second: ikHandle7
+  - first:
+      4: 400038
+    second: ikHandle8
+  - first:
+      4: 400040
+    second: jaw
+  - first:
+      4: 400042
+    second: joint11
+  - first:
+      4: 400044
+    second: joint11 1
+  - first:
+      4: 400046
+    second: joint19
+  - first:
+      4: 400048
+    second: joint19 1
+  - first:
+      4: 400050
+    second: joint19 2
+  - first:
+      4: 400052
+    second: joint19 3
+  - first:
+      4: 400054
+    second: joint19 4
+  - first:
+      4: 400056
+    second: joint19 5
+  - first:
+      4: 400058
+    second: joint19 6
+  - first:
+      4: 400060
+    second: joint19 7
+  - first:
+      4: 400062
+    second: joint19 8
+  - first:
+      4: 400064
+    second: joint19 9
+  - first:
+      4: 400066
+    second: joint23
+  - first:
+      4: 400068
+    second: joint23 1
+  - first:
+      4: 400070
+    second: joint26
+  - first:
+      4: 400072
+    second: joint26 1
+  - first:
+      4: 400074
+    second: joint28
+  - first:
+      4: 400076
+    second: joint6
+  - first:
+      4: 400078
+    second: Joint_Grp
+  - first:
+      4: 400080
+    second: L_ankle_yr_jnt
+  - first:
+      4: 400082
+    second: L_ball_yr_jnt
+  - first:
+      4: 400084
+    second: L_ball_yr_jnt 1
+  - first:
+      4: 400086
+    second: L_clavicle_yr_jnt
+  - first:
+      4: 400088
+    second: L_eye_yr
+  - first:
+      4: 400090
+    second: L_Forearm_yr
+  - first:
+      4: 400092
+    second: L_heel_yr_jnt
+  - first:
+      4: 400094
+    second: L_index01_yr_jnt
+  - first:
+      4: 400096
+    second: L_index02_yr_jnt
+  - first:
+      4: 400098
+    second: L_index03_yr_jnt
+  - first:
+      4: 400100
+    second: L_lowerleg_yr_jnt
+  - first:
+      4: 400102
+    second: L_middle01_yr_jnt
+  - first:
+      4: 400104
+    second: L_middle02_yr_jnt
+  - first:
+      4: 400106
+    second: L_middle03_yr_jnt
+  - first:
+      4: 400108
+    second: L_pinky01_yr_jnt
+  - first:
+      4: 400110
+    second: L_pinky02_yr_jnt
+  - first:
+      4: 400112
+    second: L_pinky03_yr_jnt
+  - first:
+      4: 400114
+    second: L_ring01_yr_jnt
+  - first:
+      4: 400116
+    second: L_ring02_yr_jnt
+  - first:
+      4: 400118
+    second: L_ring03_yr_jnt
+  - first:
+      4: 400120
+    second: L_thumb01_yr_jnt
+  - first:
+      4: 400122
+    second: L_thumb02_yr_jnt
+  - first:
+      4: 400124
+    second: L_thumb03_yr_jnt
+  - first:
+      4: 400126
+    second: L_toe_yr_jnt
+  - first:
+      4: 400128
+    second: L_upper_yr
+  - first:
+      4: 400130
+    second: L_upperleg_yr_jnt
+  - first:
+      4: 400132
+    second: L_Wrist
+  - first:
+      4: 400134
+    second: Neck_yr_jnt
+  - first:
+      4: 400136
+    second: polySurface1
+  - first:
+      4: 400138
+    second: polySurface10
+  - first:
+      4: 400140
+    second: polySurface3
+  - first:
+      4: 400142
+    second: polySurface35
+  - first:
+      4: 400144
+    second: polySurface44
+  - first:
+      4: 400146
+    second: polySurface45
+  - first:
+      4: 400148
+    second: polySurface46
+  - first:
+      4: 400150
+    second: polySurface47
+  - first:
+      4: 400152
+    second: polySurface54
+  - first:
+      4: 400154
+    second: polySurface55
+  - first:
+      4: 400156
+    second: polySurface56
+  - first:
+      4: 400158
+    second: polySurface57
+  - first:
+      4: 400160
+    second: polySurface58
+  - first:
+      4: 400162
+    second: polySurface59
+  - first:
+      4: 400164
+    second: R_ankle_yr_jnt
+  - first:
+      4: 400166
+    second: R_ball_yr_jnt
+  - first:
+      4: 400168
+    second: R_ball_yr_jnt 1
+  - first:
+      4: 400170
+    second: R_clavicle_yr_jnt
+  - first:
+      4: 400172
+    second: R_eye_yr
+  - first:
+      4: 400174
+    second: R_Forearm_yr
+  - first:
+      4: 400176
+    second: R_heel_yr_jnt
+  - first:
+      4: 400178
+    second: R_index01_yr_jnt
+  - first:
+      4: 400180
+    second: R_index02_yr_jnt
+  - first:
+      4: 400182
+    second: R_index03_yr_jnt
+  - first:
+      4: 400184
+    second: R_lowerleg_yr_jnt
+  - first:
+      4: 400186
+    second: R_middle01_yr_jnt
+  - first:
+      4: 400188
+    second: R_middle02_yr_jnt
+  - first:
+      4: 400190
+    second: R_middle03_yr_jnt
+  - first:
+      4: 400192
+    second: R_pinky01_yr_jnt
+  - first:
+      4: 400194
+    second: R_pinky02_yr_jnt
+  - first:
+      4: 400196
+    second: R_pinky03_yr_jnt
+  - first:
+      4: 400198
+    second: R_ring01_yr_jnt
+  - first:
+      4: 400200
+    second: R_ring02_yr_jnt
+  - first:
+      4: 400202
+    second: R_ring03_yr_jnt
+  - first:
+      4: 400204
+    second: R_thumb01_yr_jnt
+  - first:
+      4: 400206
+    second: R_thumb02_yr_jnt
+  - first:
+      4: 400208
+    second: R_thumb03_yr_jnt
+  - first:
+      4: 400210
+    second: R_toe_yr_jnt
+  - first:
+      4: 400212
+    second: R_upper_yr
+  - first:
+      4: 400214
+    second: R_upperleg_yr_jnt
+  - first:
+      4: 400216
+    second: R_Wrist
+  - first:
+      4: 400218
+    second: Root_yr_jnt
+  - first:
+      4: 400220
+    second: Spine01_yr_jnt
+  - first:
+      4: 400222
+    second: Spine02_yr_jnt
+  - first:
+      4: 400224
+    second: Spine03_yr_jnt
+  - first:
+      4: 400226
+    second: transform1
+  - first:
+      4: 400228
+    second: //RootNode
+  - first:
+      43: 4300000
+    second: polySurface3
+  - first:
+      43: 4300002
+    second: polySurface10
+  - first:
+      43: 4300004
+    second: polySurface35
+  - first:
+      43: 4300006
+    second: polySurface45
+  - first:
+      43: 4300008
+    second: polySurface46
+  - first:
+      43: 4300010
+    second: polySurface47
+  - first:
+      43: 4300012
+    second: polySurface54
+  - first:
+      43: 4300014
+    second: polySurface55
+  - first:
+      43: 4300016
+    second: polySurface57
+  - first:
+      43: 4300018
+    second: polySurface58
+  - first:
+      43: 4300020
+    second: polySurface59
+  - first:
+      74: 7400000
+    second: Take 001
+  - first:
+      74: 7400002
+    second: Idle
+  - first:
+      74: 7400004
+    second: Talk
+  - first:
+      74: 7400006
+    second: Yes
+  - first:
+      74: 7400008
+    second: No
+  - first:
+      74: 7400010
+    second: Maybe
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: polySurface10
+  - first:
+      137: 13700002
+    second: polySurface3
+  - first:
+      137: 13700004
+    second: polySurface35
+  - first:
+      137: 13700006
+    second: polySurface45
+  - first:
+      137: 13700008
+    second: polySurface46
+  - first:
+      137: 13700010
+    second: polySurface47
+  - first:
+      137: 13700012
+    second: polySurface54
+  - first:
+      137: 13700014
+    second: polySurface55
+  - first:
+      137: 13700016
+    second: polySurface57
+  - first:
+      137: 13700018
+    second: polySurface58
+  - first:
+      137: 13700020
+    second: polySurface59
+  - first:
+      41386430: 2186277476908879412
+    second: ImportLogs
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -299,6 +821,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Idle
       takeName: Take 001
+      internalID: 7400002
       firstFrame: 1
       lastFrame: 48
       wrapMode: 0
@@ -575,6 +1098,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Talk
       takeName: Take 001
+      internalID: 7400004
       firstFrame: 49
       lastFrame: 108
       wrapMode: 0
@@ -851,6 +1375,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Yes
       takeName: Take 001
+      internalID: 7400006
       firstFrame: 109
       lastFrame: 156
       wrapMode: 0
@@ -1127,6 +1652,7 @@ ModelImporter:
     - serializedVersion: 16
       name: No
       takeName: Take 001
+      internalID: 7400008
       firstFrame: 157
       lastFrame: 204
       wrapMode: 0
@@ -1403,6 +1929,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Maybe
       takeName: Take 001
+      internalID: 7400010
       firstFrame: 205
       lastFrame: 252
       wrapMode: 0
@@ -1690,30 +2217,32 @@ ModelImporter:
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.11
-    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
-    tangentImportMode: 4
-    normalCalculationMode: 0
-    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    tangentImportMode: 0
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -1723,6 +2252,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 11
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
@@ -1732,5 +2262,5 @@ ModelImporter:
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
-  assetBundleName: processed assets
+  assetBundleName: 
   assetBundleVariant: 

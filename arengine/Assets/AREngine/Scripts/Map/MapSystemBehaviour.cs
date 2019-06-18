@@ -1,6 +1,6 @@
 ﻿/************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -96,7 +96,7 @@ public class MapSystemBehaviour : MonoBehaviour
     private float  filteredCompass          = 0.0f;
     private bool   processSegmentsThisFrame = false;
 
-    public Vector2 GetGUIScale()
+    public static Vector2 GetGUIScale()
     {
         Vector2 guiScale;
         guiScale.x = 1280.0f;
@@ -694,7 +694,7 @@ public class MapSystemBehaviour : MonoBehaviour
                     }
                 }
                 if (texture.wrapMode != TextureWrapMode.Clamp)
-                    Debug.Log("WARNING: Map tiles should all be manually set to Clamp wrap mode");
+                    Debug.LogWarning("Map tiles should all be manually set to Clamp wrap mode");
 #endif
                 GameObject tile = new GameObject(filename);
                 tile.transform.parent = mapTiles;
@@ -1260,7 +1260,7 @@ public class MapSystemBehaviour : MonoBehaviour
                                                           cameraMount.rotation,
                                                           lerp);
 
-        // scale and rotate all waypoints
+        // scale, rotate and pulsate all waypoints
         foreach (Transform child in waypoints.GetComponentsInChildren<Transform>())
         {
             if (child != waypoints)
@@ -1272,6 +1272,10 @@ public class MapSystemBehaviour : MonoBehaviour
                 {
                     child.gameObject.GetComponent<SpriteRenderer>().sortingOrder = 32767;  // standing
                     child.rotation = Camera.main.transform.rotation;  // always face the camera
+
+                    // pulsate
+                    float mat = Mathf.Abs(Time.time - ((long) Time.time) - 0.5f) + 0.75f;
+                    child.GetComponent<Renderer>().material.color = new Color(mat, mat, mat);
                 }
                 else
                 {

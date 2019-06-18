@@ -1,6 +1,6 @@
 /************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -15,15 +15,15 @@ using System.Collections.Generic;
 
 public class AREngineBehaviour : MonoBehaviour, IAREngine
 {
-    // set to true to show debugging overlay
-    public static bool debuggingOverlay;
-
     // do not grab the status of just-initialized devices for the specified number of frames
     // (note: FixedUpdate is set at 30fps)
     public const int INITIALIZATION_DELAY = 15;
 
+    // horizontal field of view to maintain
+    public const float FOV = 45.0f;
+
     // maximum pitch allowed by the game in the editor
-    public const float MAX_PITCH = 20.0f;
+    public const float MAX_PITCH = 30.0f;
 
     // global state
     private static bool directionGuides;
@@ -126,6 +126,7 @@ public class AREngineBehaviour : MonoBehaviour, IAREngine
                 Vector3 biasedRotation = currentRotation.eulerAngles;
                 biasedRotation.y += biasYaw;
                 biasedRotation.x += biasPitch;
+                GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().fieldOfView = Mathf.Atan(Mathf.Tan(FOV / 360.0f * Mathf.PI) * Screen.height / Screen.width) / Mathf.PI * 360.0f;
                 GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().transform.localRotation = Quaternion.Euler(biasedRotation);
 
                 // change the render texture alpha according to the current marker state
@@ -143,7 +144,7 @@ public class AREngineBehaviour : MonoBehaviour, IAREngine
 
     private void OnGUI()
     {
-        if (debuggingOverlay)
+        if (LogCanvasBehaviour.showing)
         {
             GUILayout.TextField("AR: " + arCameraAngles + " " + GameObject.FindWithTag("MainCamera").transform.position);
             GUILayout.TextField("Device: " + DeviceInput.attitude.eulerAngles);
@@ -197,26 +198,26 @@ public class AREngineBehaviour : MonoBehaviour, IAREngine
         if (trackingStartedCounter != -1)
         {
             GUILayout.BeginArea(new Rect(Screen.width - 100, 0, 50, 50));
-            if (debuggingOverlay && GUILayout.RepeatButton("Up", GUILayout.Height(50)) || Input.GetKey(KeyCode.UpArrow))
+            if (LogCanvasBehaviour.showing && GUILayout.RepeatButton("Up", GUILayout.Height(50)) || Input.GetKey(KeyCode.UpArrow))
                 biasPitch -= Time.deltaTime / Time.fixedDeltaTime;
             GUILayout.EndArea();
             GUILayout.BeginArea(new Rect(Screen.width - 150, 50, 50, 50));
-            if (debuggingOverlay && GUILayout.RepeatButton("Left", GUILayout.Height(50)) || Input.GetKey(KeyCode.LeftArrow))
+            if (LogCanvasBehaviour.showing && GUILayout.RepeatButton("Left", GUILayout.Height(50)) || Input.GetKey(KeyCode.LeftArrow))
                 biasYaw -= Time.deltaTime / Time.fixedDeltaTime;
             GUILayout.EndArea();
             GUILayout.BeginArea(new Rect(Screen.width - 100, 50, 50, 50));
-            if (debuggingOverlay && GUILayout.RepeatButton("Zero", GUILayout.Height(50)) || Input.GetKey(KeyCode.Insert))
+            if (LogCanvasBehaviour.showing && GUILayout.RepeatButton("Zero", GUILayout.Height(50)) || Input.GetKey(KeyCode.Insert))
             {
                 biasYaw = 0;
                 biasPitch = 0;
             }
             GUILayout.EndArea();
             GUILayout.BeginArea(new Rect(Screen.width - 50, 50, 50, 50));
-            if (debuggingOverlay && GUILayout.RepeatButton("Right", GUILayout.Height(50)) || Input.GetKey(KeyCode.RightArrow))
+            if (LogCanvasBehaviour.showing && GUILayout.RepeatButton("Right", GUILayout.Height(50)) || Input.GetKey(KeyCode.RightArrow))
                 biasYaw += Time.deltaTime / Time.fixedDeltaTime;
             GUILayout.EndArea();
             GUILayout.BeginArea(new Rect(Screen.width - 100, 100, 50, 50));
-            if (debuggingOverlay && GUILayout.RepeatButton("Down", GUILayout.Height(50)) || Input.GetKey(KeyCode.DownArrow))
+            if (LogCanvasBehaviour.showing && GUILayout.RepeatButton("Down", GUILayout.Height(50)) || Input.GetKey(KeyCode.DownArrow))
                 biasPitch += Time.deltaTime / Time.fixedDeltaTime;
             GUILayout.EndArea();
 

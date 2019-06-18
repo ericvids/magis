@@ -1,9 +1,11 @@
 fileFormatVersion: 2
 guid: 6bfbfe080c7f8824686bba1cd50a949a
+labels:
+- AllEngineTextures
 TextureImporter:
-  fileIDToRecycleName: {}
+  internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 5
+  serializedVersion: 10
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -21,6 +23,8 @@ TextureImporter:
     heightScale: 0
     normalMapFilter: 0
   isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -31,7 +35,7 @@ TextureImporter:
     serializedVersion: 2
     filterMode: 1
     aniso: 0
-    mipBias: -1
+    mipBias: -100
     wrapU: 1
     wrapV: 1
     wrapW: 1
@@ -60,7 +64,7 @@ TextureImporter:
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 1024
     resizeAlgorithm: 0
-    textureFormat: 2
+    textureFormat: -1
     textureCompression: 0
     compressionQuality: 0
     crunchedCompression: 0
@@ -71,7 +75,7 @@ TextureImporter:
     buildTarget: Standalone
     maxTextureSize: 1024
     resizeAlgorithm: 0
-    textureFormat: 2
+    textureFormat: -1
     textureCompression: 0
     compressionQuality: 0
     crunchedCompression: 0
@@ -82,7 +86,7 @@ TextureImporter:
     buildTarget: iPhone
     maxTextureSize: 1024
     resizeAlgorithm: 0
-    textureFormat: 2
+    textureFormat: -1
     textureCompression: 0
     compressionQuality: 0
     crunchedCompression: 0
@@ -93,7 +97,7 @@ TextureImporter:
     buildTarget: Android
     maxTextureSize: 1024
     resizeAlgorithm: 0
-    textureFormat: 2
+    textureFormat: -1
     textureCompression: 0
     compressionQuality: 0
     crunchedCompression: 0
@@ -107,11 +111,15 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 15eacb77f7e9bba43bf763fd5b93b8cb
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
+    secondaryTextures: []
   spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
   userData: 
-  assetBundleName: processed assets
+  assetBundleName: 
   assetBundleVariant: 

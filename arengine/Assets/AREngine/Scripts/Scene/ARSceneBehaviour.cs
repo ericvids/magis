@@ -1,6 +1,6 @@
 ﻿/************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -18,8 +18,9 @@ public class ARSceneBehaviour : SceneBehaviour
 {
     public const float SAFETY_WARNING_TIMEOUT = 5.0f; // seconds before the safety warning will disappear
     public const float MARKER_TIMEOUT = 10.0f;        // seconds before the marker image will disappear
-    public const float NO_MARKER_TIMEOUT = 45.0f;     // seconds before the starting without marker button will show
-    public const float NO_MARKER_DURATION = 3.0f;     // seconds to hold the device steady
+    public const float NO_MARKER_TIMEOUT = 30.0f;     // seconds before the starting without marker button will show
+    public const float NO_MARKER_MESSAGE = 5.0f;      // seconds to tell user to hold the device steady
+    public const float NO_MARKER_STEADY = 3.0f;       // seconds to hold the device steady
     public const float NO_MARKER_ANGLE = 10.0f;       // maximum angle variation to consider the device as steady (+/-)
     public const float PITCH_ONLY_MAX_ANGLE = 15.0f;  // in PitchOnly mode, the scene will not allow the player to move past this pitch (+/-)
 
@@ -28,6 +29,7 @@ public class ARSceneBehaviour : SceneBehaviour
 
     private Dictionary<string, GameObject> gameObjects = new Dictionary<string, GameObject>();
     private string currentObject = "dummy";  // this ensures that any existing buttons (e.g., from parent scenes) will be removed properly
+    private static bool inventoryMirrored = false;  // set to true if the inventory object is to be displayed mirrored
 
     private string[] dialogue;
     private int dialogueLine;
@@ -42,6 +44,7 @@ public class ARSceneBehaviour : SceneBehaviour
     private bool startWithoutMarker;
     private int trackingInterval;
     private float lastTrackingTime;
+    private long lastSceneTimeCounterUpdateTime;  // Global%SceneTimeCounter is incremented whenever player is in a scene that has not ended
 
     private bool markerNotNeeded;
     private bool introTextShown;
@@ -80,6 +83,14 @@ public class ARSceneBehaviour : SceneBehaviour
 
     private void AdjustSceneCamera()
     {
+        if (gameState.GetFlag(gameState.sceneName + "%IgnoreRotation"))
+        {
+            Vector3 rotation = GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().transform.rotation.eulerAngles;
+            rotation.x = 0.0f;
+            rotation.y = 0.0f;
+            GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().transform.rotation = Quaternion.Euler(rotation);
+        }
+
         if (isSubscene)
         {
             Camera camera = GameObject.FindWithTag("SubsceneCamera").GetComponent<Camera>();
@@ -129,7 +140,9 @@ public class ARSceneBehaviour : SceneBehaviour
             else
                 centerPitch = float.PositiveInfinity;
             camera.transform.rotation = Quaternion.Euler(rotation);
-            camera.fieldOfView = (gameState.GetFlag(gameState.sceneName + "%PitchOnly") ? 25.0f : 30.0f);
+
+            float fov = GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().fieldOfView;
+            camera.fieldOfView = (gameState.GetFlag(gameState.sceneName + "%PitchOnly") ? fov * 0.8f : fov);
         }
 
         GameObject inventoryObject = GameObject.Find("InventoryObject");
@@ -139,14 +152,15 @@ public class ARSceneBehaviour : SceneBehaviour
                 SetLayer(inventoryObject, 1);  // invisible layer
             else
                 SetLayer(inventoryObject, gameObject.layer);
-            Vector3 hand = buttonCanvas.swapButtonGroups ? -GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().transform.right
-                                                         : GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().transform.right;
+            Vector3 hand = buttonCanvas.swapButtonGroups ? GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().transform.right * -1.25f
+                                                         : GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().transform.right * 1.25f;
             inventoryObject.transform.position = GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().transform.position
                                                  + GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().transform.forward * 10.0f
-                                                 + GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().transform.up * -3.0f
+                                                 + GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().transform.up * -2.0f
                                                  + hand * 2.0f;
             inventoryObject.transform.rotation = GameObject.FindWithTag("SceneCamera").GetComponent<Camera>().transform.rotation
                                                  * Quaternion.Euler(0.0f, -90.0f, 0.0f);
+            inventoryObject.transform.localScale = new Vector3(1.0f, 1.0f, inventoryMirrored && buttonCanvas.swapButtonGroups ? -1.0f : 1.0f);
         }
     }
 
@@ -236,11 +250,6 @@ public class ARSceneBehaviour : SceneBehaviour
             {
                 if (parameters[1].IndexOf('%') == -1)
                     parameters[1] = gameState.sceneName + "%" + parameters[1];
-
-                // Have the analytics wrapper class check the parameter for the settrue command
-                // to determine which analytics event to send
-                UnityAnalyticsIntegration.EvaluateSetTrueFlag(gameState, parameters[1]);
-
                 gameState.SetFlag(parameters[1], true, false);
             }
             else if (parameters[0] == "@setfalse")
@@ -280,11 +289,6 @@ public class ARSceneBehaviour : SceneBehaviour
             else if (parameters[0] == "@subscene")
             {
                 gameState.LoadARSubscene(parameters[1]);
-
-                if (parameters[1].ToLower().EndsWith("minigame"))
-                {
-                    UnityAnalyticsIntegration.SceneStart(gameState, parameters[1]);
-                }
             }
             else if (parameters[0] == "@select")
             {
@@ -295,10 +299,22 @@ public class ARSceneBehaviour : SceneBehaviour
                     newObject.name = "InventoryObject";
                 }
                 currentObject = "dummy";
+                inventoryMirrored = false;
+            }
+            else if (parameters[0] == "@select_mirrored")
+            {
+                gameState.selectedItem = parameters[1];
+                if (parameters[1] != "")
+                {
+                    GameObject newObject = Instantiate(gameObjects[currentObject].transform).gameObject;
+                    newObject.name = "InventoryObject";
+                }
+                currentObject = "dummy";
+                inventoryMirrored = true;
             }
             else if (parameters[0] == "@glowbutton")
             {
-                gameState.glowingButton = parameters[1].Replace('_', ' ');
+                gameState.glowingButton = parameters[1].Replace('_', ' ').Replace("  ", " ").Trim();
             }
             else if (parameters[0] == "@fade")
             {
@@ -315,16 +331,15 @@ public class ARSceneBehaviour : SceneBehaviour
             }
             else if (parameters[0] == "@showstill")
             {
-                buttonCanvas.SetFade(Color.white, 0.25f, "Stills/" + parameters[1]);
-                fading = true;
-                waitAfterFading = true;
-                return true;
+                waitAfterFading = fading = ! buttonCanvas.SetStill("Stills/" + parameters[1]);
+                if (fading)
+                    return true;
             }
             else if (parameters[0] == "@hidestill")
             {
-                buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0.25f, ""); // do not change the image
-                fading = true;
-                return true;
+                fading = ! buttonCanvas.SetStill(null);
+                if (fading)
+                    return true;
             }
             else if (parameters[0] == "@playsound")
             {
@@ -341,11 +356,31 @@ public class ARSceneBehaviour : SceneBehaviour
             else if (parameters[0] == "@animate")
             {
                 Animator animator = gameObjects[parameters[1]].GetComponentInChildren<Animator>();
-                animator.CrossFade(parameters[2], 0.25f);
+                float blendFactor = 0.25f;
+                if (parameters.Length > 3)
+                    blendFactor = float.Parse(parameters[3]);
+                if (animator != null)
+                    animator.CrossFade(parameters[2], blendFactor);
+                else
+                    Debug.LogError("No Animator found in " + parameters[1]);
+            }
+            else if (parameters[0] == "@stopanimation")
+            {
+                Animator animator = gameObjects[parameters[1]].GetComponentInChildren<Animator>();
+                if (animator != null)
+                {
+                    animator.Rebind();
+                }
+                else
+                    Debug.LogError("No Animator found in " + parameters[1]);
             }
             else if (parameters[0] == "@credits")
             {
-                buttonCanvas.ShowCreditsOverlay();
+                gameState.SetFlag("Global%PlayCredits", true, false);
+                buttonCanvas.ShowCreditsOverlay(delegate()
+                {
+                    gameState.SetFlag("Global%PlayCredits", false, false);
+                });
             }
             else if (parameters[0] == "@card")
             {
@@ -358,6 +393,7 @@ public class ARSceneBehaviour : SceneBehaviour
             else if (parameters[0] == "@exit")
             {
                 gameState.SaveFlags();
+                ProcessSceneTimeCounterEnd();
                 dialogue = null;
                 buttonCanvas.SetDialogue(null);
                 if (isSubscene)
@@ -370,12 +406,18 @@ public class ARSceneBehaviour : SceneBehaviour
                     buttonCanvas.showDynamicGroup = false;
                 }
                 else
-                    gameState.ReturnToMap();
+                    gameState.ProcessReturnToMap();
                 return false;  // script is done
             }
             else if (parameters[0] == "@analytics")
             {
-                UnityAnalyticsIntegration.ParseCommand(gameState, parameters);
+                if (gameState.GetFlagIntValue("Global%SceneTimeCounter") != 0)
+                {
+                    if (parameters[1] == "Milestone")
+                        gameState.EncodeAnalyticsMilestone(parameters[2]);  // backward compatibility
+                    else
+                        gameState.EncodeAnalyticsMilestone(parameters[1]);
+                }
             }
 
             dialogueLine++;
@@ -384,6 +426,7 @@ public class ARSceneBehaviour : SceneBehaviour
         if (dialogueLine == dialogue.Length)
         {
             gameState.SaveFlags();  // only save the new game state after a dialogue is done
+            ProcessSceneTimeCounterEnd();
             dialogue = null;
             buttonCanvas.SetDialogue(null);
             return false;  // script is done
@@ -391,7 +434,7 @@ public class ARSceneBehaviour : SceneBehaviour
         else
         {
             Debug.Log(dialogue[dialogueLine]);
-            buttonCanvas.SetDialogue(dialogue[dialogueLine].Replace("\\n", "\n"));
+            buttonCanvas.SetDialogue(dialogue[dialogueLine]);
             return true;
         }
 
@@ -430,18 +473,20 @@ public class ARSceneBehaviour : SceneBehaviour
             }
         }
 
-        if (! isSubscene && (gameState.moduleName == "M0" || gameState.GetFlag("Global%Module" + gameState.moduleName.Substring(1) + "End")))
+        if (! isSubscene && (tsv.Lookup()[1].StartsWith("_NM ") || gameState.moduleName == "M0" || gameState.GetFlag("Global%Module" + gameState.moduleName.Substring(1) + "End")))
         {
-            // special case for all M0 scenes and all other scenes where the player has already unlocked the ending:
-            // we don't need a marker, and we always start from the beginning for these scenes
+            // special case for _NM scenes, all M0 scenes and all other scenes where the player has already unlocked the ending:
+            // we don't need a marker, and we always start from the beginning for these scenes (except for _NM)
             markerNotNeeded = true;
-            gameState.ResetFlags(gameState.GetFlagsStartingWith(gameState.moduleName + "%"));
+            if (! tsv.Lookup()[1].StartsWith("_NM "))
+                gameState.ResetFlags(gameState.GetFlagsStartingWith(gameState.moduleName + "%"));
         }
 
         // a subscene called from a scene assumes that the AR camera has been initialized, so we can setup objects immediately
         if (isSubscene)
             SetupObjects();
 
+        buttonCanvas.SetStill(null);
         buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
         buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
         buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
@@ -542,9 +587,21 @@ public class ARSceneBehaviour : SceneBehaviour
         int dynamicButtonIndex = 0;
         if (! isSubscene)
         {
-            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, staticButtonIndex++, "Options", null, gameState.glowingButton == "Options");
-            if (buttonCanvas.pressedButton == "Options")
-                buttonCanvas.ShowOptionsOverlay();
+            if (gameState.GetFlag("Global%EasyBackButton"))
+            {
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, staticButtonIndex++, "Back", null, gameState.glowingButton == "Back");
+                if (buttonCanvas.pressedButton == "Back")
+                {
+                    gameState.ProcessReturnToMap();
+                    return;
+                }
+            }
+            else
+            {
+                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, staticButtonIndex++, "Options", null, gameState.glowingButton == "Options");
+                if (buttonCanvas.pressedButton == "Options")
+                    buttonCanvas.ShowOptionsOverlay();
+            }
         }
 
         string objectInFocus = null;
@@ -556,6 +613,7 @@ public class ARSceneBehaviour : SceneBehaviour
             {
                 // if we were in a subscene and the marker state is suddenly back to selecting, finish the subscene prematurely
                 finished = true;
+                buttonCanvas.SetStill(null);
                 buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
                 buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
                 buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
@@ -571,17 +629,18 @@ public class ARSceneBehaviour : SceneBehaviour
 
             dialogue = null;
             if (tsv.Lookup()[1].StartsWith("_NW "))
-                buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "MarkerStatuses/" + tsv.Lookup()[1].Substring(4) + "#Take a photo of the " + tsv.Lookup()[1].Substring(4) + "! See the example below.");
+                buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "MarkerStatuses/" + tsv.Lookup()[1].Substring(4) + "#Take a photo of the [" + tsv.Lookup()[1].Substring(4) + "]! See the example below.");
             else if ((Time.timeSinceLevelLoad % (SAFETY_WARNING_TIMEOUT + MARKER_TIMEOUT)) < SAFETY_WARNING_TIMEOUT)
                 buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "Statuses/SafetyWarning#CAUTION: Be mindful of your surroundings! Stay off the road!");
             else
                 buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "MarkerStatuses/" + tsv.Lookup()[1] + "#Take a photo of the marker! See the example below.");
             buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
             buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
+            buttonCanvas.SetStill(null);
             buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
+            buttonCanvas.SetDialogue(null);
             fading = false;
             waitAfterFading = false;
-            buttonCanvas.SetDialogue(null);
 
             if (startTime == -1)
             {
@@ -589,6 +648,7 @@ public class ARSceneBehaviour : SceneBehaviour
                 startWithoutMarker = false;
 
                 // reset game state to last-known-good state
+                buttonCanvas.HideOverlay();
                 buttonCanvas.StopMusic();
                 gameState.LoadFlags();
 
@@ -604,6 +664,7 @@ public class ARSceneBehaviour : SceneBehaviour
                     null,
                     delegate(string pressedButton2)
                     {
+                        gameState.SetFlag("Global%SceneTimeCounter", 1);  // log tutorial time
                         introTextShown = true;
                         buttonCanvas.HideOverlay();
                     }
@@ -614,7 +675,7 @@ public class ARSceneBehaviour : SceneBehaviour
                 if (startWithoutMarker || tsv.Lookup()[1].StartsWith("_BT "))
                 {
                     if (tsv.Lookup()[1].StartsWith("_BT "))
-                        buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "MarkerStatuses/" + tsv.Lookup()[1].Substring(4) + "#Take a photo of the " + tsv.Lookup()[1].Substring(4) + "!");
+                        buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "MarkerStatuses/" + tsv.Lookup()[1].Substring(4) + "#Take a photo of the [" + tsv.Lookup()[1].Substring(4) + "]!");
                     else
                         buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "Statuses/FakeMarker#Try taking a photo of the marker now!");
                     buttonCanvas.SetCrosshair(KeepOnScreen(new Vector3(Screen.width * 0.5f - Screen.height / 3, Screen.height * 0.5f - Screen.height / 3)),
@@ -630,38 +691,40 @@ public class ARSceneBehaviour : SceneBehaviour
 
                         buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
                         engine.StartTracking(GameObject.Find(tsv.Lookup()[1]));
-
-                        UnityAnalyticsIntegration.SceneStart (gameState, gameState.sceneName, false);
                     }
                 }
                 else if (markerNotNeeded)
                 {
-                    buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "Statuses/NoMarker#Hold the device directly in front of you, perpendicular to the ground.");
+                    buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "Statuses/NoMarker#Hold the device up with both hands, directly in front of you.");
                     buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
                     buttonCanvas.showDynamicGroup = false;
 
                     Vector3 deviceAngles = DeviceInput.attitude.eulerAngles;
                     if (DeviceInput.accelerometerMalfunctioning)
                         deviceAngles.x = deviceAngles.z = 0;
+                    startTime += Time.deltaTime;
                     if ((deviceAngles.x < NO_MARKER_ANGLE || deviceAngles.x >= 360.0f - NO_MARKER_ANGLE)
                         && (deviceAngles.z < NO_MARKER_ANGLE || deviceAngles.z >= 360.0f - NO_MARKER_ANGLE)
                         && ! buttonCanvas.overlayShowing)
                     {
-                        startTime += Time.deltaTime;
-                        buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "Steady... " + (int) (NO_MARKER_DURATION - startTime + 1) + "...");
-                        if (startTime >= NO_MARKER_DURATION)
+                        if (startTime >= NO_MARKER_MESSAGE)
+                            buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, "Steady... " + (int) (NO_MARKER_MESSAGE + NO_MARKER_STEADY - startTime + 1) + "...");
+                        if (startTime >= NO_MARKER_MESSAGE + NO_MARKER_STEADY)
                         {
                             startTime = 0;
                             startWithoutMarker = true;  // logic after here should assume that we startWithoutMarker
 
                             buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
                             engine.StartTracking(GameObject.Find(tsv.Lookup()[1]));
-
-                            UnityAnalyticsIntegration.SceneStart (gameState, gameState.sceneName, true);
                         }
                     }
                     else
-                        startTime = 0;
+                    {
+                        if (buttonCanvas.overlayShowing)
+                            startTime = 0;
+                        else if (startTime >= NO_MARKER_MESSAGE)
+                            startTime = NO_MARKER_MESSAGE;
+                    }
                 }
                 else if (startTime == 0)
                 {
@@ -698,14 +761,14 @@ public class ARSceneBehaviour : SceneBehaviour
                 {
                     buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
                     engine.StartTracking(null);
-
-                    // Send analytics event when the scene starts normally
-                    UnityAnalyticsIntegration.SceneStart (gameState, gameState.sceneName);
                 }
             }
         }
         else if (engine.markerState != IARMarkerState.STARTING)
         {
+            // track Global%SceneTimeCounter for every second that the player is actually playing in the scene
+            ProcessSceneTimeCounter();
+
             if (startTime != -1)
             {
                 gameState.selectedItem = "";
@@ -755,7 +818,7 @@ public class ARSceneBehaviour : SceneBehaviour
                 if (secondsSince >= 2)
                 {
                     if (startWithoutMarker)
-                        buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, "Tracking lost, hold still! (If this doesn't work, try looking at a far-away area.)");
+                        buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, "Tracking lost, hold still! (Avoid looking at featureless areas, e.g., blank walls.)");
                     else
                         buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, "Tracking lost, hold still! (If this doesn't work, try looking at the marker again.)");
                 }
@@ -766,6 +829,9 @@ public class ARSceneBehaviour : SceneBehaviour
                     buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, "If the virtual objects seem misaligned/unstable, try looking at the marker again.");
             }
 
+            if (buttonCanvas.dialogueLingering)
+                buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, "Statuses/TapToAdvance" + (gameState.GetFlag("System%SwapButtonGroups") ? "Left" : "Right") + "#Tap the screen to advance the dialogue.");
+
             if (dialogue != null)
             {
                 buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
@@ -773,7 +839,7 @@ public class ARSceneBehaviour : SceneBehaviour
                 {
                     if (waitAfterFading)
                     {
-                        buttonCanvas.SetFade(Color.white, 1.0f, ""); // do not change the image
+                        buttonCanvas.SetFade(new Color(0, 0, 0, 0), 1.0f);
                         waitAfterFading = false;
                     }
                     else
@@ -824,7 +890,7 @@ public class ARSceneBehaviour : SceneBehaviour
             else
             {
 #if UNITY_EDITOR
-                if (Vuforia.CameraDevice.Instance.GetCameraImage(Vuforia.Image.PIXEL_FORMAT.RGBA8888) != null)
+                if (Vuforia.CameraDevice.Instance.GetCameraImage(Vuforia.PIXEL_FORMAT.RGBA8888) != null)
 #endif
                 {
                     if (engine.isARMarkerActuallyVisible && ! gameState.GetFlag(gameState.sceneName + "%PitchOnly"))
@@ -963,38 +1029,42 @@ public class ARSceneBehaviour : SceneBehaviour
             buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, dynamicButtonIndex++, null);
     }
 
-/* Commented out since new Vuforia
-    private void OnApplicationPause(bool paused)
-    {
-#if UNITY_IOS
-        // This is a workaround to the Vuforia bug that prevents iOS camera feed from waking up;
-        // reload the entire scene.
-        if (! paused && ! finished && ! isSubscene)
-        {
-            finished = true;
-            gameState.LoadARScene(SceneManager.GetActiveScene().name);  // not gameState.sceneName here because that will not give us the base level during a subscene
-            buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
-            buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
-            buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
-            buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
-            buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
-            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
-            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
-            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 2, null);
-            buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 0, null);
-            buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 1, null);
-            buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 2, null);
-            buttonCanvas.showDynamicGroup = false;
-            buttonCanvas.SetDialogue(null);
-        }
-#endif
-    }
-*/
-
     private static void SetLayer(GameObject obj, int layer)
     {
         obj.layer = layer;
         foreach (Transform child in obj.transform)
             SetLayer(child.gameObject, layer);
+    }
+
+    private void ProcessSceneTimeCounter()
+    {
+        if (! isSubscene && ! gameState.GetFlag(gameState.sceneName + "%End"))
+        {
+            if (gameState.GetFlagIntValue("Global%SceneTimeCounter") != 0)
+            {
+                if ((long) Time.realtimeSinceStartup != lastSceneTimeCounterUpdateTime)
+                {
+                    if (gameState.GetFlagIntValue("Global%SceneTimeCounter") == 1)
+                        gameState.EncodeAnalyticsBeginScene(gameState.sceneName, ! startWithoutMarker);
+
+                    // regardless of actual time passed, only increment per actual gameplay second
+                    // (since player may have turned the device off in the interim)
+                    lastSceneTimeCounterUpdateTime = (long) Time.realtimeSinceStartup;
+                    gameState.SetFlag("Global%SceneTimeCounter", gameState.GetFlagIntValue("Global%SceneTimeCounter") + 1, false);
+
+                    if (gameState.GetFlagIntValue("Global%SceneTimeCounter") == 2)
+                        gameState.SaveFlags();  // need to save the fact that the scene was begun successfully
+                }
+            }
+        }
+    }
+
+    private void ProcessSceneTimeCounterEnd()
+    {
+        if (! isSubscene && gameState.GetFlag(gameState.sceneName + "%End"))
+        {
+            if (gameState.GetFlagIntValue("Global%SceneTimeCounter") != 0)
+                gameState.EncodeAnalyticsEndScene(true);
+        }
     }
 }

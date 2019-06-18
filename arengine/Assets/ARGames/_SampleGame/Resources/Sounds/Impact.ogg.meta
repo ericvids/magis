@@ -1,17 +1,19 @@
 fileFormatVersion: 2
 guid: 66b4d697edd5a7541aaa1eab822ef77c
+labels:
+- AllMonoAudioClips
 AudioImporter:
   externalObjects: {}
   serializedVersion: 6
   defaultSettings:
     loadType: 0
-    sampleRateSetting: 0
+    sampleRateSetting: 1
     sampleRateOverride: 44100
     compressionFormat: 1
     quality: 1
     conversionMode: 0
   platformSettingOverrides: {}
-  forceToMono: 0
+  forceToMono: 1
   normalize: 1
   preloadAudioData: 1
   loadInBackground: 0

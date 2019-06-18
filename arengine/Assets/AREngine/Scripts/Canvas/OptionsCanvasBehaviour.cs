@@ -1,6 +1,6 @@
 ﻿/************************************************************************************************************
 
-MAGIS copyright © 2018, Ateneo de Manila University.
+MAGIS copyright © 2015-2019, Ateneo de Manila University.
 
 This program (excluding certain assets as indicated in arengine/Assets/ARGames/_SampleGame/Resources/Credits.txt) is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License v2 ONLY, as published by the Free Software Foundation.
 
@@ -20,23 +20,30 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
     private GameStateBehaviour gameState;
     private IAREngine engine;
 
+    public CloseDelegate closeDelegate;
+
     private void Start()
     {
         gameState = GameObject.Find("GameState").GetComponent<GameStateBehaviour>();
         if (GameObject.FindWithTag("AREngine") != null)
             engine = GameObject.FindWithTag("AREngine").GetComponent<AREngineBehaviour>();
 
-        GameObject.Find("Panel/AppDetails/AppIconMask/AppIcon").GetComponent<UnityEngine.UI.Image>().sprite = Resources.Load<Sprite>("AppIcon");
+        GameObject.Find("Panel/AppDetails/AppIconMask/AppIcon").GetComponent<UnityEngine.UI.Image>().overrideSprite = Resources.Load<Sprite>("AppIcon");
         GameObject.Find("Panel/AppDetails/AppTitle").GetComponent<UnityEngine.UI.Text>().text = Application.productName;
-        GameObject.Find("Panel/AppDetails/AppVersion").GetComponent<UnityEngine.UI.Text>().text = "Version " + Application.version + "  <color=#000080>Credits...</color>  " + DeviceInput.deviceSerial;
+        GameObject.Find("Panel/AppDetails/AppVersion").GetComponent<UnityEngine.UI.Text>().text = "Version " + Application.version + "  <color=#000080>Credits...</color>  " + DeviceInput.HumanReadableEncoding(DeviceInput.deviceSerial);
 
         bool tutorialExists = false;
-        for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+        if (Resources.Load<TextAsset>("Cards/Tutorial") != null)
+            tutorialExists = true;
+        else
         {
-            string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
-            scenePath = scenePath.Substring(scenePath.LastIndexOf("/") + 1);
-            if (scenePath == "M0%Scene1.unity")
-                tutorialExists = true;
+            for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+            {
+                string scenePath = SceneUtility.GetScenePathByBuildIndex(i);
+                scenePath = scenePath.Substring(scenePath.LastIndexOf("/") + 1);
+                if (scenePath == "M0%Scene1.unity")
+                    tutorialExists = true;
+            }
         }
 
         if (engine != null)
@@ -94,7 +101,7 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
     public void Credits()
     {
         buttonCanvas.HideOverlay();
-        buttonCanvas.ShowCreditsOverlay();
+        buttonCanvas.ShowCreditsOverlay(closeDelegate);
     }
 
     public void LeftHandedMode()
@@ -140,13 +147,9 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
         {
             buttonCanvas.HideOverlay();
             if (pressedButton == "Exit game")
-            {
-#if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-#else
-                Application.Quit();
-#endif
-            }
+                DeviceInput.ExitGame(buttonCanvas);
+            else
+                buttonCanvas.ShowOptionsOverlay(closeDelegate);
         });
     }
 
@@ -163,7 +166,7 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
             {
                 buttonCanvas.HideOverlay();
                 if (pressedButton == "Do not reset")
-                    buttonCanvas.ShowOptionsOverlay();
+                    buttonCanvas.ShowOptionsOverlay(closeDelegate);
                 else
                 {
                     gameState.ResetFlags(gameState.GetFlagsStartingWith(gameState.moduleName + "%"));
@@ -171,6 +174,7 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
                     buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
                     buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
                     buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
+                    buttonCanvas.SetStill(null);
                     buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
                     buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
                     buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
@@ -192,7 +196,7 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
         {
             buttonCanvas.HideOverlay();
             if (pressedButton == "Do not reset")
-                buttonCanvas.ShowOptionsOverlay();
+                buttonCanvas.ShowOptionsOverlay(closeDelegate);
             else
             {
                 buttonCanvas.ShowQuestionOverlay("Are you REALLY sure?\n\nALL YOUR CURRENT PROGRESS WILL BE LOST.\nYou will restart from the very beginning.",
@@ -202,17 +206,15 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
                 {
                     buttonCanvas.HideOverlay();
                     if (pressedButton2 == "Do not reset")
-                        buttonCanvas.ShowOptionsOverlay();
+                        buttonCanvas.ShowOptionsOverlay(closeDelegate);
                     else
                     {
-                        // Clear analytics dictionary when resetting the game
-                        UnityAnalyticsIntegration.Reset ();
-
                         gameState.ResetFlags();
                         gameState.LoadScene("MapScene");
                         buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
                         buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
                         buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
+                        buttonCanvas.SetStill(null);
                         buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
                         buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
                         buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
@@ -232,7 +234,10 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
     public void ReplayTutorial()
     {
         buttonCanvas.HideOverlay();
-        gameState.SetFlag("M0%Scene1%End", false);
+        if (Resources.Load<TextAsset>("Cards/Tutorial") != null)
+            buttonCanvas.ShowCardOverlay("Tutorial");
+        else
+            gameState.SetFlag("M0%Scene1%End", false);
     }
 
     public void ReplayEnding()
@@ -259,11 +264,13 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
         }
 
         buttonCanvas.HideOverlay();
-        gameState.ReturnToMap();
+        gameState.ProcessReturnToMap();
     }
 
     public void CloseOptions()
     {
         buttonCanvas.HideOverlay();
+        if (closeDelegate != null)
+            closeDelegate();
     }
 }

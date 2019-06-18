@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: 0df3092a21b41f64c8dc84deecfeb23f
+labels:
+- AllEngineTextures
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -11,7 +13,8 @@ TrueTypeFontImporter:
   fontName: Source Sans Pro
   fontNames:
   - Source Sans Pro
-  fallbackFontReferences: []
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 6e4a1744cf113994799d3e46a7c45d99, type: 3}
   customCharacters: 
   fontRenderingMode: 0
   ascentCalculationMode: 1
