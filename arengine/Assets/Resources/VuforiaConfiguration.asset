@@ -15,7 +15,7 @@ MonoBehaviour:
   vuforia:
     vuforiaLicenseKey: 
     ufoLicenseKey: 
-    delayedInitialization: 0
+    delayedInitialization: 1
     cameraDeviceModeSetting: -3
     maxSimultaneousImageTargets: 2
     maxSimultaneousObjectTargets: 1

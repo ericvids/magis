@@ -170,21 +170,7 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
                 else
                 {
                     gameState.ResetFlags(gameState.GetFlagsStartingWith(gameState.moduleName + "%"));
-                    gameState.LoadScene("MapScene");
-                    buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
-                    buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
-                    buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
-                    buttonCanvas.SetStill(null);
-                    buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
-                    buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
-                    buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
-                    buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
-                    buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 2, null);
-                    buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 0, null);
-                    buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 1, null);
-                    buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 2, null);
-                    buttonCanvas.showDynamicGroup = false;
-                    buttonCanvas.SetDialogue(null);
+                    gameState.BackToMapScene();
                 }
             });
         }
@@ -210,21 +196,7 @@ public class OptionsCanvasBehaviour : CanvasBehaviour
                     else
                     {
                         gameState.ResetFlags();
-                        gameState.LoadScene("MapScene");
-                        buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
-                        buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
-                        buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
-                        buttonCanvas.SetStill(null);
-                        buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
-                        buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
-                        buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
-                        buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
-                        buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 2, null);
-                        buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 0, null);
-                        buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 1, null);
-                        buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 2, null);
-                        buttonCanvas.showDynamicGroup = false;
-                        buttonCanvas.SetDialogue(null);
+                        gameState.BackToMapScene();
                     }
                 });
             }

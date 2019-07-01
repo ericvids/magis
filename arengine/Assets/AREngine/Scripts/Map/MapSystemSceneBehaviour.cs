@@ -307,8 +307,6 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             }
         }
         buttonCanvas.showDynamicGroup = false;
-
-        gameState.ProcessMapSceneMusicPlay(gameEnded ? endingMusic : backgroundMusic);
     }
 
     private void Pathfinder()
@@ -538,7 +536,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
                 Start();
                 return;
             }
-            else if (gameState.ProcessMapSceneOverrideUpdate())
+            else if (gameState.ProcessMapSceneOverrideUpdate(gameEnded ? endingMusic : backgroundMusic))
             {
                 return;
             }
@@ -549,6 +547,7 @@ public class MapSystemSceneBehaviour : SceneBehaviour
             // countdown before zooming out
             if (zoomCountdown == 2.0f)
             {
+                mapSystem.ActivateGPS();
                 mapSystem.ShowWaypoints(activeWaypoints);
                 mapSystem.IgnoreTouchesUntilReleased();
                 if (gameEnded)

@@ -33,7 +33,6 @@ public class Autorun
     {
         GPS_SUPPORT = 0,
         BLE_SUPPORT,
-        OBB_SUPPORT,
         PRODUCT_NAME,
         IOS_ID,
         ANDROID_ID,
@@ -189,15 +188,21 @@ public class Autorun
             {
                 buildNotReady = true;
                 if ((int) System.Environment.OSVersion.Platform == 4 || (int) System.Environment.OSVersion.Platform == 6)
-                {
                     EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.iOS, BuildTarget.iOS);
-                }
                 else
-                {
                     EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
-                }
-                EditorUserBuildSettings.development = true;
                 return;
+            }
+            else
+            {
+                if (EditorUserBuildSettings.GetBuildLocation(BuildTarget.iOS) != "ios_" + DeviceInput.GameName())
+                    EditorUserBuildSettings.development = true;
+                EditorUserBuildSettings.buildAppBundle = ! EditorUserBuildSettings.development;
+                EditorUserBuildSettings.SetBuildLocation(BuildTarget.iOS, "ios_" + DeviceInput.GameName());
+                if (EditorUserBuildSettings.buildAppBundle)
+                    EditorUserBuildSettings.SetBuildLocation(BuildTarget.Android, "aab_" + DeviceInput.GameName() + ".aab");
+                else
+                    EditorUserBuildSettings.SetBuildLocation(BuildTarget.Android, "apk_" + DeviceInput.GameName() + ".apk");
             }
 
             // fix to remove empty .fbm folders that create spurious meta files
@@ -389,11 +394,9 @@ public class Autorun
                             rows[i] = "      m_Icon: {fileID: 2800000, guid: " + guid + ", type: 3}";
                         }
                         if (rows[i].StartsWith("    4: VUFORIA_IOS_SETTINGS"))
-                            rows[i] = "    4: VUFORIA_IOS_SETTINGS;MAGIS_" + DeviceInput.GameName() + (int.Parse(cols[(int) ARGameList.GPS_SUPPORT]) == 0 ? ";MAGIS_NOGPS" : "") + (int.Parse(cols[(int) ARGameList.BLE_SUPPORT]) == 0 ? "" : ";MAGIS_BLE") + (int.Parse(cols[(int) ARGameList.OBB_SUPPORT]) == 0 ? "" : ";MAGIS_OBB");
+                            rows[i] = "    4: VUFORIA_IOS_SETTINGS;MAGIS_" + DeviceInput.GameName() + (int.Parse(cols[(int) ARGameList.GPS_SUPPORT]) == 0 ? ";MAGIS_NOGPS" : "") + (int.Parse(cols[(int) ARGameList.BLE_SUPPORT]) == 0 ? "" : ";MAGIS_BLE");
                         if (rows[i].StartsWith("    7: VUFORIA_ANDROID_SETTINGS"))
-                            rows[i] = "    7: VUFORIA_ANDROID_SETTINGS;MAGIS_" + DeviceInput.GameName() + (int.Parse(cols[(int) ARGameList.GPS_SUPPORT]) == 0 ? ";MAGIS_NOGPS" : "") + (int.Parse(cols[(int) ARGameList.BLE_SUPPORT]) == 0 ? "" : ";MAGIS_BLE") + (int.Parse(cols[(int) ARGameList.OBB_SUPPORT]) == 0 ? "" : ";MAGIS_OBB");
-                        if (rows[i].StartsWith("  APKExpansionFiles: "))
-                            rows[i] = "  APKExpansionFiles: " + (int.Parse(cols[(int) ARGameList.OBB_SUPPORT]) == 0 ? "0" : "1");
+                            rows[i] = "    7: VUFORIA_ANDROID_SETTINGS;MAGIS_" + DeviceInput.GameName() + (int.Parse(cols[(int) ARGameList.GPS_SUPPORT]) == 0 ? ";MAGIS_NOGPS" : "") + (int.Parse(cols[(int) ARGameList.BLE_SUPPORT]) == 0 ? "" : ";MAGIS_BLE");
                     }
 
                     while (rows[rows.Length - 1] == "")

@@ -407,7 +407,7 @@ public class ARSceneBehaviour : SceneBehaviour
                 }
                 else
                     gameState.ProcessReturnToMap();
-                return false;  // script is done
+                return true;
             }
             else if (parameters[0] == "@analytics")
             {
@@ -429,7 +429,7 @@ public class ARSceneBehaviour : SceneBehaviour
             ProcessSceneTimeCounterEnd();
             dialogue = null;
             buttonCanvas.SetDialogue(null);
-            return false;  // script is done
+            return false;  // continue on with the next script that may trigger on the same frame
         }
         else
         {

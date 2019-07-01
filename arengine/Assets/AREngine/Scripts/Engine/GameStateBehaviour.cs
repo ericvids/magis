@@ -30,13 +30,10 @@ public class GameStateBehaviour : MonoBehaviour
     private string _selectedItem = "";
     private string _glowingButton = "";
 
-#if UNITY_ANDROID && ! UNITY_EDITOR && MAGIS_OBB
-    private float obbDelay;
-#endif
-
     private bool hasIncrementedModuleNumber;
     private bool gameEndFlag;
-    private bool playedMapSceneMusic;
+    private bool tutorialPlayedBefore;
+    private float nonOverridenTime;
     private string musicToPlay;
     private long lastMapTimeCounterUpdateTime;  // Global%MapTimeCounter is incremented whenever player is in the map
 
@@ -50,7 +47,7 @@ public class GameStateBehaviour : MonoBehaviour
         {
             baseScene.allowSceneActivation = false;
             buttonCanvas.StopMusic();
-            playedMapSceneMusic = false;
+            musicToPlay = null;
             glowingButton = null;
             subsceneName = null;
         }
@@ -66,7 +63,7 @@ public class GameStateBehaviour : MonoBehaviour
         {
             baseScene.allowSceneActivation = false;
             buttonCanvas.StopMusic();
-            playedMapSceneMusic = false;
+            musicToPlay = null;
             glowingButton = null;
             subsceneName = null;
             addedScene = SceneManager.LoadSceneAsync("ARScene", LoadSceneMode.Additive);
@@ -104,6 +101,18 @@ public class GameStateBehaviour : MonoBehaviour
         // cache game end flag
         gameEndFlag = GetFlag("Global%GameEnd");
 
+        // if loading for the first time and tutorial has been played, save that fact
+        if (GetFlag("M0%Scene1%End") || GetFlag("Global%FinishedFirstTutorial"))
+        {
+            SetFlag("M0%Scene1%End", true);
+            SetFlag("Global%FinishedFirstTutorial", true);
+            tutorialPlayedBefore = true;
+        }
+        else
+            tutorialPlayedBefore = false;
+
+        nonOverridenTime = 0;
+
         // prevent sleep on dev mode, enable sleep otherwise
 #if DEVELOPMENT_BUILD
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
@@ -136,42 +145,20 @@ public class GameStateBehaviour : MonoBehaviour
                 SetFlag("Global%HighestModule", GetFlagIntValue("Global%HighestModule") - 1);
             SetFlag("Global%Module", GetFlagIntValue("Global%Module") - 1);
         }
+        if (! hasIncrementedModuleNumber)
+            Debug.Log(DeviceInput.HumanReadableEncoding("Analytics: " + PlayerPrefs.GetString("AnalyticsCode")));
         return hasIncrementedModuleNumber;
-    }
-
-    public void ProcessMapSceneMusicPlay(string backgroundMusic)
-    {
-        musicToPlay = backgroundMusic;
-
-        // if tutorial has been played, play the music immediately
-        if ((GetFlag("M0%Scene1%End") || GetFlag("Global%FinishedFirstTutorial")) && ! playedMapSceneMusic)
-        {
-            buttonCanvas.PlayMusic(musicToPlay, true);
-            playedMapSceneMusic = true;
-        }
-
-        // playedMapSceneMusic flag doubles as a signal to not start with the tutorial anymore
-        if (playedMapSceneMusic)
-        {
-            SetFlag("M0%Scene1%End", true);
-            SetFlag("Global%FinishedFirstTutorial", true);
-        }
-
-        Debug.Log(DeviceInput.HumanReadableEncoding(PlayerPrefs.GetString("AnalyticsCode")));
     }
 
     public bool ProcessMapSceneRestart()
     {
         if (gameEndFlag != GetFlag("Global%GameEnd"))
-        {
-            playedMapSceneMusic = false;
             return true;
-        }
         else
             return false;
     }
 
-    public bool ProcessMapSceneOverrideUpdate()
+    public bool ProcessMapSceneOverrideUpdate(string music)
     {
         if (! GetFlag("M0%Scene1%End"))
         {
@@ -184,26 +171,39 @@ public class GameStateBehaviour : MonoBehaviour
                 if (scenePath == "M0%Scene1.unity")
                     tutorialExists = true;
             }
-            // if the music has been played, the tutorial is being played due to a user retrigger;
-            // if the music has NOT been played, play the tutorial only if it has not run before
+            // if the tutorial has been played before, then the tutorial is being played again due to a user retrigger;
+            // if the tutorial has NOT been played before, play the tutorial only if it has not run before
             // (this prevents the edge case where the player retriggers the tutorial then exits the game)
-            if (tutorialExists && (playedMapSceneMusic || ! GetFlag("Global%FinishedFirstTutorial")))
+            if (tutorialExists && (tutorialPlayedBefore || ! GetFlag("Global%FinishedFirstTutorial")))
             {
                 buttonCanvas.SetDialogue(null);  // in case a dialogue was shown
                 LoadARScene("M0%Scene1");
                 return true;
             }
-            else
-            {
-                SetFlag("M0%Scene1%End", true);
-                SetFlag("Global%FinishedFirstTutorial", true);
-                if (! playedMapSceneMusic)
-                {
-                    buttonCanvas.PlayMusic(musicToPlay, true);
-                    playedMapSceneMusic = true;
-                }
-            }
         }
+
+        if (nonOverridenTime >= 1.0f && DeviceInput.locationDialogUnanswered)
+        {
+            // if location access question somehow got unanswered
+            // (happens on iOS when screen was turned off during the dialog),
+            // reload the map scene to ask the question again
+            Debug.Log("Location dialog not answered, asking again...");
+            BackToMapScene();
+            return true;
+        }
+
+        // play the music
+        // but not on the first frame to allow location starting without music stuttering (Android)
+        // and not if the location dialog is unanswered (iOS)
+        buttonCanvas.PreloadSound(music);
+        if (musicToPlay != music && nonOverridenTime != 0 && ! DeviceInput.locationDialogUnanswered)
+        {
+            musicToPlay = music;
+            buttonCanvas.PlayMusic(musicToPlay, true);
+        }
+
+        if (nonOverridenTime <= 1.0f)
+            nonOverridenTime += Time.deltaTime;
 
         ProcessMapSceneCounter();
         return false;
@@ -338,6 +338,28 @@ public class GameStateBehaviour : MonoBehaviour
         PlayerPrefs.Save();
     }
 
+    public void BackToMapScene(bool fromDialog = true)
+    {
+        LoadScene("MapScene");
+        buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
+        buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
+        buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
+        buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
+        if (fromDialog)
+        {
+            buttonCanvas.SetStill(null);
+            buttonCanvas.SetFade(new Color(0, 0, 0, 0), 0);
+            buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 0, null);
+            buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 1, null);
+            buttonCanvas.SetButton(ButtonCanvasGroup.DYNAMIC, 2, null);
+        }
+        buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
+        buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
+        buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 2, null);
+        buttonCanvas.showDynamicGroup = false;
+        buttonCanvas.SetDialogue(null);
+    }
+
     public void ProcessReturnToMap()
     {
         bool sceneFinished = GetFlag(sceneName + "%End")
@@ -346,16 +368,7 @@ public class GameStateBehaviour : MonoBehaviour
         bool secretAvailable = GetFlag(sceneName + "%SecretAvailable");
         if (GetFlag("Global%EasyBackButton") || sceneFinished && ! secretAvailable)
         {
-            LoadScene("MapScene");
-            buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
-            buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
-            buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
-            buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
-            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
-            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
-            buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 2, null);
-            buttonCanvas.showDynamicGroup = false;
-            buttonCanvas.SetDialogue(null);
+            BackToMapScene(false);
             return;
         }
 
@@ -387,16 +400,7 @@ public class GameStateBehaviour : MonoBehaviour
 #endif
                 if (tutorial)
                     SetFlag("M0%Scene1%End", true);  // note that we DON'T encode analytics end scene
-                LoadScene("MapScene");
-                buttonCanvas.SetStatus(ButtonCanvasStatusType.PROGRESS, null);
-                buttonCanvas.SetStatus(ButtonCanvasStatusType.ERROR, null);
-                buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
-                buttonCanvas.SetCrosshair(new Vector3(-1f, -1f), new Vector3(-1f, -1f));
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 0, null);
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 1, null);
-                buttonCanvas.SetButton(ButtonCanvasGroup.STATIC, 2, null);
-                buttonCanvas.showDynamicGroup = false;
-                buttonCanvas.SetDialogue(null);
+                BackToMapScene();
             }
         });
     }
@@ -716,32 +720,6 @@ public class GameStateBehaviour : MonoBehaviour
                 return;
 
             buttonCanvas.showLoading = true;
-#if UNITY_ANDROID && ! UNITY_EDITOR && MAGIS_OBB
-            // check first for obb
-            if (obbDelay > 0.0f)
-            {
-                obbDelay -= Time.deltaTime;
-                return;
-            }
-            else if (GooglePlayDownloader.GetMainOBBPath(GooglePlayDownloader.GetExpansionFilePath()) == null)
-            {
-                buttonCanvas.ShowQuestionOverlay("The game needs to download resources from the Google Play Store.\n\nYou may want to switch to Wi-Fi to avoid mobile data charges.",
-                    "Exit game",
-                    "Download now",
-                    delegate(string pressedButton)
-                    {
-                        buttonCanvas.HideOverlay();
-                        if (pressedButton == "Download now")
-                        {
-                            GooglePlayDownloader.FetchOBB();
-                            obbDelay = 1.0f;
-                        }
-                        else
-                            DeviceInput.ExitGame(buttonCanvas);
-                    });
-                return;
-            }
-#endif
             LoadScene("TitleScene");
         }
 

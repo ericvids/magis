@@ -95,6 +95,9 @@ public class MapSystemBehaviour : MonoBehaviour
     private bool   following                = false;
     private float  filteredCompass          = 0.0f;
     private bool   processSegmentsThisFrame = false;
+#if ! MAGIS_NOGPS && ! UNITY_EDITOR && ! UNITY_STANDALONE
+    private static bool activated           = false;
+#endif
 
     public static Vector2 GetGUIScale()
     {
@@ -522,6 +525,26 @@ public class MapSystemBehaviour : MonoBehaviour
     {
         following = true;
         Recenter();
+    }
+
+    public void ActivateGPS()
+    {
+#if ! MAGIS_NOGPS && ! UNITY_EDITOR && ! UNITY_STANDALONE
+        if (! activated)
+        {
+            activated = true;
+            DeviceInput.RequestLocationPermission();
+        }
+        if (DeviceInput.locationPermissionEnabled || DeviceInput.locationDialogUnanswered)
+        {
+            Input.location.Stop();
+            Input.location.Start(0.1f, 0.1f);
+            lastLocationTimestamp = 0.0;
+            lastRealTime = Time.realtimeSinceStartup;
+            if (! Input.compass.enabled)
+                Input.compass.enabled = true;
+        }
+#endif
     }
 
     public void ShowWaypoints(List<string> waypoints, bool includeGps = false)
@@ -1145,14 +1168,17 @@ public class MapSystemBehaviour : MonoBehaviour
             if (Input.location.status == LocationServiceStatus.Stopped
                 || Input.location.status == LocationServiceStatus.Failed)
             {
-# if UNITY_EDITOR || UNITY_STANDALONE
-# else
-                Input.location.Start(0.1f, 0.1f);
+# if ! UNITY_EDITOR && ! UNITY_STANDALONE
+                // location service will not be started until activated and permissions are granted
+                if (activated && DeviceInput.locationPermissionEnabled)
+                {
+                    Input.location.Start(0.1f, 0.1f);
+                    lastLocationTimestamp = 0.0;
+                    lastRealTime = Time.realtimeSinceStartup;
+                    if (! Input.compass.enabled)
+                        Input.compass.enabled = true;
+                }
 # endif
-                lastLocationTimestamp = 0.0;
-                lastRealTime = Time.realtimeSinceStartup;
-                if (! Input.compass.enabled)
-                    Input.compass.enabled = true;
             }
             withinMap = false;
         }
@@ -1367,5 +1393,12 @@ public class MapSystemBehaviour : MonoBehaviour
             Application.OpenURL(attributionURL);
         }
         GUI.backgroundColor = Color.white;
+    }
+
+    private void OnDestroy()
+    {
+#if ! MAGIS_NOGPS
+        Input.location.Stop();
+#endif
     }
 }

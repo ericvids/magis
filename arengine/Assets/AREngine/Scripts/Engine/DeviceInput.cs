@@ -10,19 +10,24 @@ You should have received a copy of the GNU General Public License v2 along with 
 
 ************************************************************************************************************/
 
-using UnityEngine;
+using System;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 public class DeviceInput
 {
 #if UNITY_IOS && ! UNITY_EDITOR
+    [DllImport ("__Internal")]
+    static extern string GetApplicationSettingsURL();
+    [DllImport ("__Internal")]
+    static extern int IsCameraPermitted();
 # if ! MAGIS_NOGPS || MAGIS_BLE
     [DllImport ("__Internal")]
     static extern int IsLocationPermitted();
-# endif
     [DllImport ("__Internal")]
-    static extern string GetApplicationSettingsURL();
+    static extern int IsLocationDialogUnanswered();
+# endif
 #endif
 
     public static string NameToFolderName(string name)
@@ -269,18 +274,42 @@ public class DeviceInput
         }
     }
 
+    public static bool cameraPermissionEnabled
+    {
+        get
+        {
+            if (GameObject.FindWithTag("AREngine") == null)
+                return true;
+#if UNITY_ANDROID && ! UNITY_EDITOR
+	        return UnityEngine.Android.Permission.HasUserAuthorizedPermission(UnityEngine.Android.Permission.Camera);
+#elif UNITY_IOS && ! UNITY_EDITOR
+            return IsCameraPermitted() != 0;
+#else
+            return true;
+#endif
+        }
+    }
+
+    public static bool locationDialogUnanswered
+    {
+        get
+        {
+            if (GameObject.FindWithTag("AREngine") != null || GameObject.Find("TitleScene") != null)
+                return false;
+#if UNITY_IOS && ! UNITY_EDITOR
+            return IsLocationDialogUnanswered() != 0;
+#else
+            return false;
+#endif
+        }
+    }
+
     public static bool locationPermissionEnabled
     {
         get
         {
             if (GameObject.FindWithTag("AREngine") != null || GameObject.Find("TitleScene") != null)
-            {
-#if ! MAGIS_NOGPS
-                if (Input.location.status == LocationServiceStatus.Running)
-                    Input.location.Stop();
-#endif
                 return true;
-            }
 #if UNITY_ANDROID && ! UNITY_EDITOR
 # if MAGIS_NOGPS && MAGIS_BLE
             return UnityEngine.Android.Permission.HasUserAuthorizedPermission(UnityEngine.Android.Permission.CoarseLocation);
@@ -301,6 +330,20 @@ public class DeviceInput
         }
     }
 
+    public static void RequestLocationPermission()
+    {
+#if UNITY_ANDROID && ! UNITY_EDITOR
+# if MAGIS_NOGPS && MAGIS_BLE
+        if (! UnityEngine.Android.Permission.HasUserAuthorizedPermission(UnityEngine.Android.Permission.CoarseLocation))
+            UnityEngine.Android.Permission.RequestUserPermission(UnityEngine.Android.Permission.CoarseLocation);
+# elif ! MAGIS_NOGPS
+        if (! UnityEngine.Android.Permission.HasUserAuthorizedPermission(UnityEngine.Android.Permission.FineLocation))
+            UnityEngine.Android.Permission.RequestUserPermission(UnityEngine.Android.Permission.FineLocation);
+# endif
+#endif
+        // iOS does not need separate request (it is requested during location initialization)
+    }
+
     public static bool locationHardwareEnabled
     {
         get
@@ -309,7 +352,7 @@ public class DeviceInput
                 return true;
             bool result = true;
 #if UNITY_ANDROID && ! UNITY_EDITOR
-# if ! NAGIS_NOGPS || MAGIS_BLE
+# if ! MAGIS_NOGPS || MAGIS_BLE
             // if gps provider is enabled, location hardware is enabled for both magis modes
             result = androidActivity.Call<AndroidJavaObject>("getSystemService", "location").Call<bool>("isProviderEnabled", "gps");
 # endif
@@ -322,11 +365,22 @@ public class DeviceInput
         }
     }
 
-    public static void ShowLocationAccess()
+    public static void RestartGame()
+    {
+#if UNITY_ANDROID && ! UNITY_EDITOR
+        AndroidJavaObject intent = androidActivity.Call<AndroidJavaObject>("getPackageManager").Call<AndroidJavaObject>("getLaunchIntentForPackage", androidActivity.Call<AndroidJavaObject>("getPackageName"));
+        androidActivity.Call("startActivity", intent.CallStatic<AndroidJavaObject>("makeRestartActivityTask", intent.Call<AndroidJavaObject>("getComponent")));
+        AndroidJavaClass process = new AndroidJavaClass("android.os.Process");
+        process.CallStatic("killProcess", process.CallStatic<int>("myPid"));
+        Application.Quit();  // in case killing the process was blocked somehow (this is not as reliable though)
+#endif
+    }
+
+    public static void ShowDeviceSettings()
     {
 #if UNITY_ANDROID && ! UNITY_EDITOR
         AndroidJavaObject intent = null;
-        if (! locationPermissionEnabled)
+        if (! cameraPermissionEnabled || ! locationPermissionEnabled)
         {
             intent = new AndroidJavaObject("android.content.Intent", "android.settings.APPLICATION_DETAILS_SETTINGS");
             AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri");
@@ -337,7 +391,7 @@ public class DeviceInput
         if (intent != null)
             androidActivity.Call("startActivity", intent);
 #elif UNITY_IOS && ! UNITY_EDITOR
-        if (! locationPermissionEnabled)
+        if (! cameraPermissionEnabled || ! locationPermissionEnabled)
             Application.OpenURL(GetApplicationSettingsURL());
 #endif
     }

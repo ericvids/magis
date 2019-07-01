@@ -16,7 +16,11 @@ extern "C"
 {
     int IsLocationPermitted()
     {
-        return [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedWhenInUse
-            || [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways;
+        return [CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedWhenInUse;
+    }
+
+    int IsLocationDialogUnanswered()
+    {
+        return [CLLocationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined;
     }
 }

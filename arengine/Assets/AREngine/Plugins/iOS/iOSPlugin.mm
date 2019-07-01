@@ -10,6 +10,8 @@ You should have received a copy of the GNU General Public License v2 along with 
 
 ************************************************************************************************************/
 
+#import <AVFoundation/AVFoundation.h>
+
 extern "C"
 {
     const char *GetApplicationSettingsURL()
@@ -18,5 +20,10 @@ extern "C"
         char *copy = (char *) malloc(strlen(string) + 1);
         strcpy(copy, string);
         return copy;
+    }
+
+    int IsCameraPermitted()
+    {
+        return [AVCaptureDevice authorizationStatusForMediaType: AVMediaTypeVideo] == AVAuthorizationStatusAuthorized;
     }
 }

@@ -18,14 +18,11 @@ using System.IO;
 
 public class TitleSceneBehaviour : SceneBehaviour
 {
-    private bool done;
-
     private void Start()
     {
         if (! Init())
             return;
         GameObject.Find("ScreenCanvas/Title").GetComponent<UnityEngine.UI.Image>().overrideSprite = Resources.Load<Sprite>("TitleScreen");
-        StartCoroutine(Stream());
     }
 
     public void ButtonPress()
@@ -34,7 +31,7 @@ public class TitleSceneBehaviour : SceneBehaviour
             return;
 
         GameObject obj = EventSystem.current.currentSelectedGameObject;
-        if (obj.name == "Title" && done && ! buttonCanvas.overlayShowing)
+        if (obj.name == "Title" && ! buttonCanvas.overlayShowing)
         {
 #if DEVELOPMENT_BUILD && ! UNITY_EDITOR
             buttonCanvas.ShowQuestionOverlay(
@@ -52,55 +49,5 @@ public class TitleSceneBehaviour : SceneBehaviour
             );
 #endif
         }
-    }
-
-    private IEnumerator Stream()
-    {
-#if UNITY_ANDROID && ! UNITY_EDITOR && MAGIS_OBB
-        if (! Directory.Exists(Application.persistentDataPath + "/Vuforia"))
-            Directory.CreateDirectory(Application.persistentDataPath + "/Vuforia");
-        yield return StartCoroutine(StreamFromOBB("/Vuforia/magis-default.xml", true));
-        yield return StartCoroutine(StreamFromOBB("/Vuforia/magis-default.dat", true));
-        yield return StartCoroutine(StreamFromOBB("/Vuforia/" + DeviceInput.GameName() + ".xml"));
-        yield return StartCoroutine(StreamFromOBB("/Vuforia/" + DeviceInput.GameName() + ".dat"));
-#endif
-        done = true;
-        yield return null;
-    }
-
-    private IEnumerator StreamFromOBB(string file, bool doNotIgnore = false)
-    {
-        UnityWebRequest www = UnityWebRequest.Get(Application.streamingAssetsPath + file);
-        yield return www.SendWebRequest();
-        if (string.IsNullOrEmpty(www.error))
-        {
-            try
-            {
-                File.WriteAllBytes(Application.persistentDataPath + file, www.downloadHandler.data);
-            }
-            catch
-            {
-                buttonCanvas.ShowQuestionOverlay("The application failed to extract required game files. Please free up some space on your device. (If this fails, you might need to uninstall then re-install the application.)",
-                                                 "Exit game",
-                                                 null,
-                                                 delegate(string pressedButton)
-                {
-                    buttonCanvas.HideOverlay();
-                    DeviceInput.ExitGame(buttonCanvas);
-                });
-            }
-        }
-        else if (doNotIgnore)
-        {
-            buttonCanvas.ShowQuestionOverlay("The application failed to download required game files. Please uninstall then re-install the application.",
-                                             "Exit game",
-                                             null,
-                                             delegate(string pressedButton)
-            {
-                buttonCanvas.HideOverlay();
-                DeviceInput.ExitGame(buttonCanvas);
-            });
-        }
-        yield return null;
     }
 }

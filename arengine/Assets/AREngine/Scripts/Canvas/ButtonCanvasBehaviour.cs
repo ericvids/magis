@@ -37,6 +37,9 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     // number of actual displayed frames before diagnostic messages may show up
     public static float COOL_OFF_TIME_AFTER_LOAD_SCENE = 5.0f;
 
+    // while deferLoading is true, readyToLoadLevel will not switch to true
+    public bool deferLoading = false;
+
     // game objects for assignment into the editor
     public GameObject[] crosshair;
     public GameObject still;
@@ -63,6 +66,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     private float timeSinceSceneStart;
     private bool noRotationShown;
     private bool accelerometerMalfunctioningShown;
+    private bool cameraPermissionDisabledShown;
     private bool locationPermissionDisabledShown;
     private bool locationHardwareDisabledShown;
 
@@ -123,7 +127,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
     {
         get
         {
-            return ! showDynamicGroup && ! dialogueShowing && ! overlayShowing && oldOverlayCanvas == null;
+            return ! deferLoading && ! showDynamicGroup && ! dialogueShowing && ! overlayShowing && oldOverlayCanvas == null;
         }
     }
 
@@ -202,6 +206,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
             }
             faderEnabled = true;
             faderSuppressingText = true;
+            textDelay = 0;
             faderTime = 0.25f;
             return false;
         }
@@ -221,6 +226,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         {
             faderEnabled = true;
             faderSuppressingText = true;
+            textDelay = 0;
         }
         faderTime = time;
     }
@@ -592,7 +598,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         if (pressedButton == "Exit game")
             DeviceInput.ExitGame(this);
         else if (pressedButton == "Take me to Settings")
-            DeviceInput.ShowLocationAccess();
+            DeviceInput.ShowDeviceSettings();
     }
 
     private void UpdateMessages()
@@ -624,30 +630,47 @@ public class ButtonCanvasBehaviour : MonoBehaviour
                                 "Continue playing",
                                 MessageResponse);
         }
+        else if (! DeviceInput.cameraPermissionEnabled)
+        {
+            cameraPermissionDisabledShown = true;
+            ShowQuestionOverlay("This game requires your device's camera in order to display AR scenes.\n\nPlease ensure that you have given this app permission to access your Camera in your device's Settings.",
+                                "Take me to Settings",
+                                "Exit game",
+                                MessageResponse);
+        }
         else if (! locationPermissionDisabledShown && ! DeviceInput.locationPermissionEnabled)
         {
             locationPermissionDisabledShown = true;
             ShowQuestionOverlay("This game requires your device's location during play.\n\nPlease ensure that you have given this app permission to access your Location in your device's Settings.",
                                 "Take me to Settings",
+# if MAGIS_NOGPS && MAGIS_BLE
+                                "Exit game",
+# else
                                 "Continue playing",
+# endif
                                 MessageResponse);
         }
-        else if (! locationHardwareDisabledShown && ! DeviceInput.locationHardwareEnabled)
+        else if (! locationHardwareDisabledShown && ! locationPermissionDisabledShown && ! DeviceInput.locationHardwareEnabled)  // if user skips the location permission dialog, the location hardware dialog is just redundant
         {
             locationHardwareDisabledShown = true;
 # if ! MAGIS_NOGPS
-            ShowQuestionOverlay("Your device's location hardware has been disabled (or has not been found).\n\nPlease enable Location in your device's Settings, and also ensure that \"high-accuracy\" mode (GPS) is enabled.",
+            ShowQuestionOverlay("Your device's location hardware is either disabled or malfunctioning.\n\nPlease enable Location in your device's Settings. If it is already on, please ensure that either High-accuracy or GPS mode is enabled.",
                                 "Take me to Settings",
                                 "Continue playing",
                                 MessageResponse);
 # elif MAGIS_BLE
-            ShowQuestionOverlay("Your device's location hardware has been disabled (or has not been found).\n\nPlease enable Location in your device's Settings.",
+            ShowQuestionOverlay("Your device's location hardware is either disabled or malfunctioning.\n\nPlease enable Location in your device's Settings.",
                                 "Take me to Settings",
-                                "Continue playing",
+                                "Exit game",
                                 MessageResponse);
 # endif
         }
 #endif
+
+        if (locationPermissionDisabledShown && DeviceInput.locationPermissionEnabled)
+            locationPermissionDisabledShown = false;
+        if (locationHardwareDisabledShown && DeviceInput.locationHardwareEnabled)
+            locationHardwareDisabledShown = false;
     }
 
     private void UpdateOverlay()
@@ -754,14 +777,19 @@ public class ButtonCanvasBehaviour : MonoBehaviour
             }
         }
 
-        // if changing status, or non-card overlay is visible, or if dialogue/fader/card overlay is visible when the highest status
-        // is just game progress, hide the status
-        if (changingStatus != -1 || overlayCanvas != null && overlayCanvas.GetComponent<CardCanvasBehaviour>() == null
-            || highestStatus == 0 && (text != "" || faderSuppressingText || overlayCanvas != null))
+        // if loading, changing status, fader is active (and suppressing text), non-card overlay is visible,
+        // or dialogue/card overlay is visible when the highest status is just game progress,
+        // hide the status
+        if (showLoading || changingStatus != -1 || faderSuppressingText
+            || overlayCanvas != null && overlayCanvas.GetComponent<CardCanvasBehaviour>() == null
+            || highestStatus == 0 && (text != "" || overlayCanvas != null))
         {
             if (statusTime > 0)
             {
-                statusTime -= Time.deltaTime * STATUS_FACTOR;
+                if (showLoading)
+                    statusTime = 0;
+                else
+                    statusTime -= Time.deltaTime * STATUS_FACTOR;
                 if (statusTime < 0)
                     statusTime = 0;
             }
@@ -1136,10 +1164,16 @@ public class ButtonCanvasBehaviour : MonoBehaviour
 
     private void OnApplicationPause(bool paused)
     {
-        timeSinceSceneStart = 0.0f;
-#if ! UNITY_EDITOR
-        locationPermissionDisabledShown = false;
-        locationHardwareDisabledShown = false;
-#endif
+        if (! paused)
+        {
+            // app restart is needed to get camera working properly when permission is only given now
+            if (cameraPermissionDisabledShown && DeviceInput.cameraPermissionEnabled)
+                DeviceInput.RestartGame();
+
+            timeSinceSceneStart = 0.0f;
+            cameraPermissionDisabledShown = false;
+            locationPermissionDisabledShown = false;
+            locationHardwareDisabledShown = false;
+        }
     }
 }

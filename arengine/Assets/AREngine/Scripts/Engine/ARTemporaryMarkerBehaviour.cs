@@ -23,6 +23,8 @@ public class ARTemporaryMarkerBehaviour : MonoBehaviour, IUserDefinedTargetEvent
 
     private void Start()
     {
+        VuforiaRuntime.Instance.InitVuforia();
+
         UserDefinedTargetBuildingBehaviour userDefinedTargetBuildingBehaviour = GetComponent<UserDefinedTargetBuildingBehaviour>();
         if (userDefinedTargetBuildingBehaviour != null)
             userDefinedTargetBuildingBehaviour.RegisterEventHandler(this);
@@ -104,20 +106,12 @@ public class ARTemporaryMarkerBehaviour : MonoBehaviour, IUserDefinedTargetEvent
 
             // this loads the default data set
             dataSet = objectTracker.CreateDataSet();
-#if UNITY_ANDROID && ! UNITY_EDITOR && MAGIS_OBB
-            dataSet.Load(Application.persistentDataPath + "/Vuforia/magis-default.xml", VuforiaUnity.StorageType.STORAGE_ABSOLUTE);
-#else
             dataSet.Load("magis-default");
-#endif
             objectTracker.ActivateDataSet(dataSet);
 
             // this loads the data set for the markers of the current game
             dataSet = objectTracker.CreateDataSet();
-#if UNITY_ANDROID && ! UNITY_EDITOR && MAGIS_OBB
-            dataSet.Load(Application.persistentDataPath + "/Vuforia/" + DeviceInput.GameName() + ".xml", VuforiaUnity.StorageType.STORAGE_ABSOLUTE);
-#else
             dataSet.Load(DeviceInput.GameName());
-#endif
             objectTracker.ActivateDataSet(dataSet);
 
             // this creates an empty data set for the temporary marker
