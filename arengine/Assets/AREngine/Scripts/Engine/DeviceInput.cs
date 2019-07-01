@@ -297,7 +297,11 @@ public class DeviceInput
             if (GameObject.FindWithTag("AREngine") != null || GameObject.Find("TitleScene") != null)
                 return false;
 #if UNITY_IOS && ! UNITY_EDITOR
+# if ! MAGIS_NOGPS || MAGIS_BLE
             return IsLocationDialogUnanswered() != 0;
+# else
+            return true;
+# endif
 #else
             return false;
 #endif
