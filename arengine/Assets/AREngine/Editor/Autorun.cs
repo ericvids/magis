@@ -154,6 +154,7 @@ public class Autorun
                     // temporarily halt the loading of an AR editor level to load CommonScene
                     loadedLevel = SceneManager.GetActiveScene().name;
                     SceneManager.LoadScene("CommonScene");
+                    DeviceInput.RequestCameraPermission();
                     Debug.Log("Starting ARScene");
                 }
                 else if (GameObject.Find("GameState") == null)
@@ -195,7 +196,7 @@ public class Autorun
             }
             else
             {
-                if (EditorUserBuildSettings.GetBuildLocation(BuildTarget.iOS) != "ios_" + DeviceInput.GameName())
+                if (! EditorUserBuildSettings.GetBuildLocation(BuildTarget.iOS).EndsWith("ios_" + DeviceInput.GameName()))
                     EditorUserBuildSettings.development = true;
                 EditorUserBuildSettings.buildAppBundle = ! EditorUserBuildSettings.development;
                 EditorUserBuildSettings.SetBuildLocation(BuildTarget.iOS, "ios_" + DeviceInput.GameName());
@@ -308,12 +309,17 @@ public class Autorun
 
         if (CloudProjectSettings.projectId != "" && productNameToCloudProjectId[Application.productName] != CloudProjectSettings.projectId)
         {
+            if (! AssetDatabase.IsValidFolder("Assets/_DO NOT COMMIT RIGHT NOW - If Unity crashed, restart it now"))
+            {
+                EditorUtility.DisplayDialog("MAGIS", "The current MAGIS game has switched to '" + Application.productName + "'.\n\nRestart of Unity is required.\n\n" + "Current project id = " + CloudProjectSettings.projectId + "\nNew project id = " + productNameToCloudProjectId[Application.productName], "Restart Unity");
+                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
+                AssetDatabase.SaveAssets();
+                AssetDatabase.CreateFolder("Assets", "_DO NOT COMMIT RIGHT NOW - If Unity crashed, restart it now");
+                AssetDatabase.Refresh();
+                return true;
+            }
+
             restarting = true;
-
-            EditorUtility.DisplayDialog("MAGIS", "The current MAGIS game has switched to '" + Application.productName + "'.\n\nRestart of Unity is required.\n\n" + "Current project id = " + CloudProjectSettings.projectId + "\nNew project id = " + productNameToCloudProjectId[Application.productName], "Restart Unity");
-
-            AssetDatabase.SaveAssets();
-            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
 
             StreamReader reader = new StreamReader("Assets/ARGames/ARGameList.txt");
             string[] rows = reader.ReadToEnd().Split('\n');
@@ -462,7 +468,6 @@ public class Autorun
                     }
                     writer.Close();
 
-                    AssetDatabase.CreateFolder("Assets", "_DO NOT COMMIT RIGHT NOW - If Unity crashed, restart it now");
                     EditorApplication.OpenProject(Application.dataPath + "/..");
                     return true;
                 }

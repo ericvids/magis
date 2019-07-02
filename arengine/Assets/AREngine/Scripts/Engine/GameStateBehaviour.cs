@@ -729,18 +729,21 @@ public class GameStateBehaviour : MonoBehaviour
         // allow async level load to proceed only when button canvas animation is finished
         if (baseScene != null)
         {
-            if (buttonCanvas.readyToLoadLevel)
+            if (buttonCanvas.readyToLoadLevel && ! baseScene.allowSceneActivation)
             {
-                baseScene.allowSceneActivation = true;
-                buttonCanvas.showLoading = true;
-            }
-            if (baseScene.isDone && baseScene.allowSceneActivation)
-            {
-                if (addedScene == null || addedScene.isDone)
+                if (! buttonCanvas.showLoading)
+                    buttonCanvas.showLoading = true;
+                else
                 {
-                    baseScene = null;
-                    addedScene = null;
+                    if (sceneName == "TitleScene")
+                        DeviceInput.RequestCameraPermission();  // immediately after the title scene, request camera
+                    baseScene.allowSceneActivation = true;
                 }
+            }
+            if (baseScene.allowSceneActivation && baseScene.isDone && (addedScene == null || addedScene.isDone))
+            {
+                baseScene = null;
+                addedScene = null;
             }
         }
         else

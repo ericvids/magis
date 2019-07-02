@@ -23,8 +23,6 @@ public class ARTemporaryMarkerBehaviour : MonoBehaviour, IUserDefinedTargetEvent
 
     private void Start()
     {
-        VuforiaRuntime.Instance.InitVuforia();
-
         UserDefinedTargetBuildingBehaviour userDefinedTargetBuildingBehaviour = GetComponent<UserDefinedTargetBuildingBehaviour>();
         if (userDefinedTargetBuildingBehaviour != null)
             userDefinedTargetBuildingBehaviour.RegisterEventHandler(this);
@@ -99,33 +97,34 @@ public class ARTemporaryMarkerBehaviour : MonoBehaviour, IUserDefinedTargetEvent
 
     public void OnInitialized()
     {
+        if (dataSet != null)
+            OnDestroy();
+
         objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
         if (objectTracker != null)
         {
-            objectTracker.DestroyAllDataSets(true);
-
-            // this loads the default data set
-            dataSet = objectTracker.CreateDataSet();
-            dataSet.Load("magis-default");
-            objectTracker.ActivateDataSet(dataSet);
-
-            // this loads the data set for the markers of the current game
-            dataSet = objectTracker.CreateDataSet();
-            dataSet.Load(DeviceInput.GameName());
-            objectTracker.ActivateDataSet(dataSet);
-
             // this creates an empty data set for the temporary marker
             dataSet = objectTracker.CreateDataSet();
             objectTracker.ActivateDataSet(dataSet);
+        }
 
-            // set it so that the AR camera can only see the video feed and nothing else of the scene
-            GameObject.FindWithTag("MainCamera").transform.GetChild(0).gameObject.layer = 9;  // ARBackground
+        // set it so that the AR camera can only see the video feed and nothing else of the scene
+        GameObject.FindWithTag("MainCamera").transform.GetChild(0).gameObject.layer = 9;  // ARBackground
+    }
+
+    public void OnDestroy()
+    {
+        if (dataSet != null)
+        {
+            objectTracker.DeactivateDataSet(dataSet);
+            objectTracker.DestroyDataSet(dataSet, true);
+            dataSet = null;
         }
     }
 
     public void DeleteTrackable()
     {
-        if (objectTracker != null)
+        if (dataSet != null)
         {
             objectTracker.DeactivateDataSet(dataSet);
             dataSet.DestroyAllTrackables(false);
@@ -145,10 +144,13 @@ public class ARTemporaryMarkerBehaviour : MonoBehaviour, IUserDefinedTargetEvent
                    && ! engine.currentlySeenARMarker.GetComponent<ARMarkerBehaviour>().visible)
             {
                 Debug.Log("Saving new marker...");
-                objectTracker.DeactivateDataSet(dataSet);
-                dataSet.DestroyAllTrackables(false);
-                dataSet.CreateTrackable(trackableSource, GetComponentInChildren<TrackableBehaviour>().gameObject);
-                objectTracker.ActivateDataSet(dataSet);
+                if (dataSet != null)
+                {
+                    objectTracker.DeactivateDataSet(dataSet);
+                    dataSet.DestroyAllTrackables(false);
+                    dataSet.CreateTrackable(trackableSource, GetComponentInChildren<TrackableBehaviour>().gameObject);
+                    objectTracker.ActivateDataSet(dataSet);
+                }
 
                 gameObject.GetComponent<ARMarkerBehaviour>().StartTracking();
             }

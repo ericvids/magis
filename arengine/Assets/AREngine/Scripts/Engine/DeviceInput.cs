@@ -334,6 +334,11 @@ public class DeviceInput
         }
     }
 
+    public static void RequestCameraPermission()
+    {
+        Vuforia.VuforiaRuntime.Instance.InitVuforia();
+    }
+
     public static void RequestLocationPermission()
     {
 #if UNITY_ANDROID && ! UNITY_EDITOR
