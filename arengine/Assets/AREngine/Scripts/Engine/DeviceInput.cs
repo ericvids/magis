@@ -160,6 +160,7 @@ public class DeviceInput
         get
         {
             Quaternion deviceRotation;
+
 #if UNITY_EDITOR
             if (UnityEditor.EditorApplication.isRemoteConnected)
 #else
@@ -170,60 +171,64 @@ public class DeviceInput
                 deviceRotation = Quaternion.Euler(-90, 0, 0) * Input.gyro.attitude;
                 deviceRotation.z = -deviceRotation.z;
                 deviceRotation.w = -deviceRotation.w;
-            }
-            else
-            {
-#if UNITY_ANDROID && ! UNITY_EDITOR
-                if (compass)
-                {
-                    // if on Android, use rotation sensor
-                    deviceRotation = new Quaternion(androidPlugin.Call<float>("getX"),
-                                                    androidPlugin.Call<float>("getY"),
-                                                    androidPlugin.Call<float>("getZ"),
-                                                    androidPlugin.Call<float>("getW"));
 
-                    // apply a compensating roll rotation depending on the orientation of the device's display
-                    // (we're not using Unity's ScreenOrientation because of a bug that incorrectly returns upside-down portrait
-                    // on an upside-down-oriented phone that does not actually support displaying in upside-down portrait)
-                    int rotation = androidActivity.Call<AndroidJavaObject>("getSystemService", "window")
-                                                   .Call<AndroidJavaObject>("getDefaultDisplay").Call<int>("getRotation");
-                    if (rotation == 1)
-                        deviceRotation *= Quaternion.Euler(0, 0, -90);
-                    else if (rotation == 2)
-                        deviceRotation *= Quaternion.Euler(0, 0, 180);
-                    else if (rotation == 3)
-                        deviceRotation *= Quaternion.Euler(0, 0, 90);
-
-                    // convert this quaternion to Unity's coordinate system
-                    deviceRotation = Quaternion.Euler(-90, 0, 0) * deviceRotation;
-                    deviceRotation.z = -deviceRotation.z;
-                    deviceRotation.w = -deviceRotation.w;
-                }
-                else
-#endif
-                {
-                    Vector3 accel = Input.acceleration;
-                    deviceRotation = Quaternion.Euler(new Vector3(
-                        Mathf.Atan2(-accel.z,
-                                    Mathf.Sqrt(accel.y * accel.y + accel.x * accel.x)
-                                   ) / Mathf.PI * 180,
-                        0.0f,
-                        Mathf.Atan2(-accel.x,
-                                    (accel.y > 0 ? -1 : 1)
-                                    * Mathf.Sqrt(accel.y * accel.y + 0.1f * accel.z * accel.z)
-                                   ) / Mathf.PI * 180
-                    ));
-                }
-
-                average.AddSample(deviceRotation);
-                deviceRotation = average.GetAverage();
+                // sanity check to prevent the rest of the engine from propagating malfunctioning gyroscope errors
+                Vector3 e = deviceRotation.eulerAngles;
+                if (! float.IsNaN(e.x) && ! float.IsNaN(e.y) && ! float.IsNaN(e.z))
+                    return deviceRotation;
             }
 
 #if UNITY_EDITOR
-            if (! UnityEditor.EditorApplication.isRemoteConnected)
-                deviceRotation = Quaternion.identity;
-#endif
+            return Quaternion.identity;
+#else
+
+# if UNITY_ANDROID
+            if (compass)
+            {
+                // if on Android, use rotation sensor
+                deviceRotation = new Quaternion(androidPlugin.Call<float>("getX"),
+                                                androidPlugin.Call<float>("getY"),
+                                                androidPlugin.Call<float>("getZ"),
+                                                androidPlugin.Call<float>("getW"));
+
+                // apply a compensating roll rotation depending on the orientation of the device's display
+                // (we're not using Unity's ScreenOrientation because of a bug that incorrectly returns upside-down portrait
+                // on an upside-down-oriented phone that does not actually support displaying in upside-down portrait)
+                int rotation = androidActivity.Call<AndroidJavaObject>("getSystemService", "window")
+                                                .Call<AndroidJavaObject>("getDefaultDisplay").Call<int>("getRotation");
+                if (rotation == 1)
+                    deviceRotation *= Quaternion.Euler(0, 0, -90);
+                else if (rotation == 2)
+                    deviceRotation *= Quaternion.Euler(0, 0, 180);
+                else if (rotation == 3)
+                    deviceRotation *= Quaternion.Euler(0, 0, 90);
+
+                // convert this quaternion to Unity's coordinate system
+                deviceRotation = Quaternion.Euler(-90, 0, 0) * deviceRotation;
+                deviceRotation.z = -deviceRotation.z;
+                deviceRotation.w = -deviceRotation.w;
+            }
+            else
+# endif
+            {
+                Vector3 accel = Input.acceleration;
+                deviceRotation = Quaternion.Euler(new Vector3(
+                    Mathf.Atan2(-accel.z,
+                                Mathf.Sqrt(accel.y * accel.y + accel.x * accel.x)
+                                ) / Mathf.PI * 180,
+                    0.0f,
+                    Mathf.Atan2(-accel.x,
+                                (accel.y > 0 ? -1 : 1)
+                                * Mathf.Sqrt(accel.y * accel.y + 0.1f * accel.z * accel.z)
+                                ) / Mathf.PI * 180
+                ));
+            }
+
+            average.AddSample(deviceRotation);
+            deviceRotation = average.GetAverage();
+
             return deviceRotation;
+#endif
         }
     }
 
@@ -336,7 +341,11 @@ public class DeviceInput
 
     public static void RequestCameraPermission()
     {
-        Vuforia.VuforiaRuntime.Instance.InitVuforia();
+#if UNITY_ANDROID && ! UNITY_EDITOR
+        if (! UnityEngine.Android.Permission.HasUserAuthorizedPermission(UnityEngine.Android.Permission.Camera))
+            UnityEngine.Android.Permission.RequestUserPermission(UnityEngine.Android.Permission.Camera);
+#endif
+        // iOS does not need separate request (it is requested during vuforia initialization)
     }
 
     public static void RequestLocationPermission()

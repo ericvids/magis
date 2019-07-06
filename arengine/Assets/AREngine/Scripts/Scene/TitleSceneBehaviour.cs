@@ -42,6 +42,7 @@ public class TitleSceneBehaviour : SceneBehaviour
                 {
                     buttonCanvas.HideOverlay();
 #endif
+                    DeviceInput.RequestCameraPermission();
                     buttonCanvas.ShowBattery();
                     gameState.LoadScene("MapScene");
 #if DEVELOPMENT_BUILD && ! UNITY_EDITOR

@@ -10,7 +10,7 @@ You should have received a copy of the GNU General Public License v2 along with 
 Setup Instructions
 ==================
 
-1. Install Unity Hub, then on the Installs menu, click Add and select Unity 2019.1.8f1 (latest stable version as of this writing). When prompted for modules to add to your install, add Android Build Support, Android SDK & NDK Tools (inside Android Build Support), iOS Build Support and Vuforia Augmented Reality Support.
+1. Install Unity Hub, then on the Installs menu, click Add and select Unity 2019.1.x (where x is the latest stable version). When prompted for modules to add to your install, add Android Build Support, Android SDK & NDK Tools (inside Android Build Support), iOS Build Support and Vuforia Augmented Reality Support.
 
 2. Open the arengine/ folder in Unity via Unity Hub's Projects menu. To decrease initial loading time, select your main deployment platform under Target Platform (either Android or iOS).
 

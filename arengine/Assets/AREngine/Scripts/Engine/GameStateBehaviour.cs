@@ -146,7 +146,7 @@ public class GameStateBehaviour : MonoBehaviour
             SetFlag("Global%Module", GetFlagIntValue("Global%Module") - 1);
         }
         if (! hasIncrementedModuleNumber)
-            Debug.Log(DeviceInput.HumanReadableEncoding("Analytics: " + PlayerPrefs.GetString("AnalyticsCode")));
+            Debug.Log("Analytics: " + DeviceInput.HumanReadableEncoding(PlayerPrefs.GetString("AnalyticsCode")));
         return hasIncrementedModuleNumber;
     }
 
@@ -734,11 +734,7 @@ public class GameStateBehaviour : MonoBehaviour
                 if (! buttonCanvas.showLoading)
                     buttonCanvas.showLoading = true;
                 else
-                {
-                    if (sceneName == "TitleScene")
-                        DeviceInput.RequestCameraPermission();  // immediately after the title scene, request camera
                     baseScene.allowSceneActivation = true;
-                }
             }
             if (baseScene.allowSceneActivation && baseScene.isDone && (addedScene == null || addedScene.isDone))
             {
@@ -747,7 +743,17 @@ public class GameStateBehaviour : MonoBehaviour
             }
         }
         else
+        {
+            if (sceneName != "TitleScene" && Vuforia.VuforiaRuntime.Instance.InitializationState == Vuforia.VuforiaRuntime.InitState.NOT_INITIALIZED)
+            {
+#if UNITY_ANDROID && ! UNITY_EDITOR
+                // prevent asking location permission again at this point, which may hang the device
+                if (UnityEngine.Android.Permission.HasUserAuthorizedPermission(UnityEngine.Android.Permission.Camera))
+#endif
+                    Vuforia.VuforiaRuntime.Instance.InitVuforia();
+            }
             buttonCanvas.showLoading = false;
+        }
     }
 
     private void OnApplicationPause(bool paused)
