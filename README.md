@@ -14,7 +14,7 @@ Setup Instructions
 
 2. Open the arengine/ folder in Unity via Unity Hub's Projects menu. To decrease initial loading time, select your main deployment platform under Target Platform (either Android or iOS).
 
-3. Go to https://library.vuforia.com/content/vuforia-library/en/articles/Solution/arcore-with-vuforia.html and follow the instructions to download the Google ARCore .aar file for Unity, and to add it to your project under arengine/Assets/Plugins/Android (create the folders if they are not yet existing). _This step is essential for Android but may be skipped for iOS. **Do not forget this step or your APK submission will be rejected by Google Play.**_
+3. Go to https://library.vuforia.com/content/vuforia-library/en/articles/Solution/arcore-with-vuforia.html and follow the instructions to download the Google ARCore .aar file for Unity, and to add it to your project under arengine/Assets/Plugins/Android (create the folders if they are not yet existing). _This step is essential for Android but may be skipped for iOS. **Do not forget this step or your app submission will be rejected by Google Play.**_
 
 4. On the Unity window menu, select GameObject->Vuforia->AR Camera. This action will activate Vuforia and will prompt you to import the necessary Vuforia resources. **Do not forget this step or your device's camera will not work.**
 

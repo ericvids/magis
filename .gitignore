@@ -19,10 +19,8 @@ arengine/obj/
 arengine/Obj/
 arengine/temp/
 arengine/Temp/
-Resources.meta
-arengine/Assets/DownloadObbExample.cs*
-arengine/Assets/README.txt*
 arengine/QCAR
+Resources.meta
 arengine/Assets/ARGames/ARGameList.txt*
 arengine/Assets/Plugins*
 arengine/Assets/Vuforia*

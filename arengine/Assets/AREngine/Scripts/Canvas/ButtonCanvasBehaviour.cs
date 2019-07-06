@@ -688,7 +688,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
                 oldOverlayCanvas = null;
             }
         }
-        if (overlayCanvas != null)
+        if (overlayCanvas != null && ! showLoading)
         {
             Vector3 scale = overlayCanvas.GetChild(0).localScale;
             scale.x += Time.deltaTime;
@@ -990,7 +990,7 @@ public class ButtonCanvasBehaviour : MonoBehaviour
             color = new Color(0.875f, 0.25f, 0.25f);
 
         // if charging, pulsate the battery color
-        float add = Mathf.Abs(Time.time - ((long) Time.time) - 0.5f);
+        float add = Mathf.Abs(Time.realtimeSinceStartup - ((long) Time.realtimeSinceStartup) - 0.5f);
         if (DeviceInput.batteryCharging)
             color = new Color(color.r + add, color.g + add, color.b + add);
 
@@ -1046,9 +1046,9 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         source.PlayOneShot(PreloadSound(sound));
     }
 
-    private System.Collections.IEnumerator PlayMusicCoroutine(string sound)
+    private System.Collections.IEnumerator PlayMusicCoroutine(string sound, bool playAfterStoppingFade)
     {
-        yield return new WaitUntil(() => (volumeDecreasePerSecond == 0.0f));
+        yield return new WaitUntil(() => ((! playAfterStoppingFade || volumeDecreasePerSecond == 0.0f) && ! showLoading));
         PlayMusic(sound);
     }
 
@@ -1057,12 +1057,12 @@ public class ButtonCanvasBehaviour : MonoBehaviour
         if (lastMusic == sound)
             return;
 
-        if (playAfterStoppingFade)
+        if (playAfterStoppingFade || showLoading)
         {
             StopMusic();
             PreloadSound(sound);
             PreloadSound(sound + "-intro");
-            StartCoroutine(PlayMusicCoroutine(sound));
+            StartCoroutine(PlayMusicCoroutine(sound, playAfterStoppingFade));
             return;
         }
 

@@ -40,7 +40,7 @@ public class CardCanvasBehaviour : CanvasBehaviour
         }
 
         if (previousCardName == null)
-            startTime = Time.realtimeSinceStartup;
+            startTime = 0;
 
         Sprite background = Resources.Load<Sprite>("Cards/" + cardName);
         Sprite buttons = Resources.Load<Sprite>("Cards/" + cardName + "-buttons");
@@ -68,7 +68,7 @@ public class CardCanvasBehaviour : CanvasBehaviour
                         if (newStatus != null && status != newStatus)
                         {
                             status = newStatus;
-                            startTime = Time.realtimeSinceStartup;
+                            startTime = 0;
                         }
 
                         if (count > 0)
@@ -100,6 +100,9 @@ public class CardCanvasBehaviour : CanvasBehaviour
 
     private void Update()
     {
+        if (startTime == 0 && ! buttonCanvas.showLoading)
+            startTime = Time.realtimeSinceStartup;
+
         float glowValue = Mathf.Abs((Time.realtimeSinceStartup - ((long) (Time.realtimeSinceStartup))) * 2f - 1f) * 0.33f + 0.67f;
         Color glowColor = new Color(glowValue, glowValue, glowValue);
         foreach (Transform child in transform.GetChild(0))
@@ -110,7 +113,7 @@ public class CardCanvasBehaviour : CanvasBehaviour
 
         if (status != null)
         {
-            if (((int) (Time.realtimeSinceStartup - startTime)) % 30 <= 8)
+            if (startTime != 0 && ((int) (Time.realtimeSinceStartup - startTime)) % 30 <= 8)
                 buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, status);
             else
                 buttonCanvas.SetStatus(ButtonCanvasStatusType.TIP, null);
@@ -201,7 +204,7 @@ public class CardCanvasBehaviour : CanvasBehaviour
         {
             buttonCanvas.ShowOptionsOverlay(delegate()
             {
-                startTime = Time.realtimeSinceStartup;
+                startTime = 0;
                 buttonCanvas.ShowCardOverlay(cardName, previousCardName);
             });
         }
@@ -217,7 +220,7 @@ public class CardCanvasBehaviour : CanvasBehaviour
                     DeviceInput.ExitGame(buttonCanvas);
                 else
                 {
-                    startTime = Time.realtimeSinceStartup;
+                    startTime = 0;
                     buttonCanvas.ShowCardOverlay(cardName, previousCardName);
                 }
             });

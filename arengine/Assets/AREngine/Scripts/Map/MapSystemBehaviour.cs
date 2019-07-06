@@ -1300,7 +1300,7 @@ public class MapSystemBehaviour : MonoBehaviour
                     child.rotation = Camera.main.transform.rotation;  // always face the camera
 
                     // pulsate
-                    float mat = Mathf.Abs(Time.time - ((long) Time.time) - 0.5f) + 0.75f;
+                    float mat = Mathf.Abs(Time.realtimeSinceStartup - ((long) Time.realtimeSinceStartup) - 0.5f) + 0.75f;
                     child.GetComponent<Renderer>().material.color = new Color(mat, mat, mat);
                 }
                 else

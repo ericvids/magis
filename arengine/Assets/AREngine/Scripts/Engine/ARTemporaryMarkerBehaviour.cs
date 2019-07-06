@@ -97,9 +97,6 @@ public class ARTemporaryMarkerBehaviour : MonoBehaviour, IUserDefinedTargetEvent
 
     public void OnInitialized()
     {
-        if (dataSet != null)
-            OnDestroy();
-
         objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
         if (objectTracker != null)
         {
@@ -110,16 +107,6 @@ public class ARTemporaryMarkerBehaviour : MonoBehaviour, IUserDefinedTargetEvent
 
         // set it so that the AR camera can only see the video feed and nothing else of the scene
         GameObject.FindWithTag("MainCamera").transform.GetChild(0).gameObject.layer = 9;  // ARBackground
-    }
-
-    public void OnDestroy()
-    {
-        if (dataSet != null)
-        {
-            objectTracker.DeactivateDataSet(dataSet);
-            objectTracker.DestroyDataSet(dataSet, true);
-            dataSet = null;
-        }
     }
 
     public void DeleteTrackable()
