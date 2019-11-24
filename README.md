@@ -18,7 +18,9 @@ Setup Instructions
 
 4. Click the Play button to play the sample game within the Unity Editor.
 
- * Use the mouse to perform touchscreen commands, and use the arrow keys on your keyboard to navigate within an AR scene.
+ * Use the mouse to perform touchscreen commands.
+ * Click the Game window and use the arrow keys on your keyboard to navigate within an AR scene.
+ * Click the Game window and press the space bar to show the debug overlay. The debug overlay contains commands such as initiating a "fake" marker scan (so you won't need a webcam and marker printout), skipping a scene or module from the map screen, and so on. Press the space bar again to turn the debug overlay off.
  * If you connect a webcam to your computer, you may use it to simulate AR scenes in conjunction with printouts of the sample marker images at arengine/Assets/Editor/Vuforia/ImageTargetTextures/magis-default/. You will need to go to Vuforia Configuration and uncheck "Disable Vuforia Play Mode" near the bottom of the Inspector.
  * You may also connect a device with Unity Remote 5 installed to use its gyroscope and touchscreen. Go to Edit->Project Settings->Editor and under Unity Remote->Device, select "Any Android Device" or "Any iOS Device" depending on your device. Note that due to Vuforia limitations, it is not possible to use the device's back-facing camera for AR tracking in Play Mode, but you may attach your webcam to the back of your device to simulate it.
 
