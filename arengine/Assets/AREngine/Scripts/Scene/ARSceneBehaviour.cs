@@ -47,7 +47,7 @@ public class ARSceneBehaviour : SceneBehaviour
     private long lastSceneTimeCounterUpdateTime;  // Global%SceneTimeCounter is incremented whenever player is in a scene that has not ended
 
     private bool markerNotNeeded;
-    private bool introTextShown;
+    private static bool introTextShown = false;
 
     private bool isSubscene
     {
@@ -656,15 +656,16 @@ public class ARSceneBehaviour : SceneBehaviour
                 SetupObjects();
             }
 
-            if (gameState.sceneName == "M0%Scene1" && ! gameState.GetFlag("Global%FinishedFirstTutorial") && ! introTextShown)
+            if (! introTextShown)
             {
                 buttonCanvas.ShowQuestionOverlay(
-                    "Before we begin, let us do a quick tutorial.\n\nWe will now calibrate your device. Make sure your camera lens is unobstructed.",
-                    "Start calibration",
+                    "About to start Augmented Reality mode.\n\nFor children: Please ask your parent/guardian for help!\n\nFor adults: Make sure your camera lens is unobstructed. Please be aware of your surroundings at all times!",
+                    "Start AR mode",
                     null,
                     delegate(string pressedButton2)
                     {
-                        gameState.SetFlag("Global%SceneTimeCounter", 1);  // log tutorial time
+                        if (gameState.sceneName == "M0%Scene1" && ! gameState.GetFlag("Global%FinishedFirstTutorial"))
+                            gameState.SetFlag("Global%SceneTimeCounter", 1);  // log tutorial time
                         introTextShown = true;
                         buttonCanvas.HideOverlay();
                     }
