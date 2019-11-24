@@ -243,6 +243,7 @@ public class Autorun
         {
             buildNotReady = true;
             Debug.Log("Restoring " + file);
+            AssetDatabase.DeleteAsset(file);
             AssetDatabase.MoveAsset(file + ".bak", file);
         }
     }

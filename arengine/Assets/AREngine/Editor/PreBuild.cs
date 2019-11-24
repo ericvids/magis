@@ -25,6 +25,16 @@ public class PreBuild : IPreprocessBuildWithReport
         }
     }
 
+    void ReplaceFile(string oldFile, string newFile)
+    {
+        BackupFile(oldFile);
+        if (AssetDatabase.AssetPathToGUID(newFile) != "")
+        {
+            Debug.Log("Replacing " + oldFile + " with " + newFile);
+            AssetDatabase.CopyAsset(newFile, oldFile);
+        }
+    }
+
     void BackupFile(string file)
     {
         if (AssetDatabase.AssetPathToGUID(file) != "")
@@ -73,8 +83,9 @@ public class PreBuild : IPreprocessBuildWithReport
         BackupFile("Assets/AREngine/Plugins/iOS/Location.mm");
 #endif
 
-#if ! MAGIS_BLE
-        BackupFile("Assets/Plugins/Android/AndroidManifest.xml");
+#if MAGIS_BLE
+        ReplaceFile("Assets/Plugins/Android/AndroidManifest.xml", "Assets/AREngine/Plugins/Android/AndroidManifestBT.xml");
+#else
         BackupFile("Assets/Plugins/Android/unityandroidbluetoothlelib.jar");
         BackupFile("Assets/Plugins/iOS/UnityBluetoothLE.mm");
 #endif
